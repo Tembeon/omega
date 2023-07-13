@@ -1,0 +1,7 @@
+{
+  "server": "SERVER_ID",
+  "botToken": "BOT_TOKEN",
+  "lfgChannel": "CHANNEL_ID",
+  "promoChannel": "CHANNEL_ID",
+  "eventsChannel": "CHANNEL_ID"
+}

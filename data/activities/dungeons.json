@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Ghosts of the Deep",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/dungeon_ghosts_of_the_deep.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Spire of the Watcher",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/dungeon_spire_of_the_watcher.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Duality",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/dungeon_duality.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Grasp of Avarice",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/30th-anniversary-grasp-of-avarice.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Prophecy",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/dungeon_prophecy.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Pit of Heresy",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/dungeon_pit_of_heresy.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Shattered Throne",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/mission_labyrinth.jpg",
+    "enabled": true
+  }
+]

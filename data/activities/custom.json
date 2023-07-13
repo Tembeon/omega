@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Gambit",
+    "max_members": 4,
+    "banner_url": "https://help.bungie.net/hc/article_attachments/360069306472/Gambit.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Crucible",
+    "max_members": 6,
+    "banner_url": "https://help.bungie.net/hc/article_attachments/11462040504084",
+    "enabled": true
+  },
+  {
+    "name": "Nightfall",
+    "max_members": 3,
+    "banner_url": "https://help.bungie.net/hc/article_attachments/360069285531/Strikes_DPS_Banner.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Trials of Osiris",
+    "max_members": 3,
+    "banner_url": "https://www.bungie.net/pubassets/pkgs/132/132674/Banner_TrialsofOsiris.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Iron Banner",
+    "max_members": 6,
+    "banner_url": "https://help.bungie.net/hc/article_attachments/360069305372/iron_banner.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Season Activity [6]",
+    "max_members": 6,
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/campaign_adieu.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Season Activity [3]",
+    "max_members": 3,
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/campaign_adieu.jpg",
+    "enabled": true
+  }
+]

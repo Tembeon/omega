@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Root of Nightmares",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/raid_root_of_nightmares.jpg",
+    "enabled": true
+  },
+  {
+    "name": "King's Fall",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/raid_kings_fall.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Vow of Disciple",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/raid_nemesis.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Vault of Glass",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/vault_of_glass.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Deep Stone Crypt",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/europa-raid-deep-stone-crypt.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Garden of Salvation",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/raid_garden_of_salvation.jpg",
+    "enabled": true
+  },
+  {
+    "name": "Last Wish",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/raid_beanstalk.jpg",
+    "enabled": true
+  }
+]
