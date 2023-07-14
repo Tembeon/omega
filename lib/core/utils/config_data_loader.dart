@@ -102,9 +102,12 @@ final class ConfigDataLoader {
       throw ConfigFileMissing('raids.json', configPath: raidActivities.path);
     }
 
-    final customActivitiesData = jsonDecode(customActivities.readAsStringSync()) as List<Map<String, dynamic>>;
-    final dungeonActivitiesData = jsonDecode(dungeonActivities.readAsStringSync()) as List<Map<String, dynamic>>;
-    final raidActivitiesData = jsonDecode(raidActivities.readAsStringSync()) as List<Map<String, dynamic>>;
+    final customActivitiesData =
+        (jsonDecode(customActivities.readAsStringSync()) as List<dynamic>).cast<Map<String, dynamic>>();
+    final dungeonActivitiesData =
+        (jsonDecode(dungeonActivities.readAsStringSync()) as List<dynamic>).cast<Map<String, dynamic>>();
+    final raidActivitiesData =
+        (jsonDecode(raidActivities.readAsStringSync()) as List<dynamic>).cast<Map<String, dynamic>>();
 
     _activityData['custom'] = _parseFrom(activityType: 'custom', data: customActivitiesData);
     _activityData['dungeons'] = _parseFrom(activityType: 'dungeons', data: dungeonActivitiesData);
