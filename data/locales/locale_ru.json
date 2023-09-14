@@ -1,0 +1,13 @@
+{
+  "locale": "ru",
+  "activity_option_name": "название",
+  "activity_option_description": "Введите название активности",
+  "description_option_name": "описание",
+  "description_option_description": "Введите описание активности",
+  "date_option_name": "дата",
+  "date_option_description": "Введите дату сбора [15 01 2023]",
+  "time_option_name": "время",
+  "time_option_description": "Введите время сбора [08 30]",
+  "timezone_option_name": "часовой_пояс",
+  "timezone_option_description": "Введите ваш текущий часовой пояс"
+}

@@ -1,5 +1,10 @@
 [
   {
+    "name": "Krota's End",
+    "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/raid_crotas_end.jpg",
+    "enabled": true
+  },
+  {
     "name": "Root of Nightmares",
     "banner_url": "https://www.bungie.net/img/destiny_content/pgcr/raid_root_of_nightmares.jpg",
     "enabled": true

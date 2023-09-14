@@ -1,0 +1,13 @@
+{
+  "locale_path": "data/locales/locale_ru.json",
+  "@locale_path": {
+    "description": "Path to the locale file. Should be relative to the root of the executable."
+  },
+  "dungeon_activities_path": "data/activities/dungeons.json",
+  "raid_activities_path": "data/activities/raids.json",
+  "custom_activities_path": "data/activities/custom.json",
+  "bot_config_path": "data/config_stage.json",
+  "@bot_config_path": {
+    "description": "Path to the bot config file, which contains the bot token and other settings."
+  }
+}
