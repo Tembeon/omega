@@ -21,10 +21,10 @@ class CantRespond implements Exception {
   final String reason;
 
   String toHumanMessage() {
-    final sb = StringBuffer();
-    sb.writeln('Невозможно выполнить команду.');
-    sb.writeln('Причина: $reason');
-    sb.writeln('Попробуйте ещё раз или обратитесь к администрации сервера.');
+    final sb = StringBuffer()
+      ..writeln('Невозможно выполнить команду.')
+      ..writeln('Причина: $reason')
+      ..writeln('Попробуйте ещё раз или обратитесь к администрации сервера.');
 
     return sb.toString();
   }

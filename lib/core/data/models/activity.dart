@@ -15,18 +15,18 @@ abstract interface class Activity {
   bool get enabled;
 
   /// Creates activity from json
-  factory Activity.custom(Map<String, dynamic> json) => _JsonActivity(
-        name: json['name'] as String,
-        maxMembers: json['max_members'] as int,
-        bannerUrl: json['banner_url'] as String,
-        enabled: json['enabled'] as bool,
+  factory Activity.custom(Map<String, Object?> json) => _JsonActivity(
+        name: json['name']! as String,
+        maxMembers: json['max_members']! as int,
+        bannerUrl: json['banner_url']! as String,
+        enabled: json['enabled']! as bool,
       );
 
   /// Creates dungeon activity from json
-  factory Activity.dungeon(Map<String, dynamic> json) = _JsonActivity.dungeon;
+  factory Activity.dungeon(Map<String, Object?> json) = _JsonActivity.dungeon;
 
   /// Creates raid activity from json
-  factory Activity.raid(Map<String, dynamic> json) = _JsonActivity.raid;
+  factory Activity.raid(Map<String, Object?> json) = _JsonActivity.raid;
 }
 
 class _JsonActivity implements Activity {
@@ -57,21 +57,21 @@ class _JsonActivity implements Activity {
   @override
   bool get enabled => _enabled;
 
-  factory _JsonActivity.dungeon(Map<String, dynamic> json) {
+  factory _JsonActivity.dungeon(Map<String, Object?> json) {
     return _JsonActivity(
-      name: json['name'] as String,
+      name: json['name']! as String,
       maxMembers: 3,
-      bannerUrl: json['banner_url'] as String,
-      enabled: json['enabled'] as bool,
+      bannerUrl: json['banner_url']! as String,
+      enabled: json['enabled']! as bool,
     );
   }
 
-  factory _JsonActivity.raid(Map<String, dynamic> json) {
+  factory _JsonActivity.raid(Map<String, Object?> json) {
     return _JsonActivity(
-      name: json['name'] as String,
+      name: json['name']! as String,
       maxMembers: 6,
-      bannerUrl: json['banner_url'] as String,
-      enabled: json['enabled'] as bool,
+      bannerUrl: json['banner_url']! as String,
+      enabled: json['enabled']! as bool,
     );
   }
 }

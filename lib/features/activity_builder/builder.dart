@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:lfg_bot/core/utils/config_data_loader.dart';
-import 'package:lfg_bot/features/activity_builder/buttons.dart';
-import 'package:lfg_bot/features/commands/command_exceptions.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_interactions/nyxx_interactions.dart';
 
+import '../../core/utils/loaders/bot_settings.dart';
 import '../../core/utils/time_convert.dart';
+import '../commands/command_exceptions.dart';
+import 'buttons.dart';
 
 class ActivityPostBuilder {
   /// Returns [ComponentMessageBuilder] with embed and buttons for activity post.
@@ -14,14 +14,14 @@ class ActivityPostBuilder {
     // extract data from event
     final user = event.interaction.memberAuthor;
     final args = event.args;
-    final String activityName = args[0].value;
-    final String activityDescription = args[1].value;
-    final String time = args[2].value;
-    final String date = args[3].value;
-    final int userTimezoneOffset = args[4].value;
+    final String activityName = args[0].value as String;
+    final String activityDescription = args[1].value as String;
+    final String time = args[2].value as String;
+    final String date = args[3].value as String;
+    final int userTimezoneOffset = args[4].value as int;
 
     // disallow null user (bots)
-    if (user == null) throw CantRespond('Неизвестный пользователь, возможно это бот. Ботов не обслуживаем.');
+    if (user == null) throw const CantRespond('Неизвестный пользователь, возможно это бот. Ботов не обслуживаем.');
 
     final messageBuilder = await _createEmbedWith(
       user: user,
@@ -43,9 +43,9 @@ class ActivityPostBuilder {
     required String date,
     required int userTimezoneOffset,
   }) async {
-    ComponentMessageBuilder msgBuilder = ComponentMessageBuilder();
+    final msgBuilder = ComponentMessageBuilder();
     final rawUser = await user.user.getOrDownload();
-    final activity = ConfigDataLoader.getActivityByName(activityName);
+    final activity = BotSettings.i.activityData.get(activityName);
     final discordTime = TimeConverters.convertRawDateToDiscordTime(
       time: time,
       date: date,
@@ -57,26 +57,30 @@ class ActivityPostBuilder {
       (embed) => embed
         ..addAuthor(
           (author) {
-            author.name = rawUser.username;
-            author.iconUrl = rawUser.avatarUrl();
+            author
+              ..name = rawUser.username
+              ..iconUrl = rawUser.avatarUrl();
           },
         )
         ..addField(
           builder: (field) {
-            field.name = activityName;
-            field.content = activityDescription;
+            field
+              ..name = activityName
+              ..content = activityDescription;
           },
         )
         ..addField(
           builder: (field) {
-            field.name = 'Время сбора:';
-            field.content = discordTime;
+            field
+              ..name = 'Время сбора:'
+              ..content = discordTime;
           },
         )
         ..addField(
           builder: (field) {
-            field.name = 'Участники:';
-            field.content = user.nickname ?? rawUser.username;
+            field
+              ..name = 'Участники:'
+              ..content = user.nickname ?? rawUser.username;
           },
         )
         ..imageUrl = activity.bannerUrl

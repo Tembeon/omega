@@ -1,6 +1,7 @@
-import 'package:lfg_bot/features/commands/create/create_category.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_interactions/nyxx_interactions.dart';
+
+import '../../features/commands/create/create_category.dart';
 
 class BotInteractions {
   BotInteractions(INyxxWebsocket bot) {

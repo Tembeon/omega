@@ -1,10 +1,11 @@
-import 'package:lfg_bot/core/utils/flavors.dart';
 import 'package:nyxx/nyxx.dart';
+
+import '../utils/loaders/bot_settings.dart';
 
 class BotCore {
   BotCore() {
     _bot = NyxxFactory.createNyxxWebsocket(
-      Flavors.d.botToken,
+      BotSettings.instance.botConfig.botToken,
       GatewayIntents.allUnprivileged | GatewayIntents.guildMessages,
     )
       ..registerPlugin(Logging())

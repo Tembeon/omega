@@ -15,8 +15,8 @@ class TimeConverters {
     required final int userTimezoneOffset,
     required final DateTime rawDate,
   }) {
-    int localTimezone = 3;
-    int difference = localTimezone - userTimezoneOffset;
+    final int localTimezone = 3;
+    final int difference = localTimezone - userTimezoneOffset;
 
     return rawDate.add(Duration(hours: difference)).toUtc();
   }

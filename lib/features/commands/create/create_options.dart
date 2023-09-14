@@ -1,9 +1,11 @@
-import 'package:lfg_bot/core/utils/config_data_loader.dart';
 import 'package:nyxx_interactions/nyxx_interactions.dart';
 
 import '../../../core/data/enums/activity_type.dart';
+import '../../../core/utils/loaders/bot_settings.dart';
 
+/// Creates options for activity creation command based on [LFGActivityType].
 List<CommandOptionBuilder> createActivityOptionsFor(LFGActivityType type) {
+  // you can set order of options by changing their order in this list
   return [
     _nameOption(type),
     _descriptionOption,
@@ -12,6 +14,21 @@ List<CommandOptionBuilder> createActivityOptionsFor(LFGActivityType type) {
     _timezoneOption,
   ];
 }
+
+/// Returns name of option "activity name"
+String get nameOptionName => _nameOption(LFGActivityType.raid).name;
+
+/// Returns name of option "activity description"
+String get descriptionOptionName => _descriptionOption.name;
+
+/// Returns name of option "activity date"
+String get dateOptionName => _dateOption.name;
+
+/// Returns name of option "activity time"
+String get timeOptionName => _timeOption.name;
+
+/// Returns name of option "activity timezone"
+String get timezoneOptionName => _timezoneOption.name;
 
 /// Option for activity date input
 CommandOptionBuilder get _dateOption {
@@ -45,7 +62,7 @@ CommandOptionBuilder get _descriptionOption {
 
 /// Option for user's timezone input
 CommandOptionBuilder get _timezoneOption {
-  Map<String, String> timezones = {
+  const Map<String, String> timezones = {
     'UTC±0 (GMT)': '0',
     'UTC+1 (WET)': '1',
     'UTC+2 (EET)': '2',
@@ -75,9 +92,9 @@ CommandOptionBuilder get _timezoneOption {
 CommandOptionBuilder _nameOption(LFGActivityType type) {
   List<ArgChoiceBuilder> getChoices() {
     final activities = switch (type) {
-      LFGActivityType.dungeon => ConfigDataLoader.dungeons,
-      LFGActivityType.raid => ConfigDataLoader.raids,
-      LFGActivityType.custom => ConfigDataLoader.custom,
+      LFGActivityType.dungeon => BotSettings.i.activityData.dungeons,
+      LFGActivityType.raid => BotSettings.i.activityData.raids,
+      LFGActivityType.custom => BotSettings.i.activityData.customs,
     };
 
     final List<ArgChoiceBuilder> choices = [];

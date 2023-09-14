@@ -26,8 +26,9 @@ Future<void> sendUnexpectedErrorMessage(
 }) async {
   final sb = StringBuffer()..writeln('Что-то пошло не так...');
   if (e != null) {
-    sb.writeln();
-    sb.writeln(e.toString());
+    sb
+      ..writeln()
+      ..writeln(e.toString());
   }
 
   await event.respond(

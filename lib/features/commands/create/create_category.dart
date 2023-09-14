@@ -1,10 +1,11 @@
-import 'package:lfg_bot/core/utils/flavors.dart';
-import 'package:lfg_bot/features/activity_builder/unexpected_error_message.dart';
-import 'package:lfg_bot/features/commands/command_exceptions.dart';
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx_interactions/nyxx_interactions.dart';
 
 import '../../../core/data/enums/activity_type.dart';
+import '../../../core/utils/loaders/bot_settings.dart';
 import '../../activity_builder/builder.dart';
+import '../../activity_builder/unexpected_error_message.dart';
+import '../command_exceptions.dart';
 import 'create_options.dart';
 
 class CategoryCreate {
@@ -18,7 +19,7 @@ class CategoryCreate {
         _activity,
       ],
       canBeUsedInDm: false,
-      guild: Flavors.d.server,
+      guild: Snowflake(BotSettings.i.botConfig.serverID),
     );
   }
 }
@@ -55,10 +56,10 @@ Future<void> _handleCreateCommand(ISlashCommandInteractionEvent event) async {
     final msg = await ActivityPostBuilder.fromCreate(event);
     await event.respond(msg);
   } on FormatException {
-    sendFormatExceptionMessage(event);
+    await sendFormatExceptionMessage(event);
   } on CantRespond catch (e) {
-    sendUnexpectedErrorMessage(event, e: e.toHumanMessage());
-  } catch (e) {
-    sendUnexpectedErrorMessage(event, e: e);
+    await sendUnexpectedErrorMessage(event, e: e.toHumanMessage());
+  } on Object catch (e) {
+    await sendUnexpectedErrorMessage(event, e: e);
   }
 }

@@ -3,29 +3,28 @@ import 'dart:io';
 
 import 'package:io/io.dart';
 import 'package:l/l.dart';
-import 'package:lfg_bot/core/bot/nyxx_core.dart';
-import 'package:lfg_bot/core/bot/nyxx_interactions.dart';
-import 'package:lfg_bot/core/utils/config_data_loader.dart';
-import 'package:lfg_bot/core/utils/flavors.dart';
+import 'package:lfg_bot/core/bot/core.dart';
+import 'package:lfg_bot/core/bot/interactions.dart';
+import 'package:lfg_bot/core/const/exceptions.dart';
+import 'package:lfg_bot/core/utils/loaders/bot_settings.dart';
 
 void main(List<String> arguments) => runZonedGuarded(
       runner,
       (error, stack) {
-        if (error is ConfigFileMissing) {
-          l.e(error.toString());
-          exit(ExitCode.config.code);
+        l.e('Root level exception:\n$error\n$stack');
+
+        if (error case FatalException(:final exitCode)) {
+          exit(exitCode);
         }
 
-        print(stack);
-        l.e(error.toString(), stack);
         exit(ExitCode.software.code);
       },
     );
 
 void runner() {
   // load bot settings
-  Flavors.readFromFile(useTestEnvironment: true);
-  ConfigDataLoader().load();
+  final settings = BotSettings.fromFile('data/bot_settings.json');
+  print('Using locale: ${settings.locale.get('locale')}');
 
   // initialize bot
   final bot = BotCore().bot;
