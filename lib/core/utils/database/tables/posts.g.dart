@@ -3,137 +3,100 @@
 part of 'posts.dart';
 
 // ignore_for_file: type=lint
-class $PostsTableTable extends PostsTable
-    with TableInfo<$PostsTableTable, PostsTableData> {
+class $PostsTableTable extends PostsTable with TableInfo<$PostsTableTable, PostsTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $PostsTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
+  late final GeneratedColumn<int> id = GeneratedColumn<int>('id', aliasedName, false,
       hasAutoIncrement: true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-      'title', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _descriptionMeta =
-      const VerificationMeta('description');
+  late final GeneratedColumn<String> title =
+      GeneratedColumn<String>('title', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _descriptionMeta = const VerificationMeta('description');
   @override
-  late final GeneratedColumn<String> description = GeneratedColumn<String>(
-      'description', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumn<String> description =
+      GeneratedColumn<String>('description', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _authorMeta = const VerificationMeta('author');
   @override
-  late final GeneratedColumn<String> author = GeneratedColumn<String>(
-      'author', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _activityMeta =
-      const VerificationMeta('activity');
+  late final GeneratedColumn<String> author =
+      GeneratedColumn<String>('author', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _activityMeta = const VerificationMeta('activity');
   @override
-  late final GeneratedColumn<String> activity = GeneratedColumn<String>(
-      'activity', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumn<String> activity =
+      GeneratedColumn<String>('activity', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
-  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
-      'date', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _createdAtMeta =
-      const VerificationMeta('createdAt');
+  late final GeneratedColumn<DateTime> date =
+      GeneratedColumn<DateTime>('date', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
   @override
-  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
-      'created_at', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  late final GeneratedColumn<String> createdAt =
+      GeneratedColumn<String>('created_at', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
   @override
-  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _membersMeta =
-      const VerificationMeta('members');
+  late final GeneratedColumn<String> updatedAt =
+      GeneratedColumn<String>('updated_at', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _membersMeta = const VerificationMeta('members');
   @override
-  late final GeneratedColumn<String> members = GeneratedColumn<String>(
-      'members', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumn<String> members =
+      GeneratedColumn<String>('members', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [
-        id,
-        title,
-        description,
-        author,
-        activity,
-        date,
-        createdAt,
-        updatedAt,
-        members
-      ];
+  List<GeneratedColumn> get $columns => [id, title, description, author, activity, date, createdAt, updatedAt, members];
   @override
   String get aliasedName => _alias ?? 'posts_table';
   @override
   String get actualTableName => 'posts_table';
   @override
-  VerificationContext validateIntegrity(Insertable<PostsTableData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<PostsTableData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('title')) {
-      context.handle(
-          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+      context.handle(_titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
     } else if (isInserting) {
       context.missing(_titleMeta);
     }
     if (data.containsKey('description')) {
-      context.handle(
-          _descriptionMeta,
-          description.isAcceptableOrUnknown(
-              data['description']!, _descriptionMeta));
+      context.handle(_descriptionMeta, description.isAcceptableOrUnknown(data['description']!, _descriptionMeta));
     } else if (isInserting) {
       context.missing(_descriptionMeta);
     }
     if (data.containsKey('author')) {
-      context.handle(_authorMeta,
-          author.isAcceptableOrUnknown(data['author']!, _authorMeta));
+      context.handle(_authorMeta, author.isAcceptableOrUnknown(data['author']!, _authorMeta));
     } else if (isInserting) {
       context.missing(_authorMeta);
     }
     if (data.containsKey('activity')) {
-      context.handle(_activityMeta,
-          activity.isAcceptableOrUnknown(data['activity']!, _activityMeta));
+      context.handle(_activityMeta, activity.isAcceptableOrUnknown(data['activity']!, _activityMeta));
     } else if (isInserting) {
       context.missing(_activityMeta);
     }
     if (data.containsKey('date')) {
-      context.handle(
-          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
+      context.handle(_dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
     } else if (isInserting) {
       context.missing(_dateMeta);
     }
     if (data.containsKey('created_at')) {
-      context.handle(_createdAtMeta,
-          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+      context.handle(_createdAtMeta, createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(_updatedAtMeta, updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
     }
     if (data.containsKey('members')) {
-      context.handle(_membersMeta,
-          members.isAcceptableOrUnknown(data['members']!, _membersMeta));
+      context.handle(_membersMeta, members.isAcceptableOrUnknown(data['members']!, _membersMeta));
     } else if (isInserting) {
       context.missing(_membersMeta);
     }
@@ -146,24 +109,15 @@ class $PostsTableTable extends PostsTable
   PostsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PostsTableData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      description: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
-      author: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}author'])!,
-      activity: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}activity'])!,
-      date: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
-      createdAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
-      members: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}members'])!,
+      id: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      description: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}description'])!,
+      author: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}author'])!,
+      activity: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}activity'])!,
+      date: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
+      createdAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      members: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}members'])!,
     );
   }
 
@@ -222,8 +176,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
     );
   }
 
-  factory PostsTableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory PostsTableData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PostsTableData(
       id: serializer.fromJson<int>(json['id']),
@@ -291,8 +244,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
   }
 
   @override
-  int get hashCode => Object.hash(id, title, description, author, activity,
-      date, createdAt, updatedAt, members);
+  int get hashCode => Object.hash(id, title, description, author, activity, date, createdAt, updatedAt, members);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -448,8 +400,7 @@ abstract class _$PostsDatabase extends GeneratedDatabase {
   _$PostsDatabase(QueryExecutor e) : super(e);
   late final $PostsTableTable postsTable = $PostsTableTable(this);
   @override
-  Iterable<TableInfo<Table, Object?>> get allTables =>
-      allSchemaEntities.whereType<TableInfo<Table, Object?>>();
+  Iterable<TableInfo<Table, Object?>> get allTables => allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [postsTable];
 }

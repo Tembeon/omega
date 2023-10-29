@@ -1,25 +1,15 @@
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx_interactions/nyxx_interactions.dart';
 
 import '../../features/commands/create/create_category.dart';
-import '../utils/context/context.dart';
 import '../utils/loaders/bot_settings.dart';
 
 class LFGBotCore {
   const LFGBotCore({
     required this.bot,
-    required this.interactions,
-    required this.context,
   });
 
   /// Current active bot (WebSocket).
-  final INyxxWebsocket bot;
-
-  /// Interactions with bot.
-  final IInteractions interactions;
-
-  /// Root context. Empty by default.
-  final Context context;
+  final NyxxGateway bot;
 
   /// Initializes connection to Discord using WebSocket and syncs interactions.
   static Future<LFGBotCore> initialize() async {
@@ -28,26 +18,22 @@ class LFGBotCore {
     }
 
     // create bot with intents and register plugins
-    final bot = NyxxFactory.createNyxxWebsocket(
+    final bot = await Nyxx.connectGateway(
       BotSettings.instance.botConfig.botToken,
       GatewayIntents.allUnprivileged | GatewayIntents.guildMessages,
-    )
-      ..registerPlugin(Logging())
-      ..registerPlugin(CliIntegration())
-      ..registerPlugin(IgnoreExceptions());
+      options: GatewayClientOptions(
+        plugins: [
+          Logging(),
+          CliIntegration(),
+          IgnoreExceptions(),
+        ],
+      ),
+    );
 
-    // connect to Discord
-    await bot.connect();
-
-    // create interactions with bot (slash commands, buttons, etc.)
-    final interactions = IInteractions.create(WebsocketInteractionBackend(bot))
-      ..registerSlashCommand(CategoryCreate.create)
-      ..syncOnReady();
+    // bot.commands.create(ApplicationCommandBuilder(name: name, type: type));
 
     return LFGBotCore(
       bot: bot,
-      interactions: interactions,
-      context: Context.empty(),
     );
   }
 

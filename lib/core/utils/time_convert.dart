@@ -23,7 +23,8 @@ class TimeConverters {
 
   /// Converts DateTime to Discord timestamp. You must provide DateTime in UTC.
   static String convertToDiscordTime(final DateTime time) {
-    return TimeStampStyle.longDateTime.format(time);
+    throw Exception('Not implemented');
+    // return TimeStampStyle.longDateTime.format(time);
   }
 
   /// Converts user input date to Discord timestamp.
