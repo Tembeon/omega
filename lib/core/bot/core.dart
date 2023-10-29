@@ -1,24 +1,64 @@
 import 'package:nyxx/nyxx.dart';
+import 'package:nyxx_interactions/nyxx_interactions.dart';
 
+import '../../features/commands/create/create_category.dart';
+import '../utils/context/context.dart';
 import '../utils/loaders/bot_settings.dart';
 
-class BotCore {
-  BotCore() {
-    _bot = NyxxFactory.createNyxxWebsocket(
+class LFGBotCore {
+  const LFGBotCore({
+    required this.bot,
+    required this.interactions,
+    required this.context,
+  });
+
+  /// Current active bot (WebSocket).
+  final INyxxWebsocket bot;
+
+  /// Interactions with bot.
+  final IInteractions interactions;
+
+  /// Root context. Empty by default.
+  final Context context;
+
+  /// Initializes connection to Discord using WebSocket and syncs interactions.
+  static Future<LFGBotCore> initialize() async {
+    if (_instance != null) {
+      throw Exception('Bot is already initialized');
+    }
+
+    // create bot with intents and register plugins
+    final bot = NyxxFactory.createNyxxWebsocket(
       BotSettings.instance.botConfig.botToken,
       GatewayIntents.allUnprivileged | GatewayIntents.guildMessages,
     )
       ..registerPlugin(Logging())
       ..registerPlugin(CliIntegration())
-      ..registerPlugin(IgnoreExceptions())
-      ..connect();
+      ..registerPlugin(IgnoreExceptions());
+
+    // connect to Discord
+    await bot.connect();
+
+    // create interactions with bot (slash commands, buttons, etc.)
+    final interactions = IInteractions.create(WebsocketInteractionBackend(bot))
+      ..registerSlashCommand(CategoryCreate.create)
+      ..syncOnReady();
+
+    return LFGBotCore(
+      bot: bot,
+      interactions: interactions,
+      context: Context.empty(),
+    );
   }
 
-  // stores bot instance
-  INyxxWebsocket? _bot;
+  static LFGBotCore? _instance;
 
-  /// Returns current active bot (WebSocket).
-  ///
-  /// Will drop [Exception] if bot isn't initialized.
-  INyxxWebsocket get bot => _bot ??= throw Exception('Bot isn\'t initialized');
+  /// Returns current active instance.
+  static LFGBotCore get instance {
+    if (_instance == null) {
+      throw Exception('Bot is not initialized');
+    }
+
+    return _instance!;
+  }
 }

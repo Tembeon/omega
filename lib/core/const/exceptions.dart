@@ -1,5 +1,6 @@
 import 'package:io/io.dart';
 
+/// Base class for all fatal exceptions.
 abstract class FatalException implements Exception {
   factory FatalException([Object? message]) => _FatalException(message);
 
