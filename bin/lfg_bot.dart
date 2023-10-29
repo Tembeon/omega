@@ -5,6 +5,7 @@ import 'package:io/io.dart';
 import 'package:l/l.dart';
 import 'package:lfg_bot/core/bot/core.dart';
 import 'package:lfg_bot/core/const/exceptions.dart';
+import 'package:lfg_bot/core/utils/context/context.dart';
 import 'package:lfg_bot/core/utils/loaders/bot_settings.dart';
 
 void main(List<String> arguments) => runZonedGuarded(
@@ -27,7 +28,10 @@ Future<void> runner() async {
   // initialize bot
   final core = await LFGBotCore.initialize();
 
-  // save settings and core to context
-  core.context['settings'] = settings;
-  core.context['core'] = core;
+  Context.setRoot(
+    Context.from({
+      'settings': settings,
+      'core': core,
+    }),
+  );
 }
