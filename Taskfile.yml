@@ -1,0 +1,19 @@
+version: '3'
+
+tasks:
+  arb:export:
+    desc: Extracts messages from dart files to arb files.
+    cmds:
+      - echo "Generating arb files from dart files..."
+      - dart run intl_translation:extract_to_arb --output-dir=lib/core/l10n/arb/ --output-file=ru.arb --locale=ru lib/core/l10n/messages.dart
+    silent: true
+
+  arb:import:
+    desc: Generates dart files from arb files.
+    cmds:
+      - echo "Generating dart files from arb files..."
+      - dart run intl_translation:generate_from_arb --output-dir=lib/core/l10n/generated --no-use-deferred-loading lib/core/l10n/messages.dart lib/core/l10n/arb/{{.CLI_ARGS}}.arb
+    preconditions:
+      - sh: "[ {{.CLI_ARGS}} != '' ]"
+        msg: "Locale input expected: 'task -- <LOCALE>'"
+    silent: true

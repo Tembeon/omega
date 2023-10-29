@@ -1,5 +1,5 @@
 name: lfg_bot
-description: A sample command-line application.
+description: Open-source Discord LFG bot.
 version: 1.0.0
 # repository: https://github.com/my_org/my_repo
 
@@ -8,15 +8,26 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
+
+  # bot core
   nyxx: ^6.0.0
-  schedulers: ^1.0.1
-  drift: ^2.13.0
-  sqlite3_flutter_libs: ^0.5.17
+
+  # platform
   path_provider: ^2.1.1
   path: ^1.8.3
   io: ^1.0.4
-  intl: ^0.18.1
+
+  # database
+  drift: ^2.13.0
+  sqlite3_flutter_libs: ^0.5.17
+
+  # utils
   l: ^4.0.2
+  schedulers: ^1.0.1
+
+  # localization
+  intl: ^0.18.1
+  intl_translation: ^0.18.2
 
 dev_dependencies:
   lints: ^3.0.0

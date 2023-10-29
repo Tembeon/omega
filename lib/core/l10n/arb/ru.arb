@@ -1,0 +1,64 @@
+{
+  "@@locale": "ru",
+  "@@last_modified": "2023-10-29T20:50:08.245850",
+  "commandOptionNameKey": "название",
+  "@commandOptionNameKey": {
+    "description": "A name of parameter in command, which visible for user",
+    "type": "text",
+    "placeholders": {}
+  },
+  "commandOptionNameDescription": "Введите название активности",
+  "@commandOptionNameDescription": {
+    "description": "A description text for \"name\" option in command",
+    "type": "text",
+    "placeholders": {}
+  },
+  "commandOptionDescriptionKey": "описание",
+  "@commandOptionDescriptionKey": {
+    "description": "A name of parameter in command, which visible for user",
+    "type": "text",
+    "placeholders": {}
+  },
+  "commandOptionDescriptionDescription": "Введите описание активности",
+  "@commandOptionDescriptionDescription": {
+    "description": "A description text for \"description\" option in command",
+    "type": "text",
+    "placeholders": {}
+  },
+  "commandOptionDateKey": "дата",
+  "@commandOptionDateKey": {
+    "description": "A name of parameter in command, which visible for user",
+    "type": "text",
+    "placeholders": {}
+  },
+  "commandOptionDateDescription": "Введите дату начала активности [15 01 2023]",
+  "@commandOptionDateDescription": {
+    "description": "A description text for \"date\" option in command",
+    "type": "text",
+    "placeholders": {}
+  },
+  "commandOptionTimeKey": "время",
+  "@commandOptionTimeKey": {
+    "description": "A name of parameter in command, which visible for user",
+    "type": "text",
+    "placeholders": {}
+  },
+  "commandOptionTimeDescription": "Введите время начала активности [15 01]",
+  "@commandOptionTimeDescription": {
+    "description": "A description text for \"time\" option in command",
+    "type": "text",
+    "placeholders": {}
+  },
+  "commandOptionTimezoneKey": "часовой_пояс",
+  "@commandOptionTimezoneKey": {
+    "description": "A name of parameter in command, which visible for user",
+    "type": "text",
+    "placeholders": {}
+  },
+  "commandOptionTimezoneDescription": "Введите ваш текущий часовой пояс",
+  "@commandOptionTimezoneDescription": {
+    "description": "A description text for \"timezone\" option in command",
+    "type": "text",
+    "placeholders": {}
+  }
+}
