@@ -1,7 +1,7 @@
 {
-  "locale_path": "data/locales/locale_ru.json",
-  "@locale_path": {
-    "description": "Path to the locale file. Should be relative to the root of the executable."
+  "locale": "ru",
+  "@locale": {
+    "description": "The locale of the bot. This is used for localization of the bot's responses."
   },
   "dungeon_activities_path": "data/activities/dungeons.json",
   "raid_activities_path": "data/activities/raids.json",

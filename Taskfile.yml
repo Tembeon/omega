@@ -15,5 +15,5 @@ tasks:
       - dart run intl_translation:generate_from_arb --output-dir=lib/core/l10n/generated --no-use-deferred-loading lib/core/l10n/messages.dart lib/core/l10n/arb/{{.CLI_ARGS}}.arb
     preconditions:
       - sh: "[ {{.CLI_ARGS}} != '' ]"
-        msg: "Locale input expected: 'task -- <LOCALE>'"
+        msg: "Locale input expected: 'task arb:import -- <LOCALE>'"
     silent: true

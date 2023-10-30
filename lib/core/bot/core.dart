@@ -1,6 +1,5 @@
 import 'package:nyxx/nyxx.dart';
 
-import '../../features/commands/create/create_category.dart';
 import '../utils/loaders/bot_settings.dart';
 
 class LFGBotCore {

@@ -5,6 +5,7 @@ analyzer:
     - "test/.test_coverage.dart"
     - "bin/cache/**"
     - "lib/generated_plugin_registrant.dart"
+    - "lib/core/l10n/generated/**"
 
   # For more information see:
   # https://dart.dev/guides/language/analysis-options#enabling-additional-type-checks
