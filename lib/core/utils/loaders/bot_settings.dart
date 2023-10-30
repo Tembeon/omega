@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'bot_locale.dart';
 import '../../const/exceptions.dart';
 import 'activity_data.dart';
 import 'config_data.dart';
 
 abstract final class BotSettings {
-  Locale get locale;
+  String get locale;
 
   ActivityData get activityData;
 
@@ -33,7 +32,7 @@ abstract final class BotSettings {
         customsPath: botSettings['custom_activities_path']! as String,
       ),
       botConfig: BotConfig.fromFile(botSettings['bot_config_path']! as String),
-      locale: Locale.fromFile(botSettings['locale_path']! as String),
+      locale: botSettings['locale']! as String,
     );
 
     _instance = settingsData;
@@ -45,14 +44,14 @@ final class _BotSettingsLoader implements BotSettings {
   const _BotSettingsLoader({
     required ActivityData activityData,
     required BotConfig botConfig,
-    required Locale locale,
+    required String locale,
   })  : _activityData = activityData,
         _botConfig = botConfig,
         _locale = locale;
 
   final ActivityData _activityData;
   final BotConfig _botConfig;
-  final Locale _locale;
+  final String _locale;
 
   @override
   ActivityData get activityData => _activityData;
@@ -61,5 +60,5 @@ final class _BotSettingsLoader implements BotSettings {
   BotConfig get botConfig => _botConfig;
 
   @override
-  Locale get locale => _locale;
+  String get locale => _locale;
 }

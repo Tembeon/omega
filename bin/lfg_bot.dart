@@ -24,7 +24,6 @@ void main(List<String> arguments) => runZonedGuarded(
 Future<void> runner() async {
   // load bot settings
   final settings = BotSettings.fromFile('data/bot_settings.json');
-
   // initialize bot
   final core = await LFGBotCore.initialize();
 
