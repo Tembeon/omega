@@ -5,16 +5,16 @@ import '../../const/exceptions.dart';
 
 abstract final class BotConfig {
   /// Returns server ID.
-  String get serverID;
+  int get serverID;
 
   /// Returns bot token.
   String get botToken;
 
   /// Returns channel where bot should send LFG messages.
-  String get lfgChannel;
+  int get lfgChannel;
 
   /// Returns channel where bot should send promo messages to promote LFGs.
-  String get promoChannel;
+  int? get promoChannel;
 
   /// Returns list of channels where bot should check for deleted messages.
   ///
@@ -36,28 +36,45 @@ abstract final class BotConfig {
       throw ConfigFileMissing('bot config is empty', configPath: botConfig.path);
     }
 
-    return _BotConfigLoader(config);
+    return _BotConfigLoader.fromJson(config);
   }
 }
 
 final class _BotConfigLoader implements BotConfig {
-  const _BotConfigLoader(this._botConfig);
+  const _BotConfigLoader({
+    required this.botToken,
+    required this.lfgChannel,
+    required this.serverID,
+    this.promoChannel,
+    this.deleteDeletedMessagesFromChannels,
+  });
 
-  final Map<String, Object?> _botConfig;
+  factory _BotConfigLoader.fromJson(Map<String, Object?> json) {
+    return _BotConfigLoader(
+      botToken: json['bot_token']! as String,
+      lfgChannel: int.parse(json['lfg_channel']! as String),
+      serverID: int.parse(json['server_id']! as String),
+      promoChannel: int.tryParse(json['promo_channel']! as String),
+      deleteDeletedMessagesFromChannels: (json['delete_deleted_messages_from_channels'] as List<Object>?)
+          ?.map(
+            (e) => e as String,
+          )
+          .toList(),
+    );
+  }
 
   @override
-  String get serverID => _botConfig['server_id']! as String;
+  final String botToken;
 
   @override
-  String get botToken => _botConfig['bot_token']! as String;
+  final int lfgChannel;
 
   @override
-  String get lfgChannel => _botConfig['lfg_channel']! as String;
+  final int? promoChannel;
 
   @override
-  String get promoChannel => _botConfig['promo_channel']! as String;
+  final List<String>? deleteDeletedMessagesFromChannels;
 
   @override
-  List<String>? get deleteDeletedMessagesFromChannels =>
-      _botConfig['delete_deleted_messages_from_channels'] as List<String>?;
+  final int serverID;
 }
