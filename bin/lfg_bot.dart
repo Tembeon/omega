@@ -5,6 +5,7 @@ import 'package:io/io.dart';
 import 'package:l/l.dart';
 import 'package:lfg_bot/core/bot/core.dart';
 import 'package:lfg_bot/core/const/exceptions.dart';
+import 'package:lfg_bot/core/l10n/generated/messages_all_locales.dart';
 import 'package:lfg_bot/core/utils/context/context.dart';
 import 'package:lfg_bot/core/utils/loaders/bot_settings.dart';
 
@@ -26,6 +27,9 @@ Future<void> runner() async {
   final settings = BotSettings.fromFile('data/bot_settings.json');
   // initialize bot
   final core = await LFGBotCore.initialize();
+
+  final isLocaleInitialized = await initializeMessages(settings.locale);
+  if (!isLocaleInitialized) throw FatalException('Failed to initialize locale: ${settings.locale}');
 
   Context.setRoot(
     Context.from({
