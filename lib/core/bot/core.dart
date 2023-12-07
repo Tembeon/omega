@@ -1,6 +1,7 @@
 import 'package:nyxx/nyxx.dart';
 
 import '../../features/command_manager/command_manager.dart';
+import '../../features/create/handler/create_handle.dart';
 import '../utils/loaders/bot_settings.dart';
 
 class LFGBotCore {
@@ -10,33 +11,23 @@ class LFGBotCore {
   });
 
   /// Current active bot (WebSocket).
+  ///
+  /// You can get access to all bot features using this variable.
   final NyxxGateway bot;
 
   /// Manages bot commands.
+  ///
+  /// You can register new commands using this variable.
   final CommandManager commandManager;
-
-  static LFGBotCore? _instance;
-
-  /// Returns current active instance.
-  static LFGBotCore get instance {
-    if (_instance == null) {
-      throw Exception('Bot is not initialized');
-    }
-
-    return _instance!;
-  }
 
   /// Initializes connection to Discord using WebSocket and syncs interactions.
   static Future<LFGBotCore> initialize() async {
-    if (_instance != null) {
-      throw Exception('Bot is already initialized');
-    }
-
     // create bot with intents and register plugins
     final bot = await Nyxx.connectGateway(
       BotSettings.instance.botConfig.botToken,
       GatewayIntents.allUnprivileged | GatewayIntents.guildMessages,
       options: GatewayClientOptions(
+        loggerName: 'LFG Bot',
         plugins: [
           Logging(),
           CliIntegration(),
@@ -45,7 +36,9 @@ class LFGBotCore {
       ),
     );
 
-    final commandManager = CommandManager(bot: bot)..startListenInteractions();
+    final commandManager = CommandManager(bot: bot)
+      ..startListenInteractions()
+      ..registerCommand(createRaidCommand());
 
     return LFGBotCore(
       bot: bot,
