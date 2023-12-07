@@ -15,8 +15,12 @@ abstract final class Context {
   /// Puts value to context.
   void operator []=(String key, Object value);
 
+  void put(String key, Object value) => this[key] = value;
+
   /// Returns value from context.
   Object operator [](String key);
+
+  T get<T>(String key) => this[key] as T;
 
   Map<String, Object> toMap();
 
@@ -37,7 +41,19 @@ final class _Context implements Context {
   Object operator [](String key) => _map[key] ?? _throwKeyNotFound(key);
 
   @override
+  void put(String key, Object value) => _map[key] = value;
+
+  @override
   void operator []=(String key, Object value) => _map[key] = value;
+
+  @override
+  T get<T>(String key) {
+    final value = _map[key];
+    if (value == null) {
+      _throwKeyNotFound(key);
+    }
+    return value as T;
+  }
 
   @override
   Map<String, Object> toMap() => _map;
@@ -55,7 +71,15 @@ final class UnmodifiableContext implements Context {
   Object operator [](String key) => _context[key];
 
   @override
+  T get<T>(String key) => this[key] as T;
+
+  @override
   void operator []=(String key, Object value) => throw Exception('Context is unmodifiable');
+
+  @override
+  void put(String key, Object value) {
+    throw Exception('Context is unmodifiable');
+  }
 
   @override
   Map<String, Object> toMap() => _context.toMap();
