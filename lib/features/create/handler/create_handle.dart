@@ -1,5 +1,22 @@
 import 'package:nyxx/nyxx.dart';
 
+import '../../command_manager/command_manager.dart';
+
+CommandCreator createRaidCommand() {
+  return (
+    builder: createCommandBuilder,
+    handler: _handler,
+  );
+}
+
+Future<void> _handler(InteractionCreateEvent<ApplicationCommandInteraction> interaction) {
+  return interaction.interaction.respond(
+    MessageBuilder(
+      content: 'Raid created',
+    ),
+  );
+}
+
 ApplicationCommandBuilder createCommandBuilder() {
   return ApplicationCommandBuilder(
     name: 'create',
