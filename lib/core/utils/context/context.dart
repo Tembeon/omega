@@ -77,9 +77,7 @@ final class UnmodifiableContext implements Context {
   void operator []=(String key, Object value) => throw Exception('Context is unmodifiable');
 
   @override
-  void put(String key, Object value) {
-    throw Exception('Context is unmodifiable');
-  }
+  void put(String key, Object value) => throw Exception('Context is unmodifiable');
 
   @override
   Map<String, Object> toMap() => _context.toMap();

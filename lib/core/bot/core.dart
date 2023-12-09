@@ -37,7 +37,7 @@ class LFGBotCore {
     );
 
     final commandManager = CommandManager(bot: bot)
-      ..startListenInteractions()
+      ..listenInteractions()
       ..registerCommand(createRaidCommand());
 
     return LFGBotCore(

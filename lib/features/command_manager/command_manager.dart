@@ -4,13 +4,22 @@ import 'package:nyxx/nyxx.dart';
 
 import '../../core/utils/loaders/bot_settings.dart';
 
-/// Type of function which creates a command with builder and handler.
+/// Typedef for creating a new command with a handler.
+///
+/// Parameters:
+/// * [builder] is a function that returns an [ApplicationCommandBuilder] object. Use this object to create a new command.
+/// * [handler] is a function that handles the command. It takes an [InteractionCreateEvent] object as a parameter. \
+///  You can use the [InteractionCreateEvent] object to get the [ApplicationCommandInteraction] object and respond to the interaction.
 typedef CommandCreator = ({
   ApplicationCommandBuilder Function() builder,
   FutureOr<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction) handler,
 });
 
 /// Class which manages bot interactions, such as commands, buttons, etc.
+///
+/// This class listens for interactions, parses them, and calls the appropriate handler.
+///
+/// To register a new command, use the [registerCommand] method, which takes a [CommandCreator] as a parameter.
 class CommandManager {
   /// Creates a new [CommandManager] instance for a [bot].
   CommandManager({
@@ -29,21 +38,22 @@ class CommandManager {
   final Map<String, CommandCreator> _commands = {};
 
   /// Starts listening for registered interactions.
-  void startListenInteractions() {
+  ///
+  /// You can register new interactions using the [registerCommand] method. \
+  /// If you create new command using the [registerCommand] method, you don't need to call this method again.
+  void listenInteractions() {
     _bot.onApplicationCommandInteraction.listen((event) {
       _commands[_convertInteractionToName(event.interaction.data)]?.handler(event);
     });
   }
 
-  /// Registers a new command.
+  /// Registers a new command to a bot.
   void registerCommand(CommandCreator commandCreator) {
-    final commandName = commandCreator.builder().name;
-    print('Registering command "${commandName}"');
     // register command in Discord Guild
     _guildManager.manager.create(commandCreator.builder());
     // register command in bot to handle it
     _commands[_convertCommandBuilderToName(commandCreator.builder())] = commandCreator;
-    print('Command "${commandName}" registered with a name "${_commands.entries.last.key}"');
+    print('Registered new command: "${_commands.entries.last.key}"');
   }
 
   /// Converts [ApplicationCommandBuilder] to a full command name for matching with interaction.
