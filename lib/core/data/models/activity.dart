@@ -1,5 +1,3 @@
-import 'package:nyxx/nyxx.dart';
-
 /// Base class for all activities.
 abstract interface class Activity {
   /// Visible name of the activity
@@ -31,31 +29,23 @@ abstract interface class Activity {
 
 class _JsonActivity implements Activity {
   const _JsonActivity({
-    required String name,
-    required int maxMembers,
-    required String bannerUrl,
-    required bool enabled,
-  })  : _name = name,
-        _maxMembers = maxMembers,
-        _bannerUrl = bannerUrl,
-        _enabled = enabled;
-
-  final String _name;
-  final int _maxMembers;
-  final String _bannerUrl;
-  final bool _enabled;
+    required this.name,
+    required this.maxMembers,
+    required this.bannerUrl,
+    required this.enabled,
+  });
 
   @override
-  String get name => _name;
+  final String name;
 
   @override
-  int get maxMembers => _maxMembers;
+  final int maxMembers;
 
   @override
-  String get bannerUrl => _bannerUrl;
+  final String bannerUrl;
 
   @override
-  bool get enabled => _enabled;
+  final bool enabled;
 
   factory _JsonActivity.dungeon(Map<String, Object?> json) {
     return _JsonActivity(
@@ -74,52 +64,4 @@ class _JsonActivity implements Activity {
       enabled: json['enabled']! as bool,
     );
   }
-}
-
-/// Represents activity for LFG Builder
-final class LFGActivity implements Activity {
-  const LFGActivity({
-    required String name,
-    required int maxMembers,
-    required String bannerUrl,
-    required bool enabled,
-    required String description,
-    required Snowflake author,
-    required int id,
-  })  : _name = name,
-        _description = description,
-        _maxMembers = maxMembers,
-        _bannerUrl = bannerUrl,
-        _enabled = enabled,
-        _author = author,
-        _id = id;
-
-  final String _name;
-  final String _description;
-  final String _bannerUrl;
-  final bool _enabled;
-  final int _maxMembers;
-  final Snowflake _author;
-  final int _id;
-
-  @override
-  String get name => _name;
-
-  /// Description of the activity, passed by the user.
-  String get description => _description;
-
-  /// Author of the activity.
-  Snowflake get author => _author;
-
-  /// Activity id. Provided by the database.
-  int get id => _id;
-
-  @override
-  String get bannerUrl => _bannerUrl;
-
-  @override
-  bool get enabled => _enabled;
-
-  @override
-  int get maxMembers => _maxMembers;
 }
