@@ -140,3 +140,56 @@ base class LFGPostBuilder implements ILFGPostBuilder {
     );
   }
 }
+
+/// Model used for LFG post after creation.
+///
+/// Contains all data for LFG post.
+base class LFGPost implements ILFGPost {
+  /// Creates new LFG post.
+  ///
+  /// You may prefer to use [LFGPost.fromBuilder] instead.
+  const LFGPost({
+    required this.id,
+    required this.authorID,
+    required this.description,
+    required this.unixDate,
+    required this.bannerUrl,
+    required this.enabled,
+    required this.name,
+    required this.maxMembers,
+    required this.members,
+    required this.messageID,
+  });
+
+  /// Creates new LFG post from [ILFGPostBuilder].
+  factory LFGPost.fromBuilder(
+    ILFGPostBuilder builder, {
+    required int id,
+    required List<Snowflake> members,
+    required Snowflake messageID,
+  }) {
+    return LFGPost(
+      id: id,
+      authorID: builder.authorID,
+      description: builder.description,
+      unixDate: builder.unixDate,
+      bannerUrl: builder.bannerUrl,
+      enabled: builder.enabled,
+      name: builder.name,
+      maxMembers: builder.maxMembers,
+      members: members,
+      messageID: messageID,
+    );
+  }
+
+  final int id;
+  final Snowflake authorID;
+  final String description;
+  final int unixDate;
+  final String bannerUrl;
+  final bool enabled;
+  final String name;
+  final int maxMembers;
+  final List<Snowflake> members;
+  final Snowflake messageID;
+}
