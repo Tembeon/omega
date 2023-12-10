@@ -43,7 +43,14 @@ class CommandManager {
   /// If you create new command using the [registerCommand] method, you don't need to call this method again.
   void listenInteractions() {
     _bot.onApplicationCommandInteraction.listen((event) {
-      _commands[_convertInteractionToName(event.interaction.data)]?.handler(event);
+      print('Received new interaction: "${event.interaction.data.name}"');
+      final handler = _commands[_convertInteractionToName(event.interaction.data)]?.handler;
+      if (handler == null) {
+        print('Handler for interaction "${event.interaction.data.name}" not found');
+        return;
+      }
+
+      handler.call(event);
     });
   }
 
