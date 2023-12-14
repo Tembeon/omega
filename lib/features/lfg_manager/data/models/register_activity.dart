@@ -1,5 +1,6 @@
 import 'package:nyxx/nyxx.dart' show Snowflake;
 
+import '../../../../core/data/enums/activity_type.dart';
 import '../../../../core/data/models/activity.dart';
 
 /// Interface for model used for build new LFG post.
@@ -47,6 +48,7 @@ base class LFGPostBuilder implements ILFGPostBuilder {
     required this.name,
     required this.maxMembers,
     this.enabled = true,
+    this.type = LFGActivityType.custom,
   });
 
   /// Creates new LFG post builder using data from [Activity].
@@ -63,6 +65,8 @@ base class LFGPostBuilder implements ILFGPostBuilder {
       bannerUrl: activity.bannerUrl,
       name: activity.name,
       maxMembers: activity.maxMembers,
+      enabled: activity.enabled,
+      type: activity.type,
     );
   }
 
@@ -97,6 +101,9 @@ base class LFGPostBuilder implements ILFGPostBuilder {
   /// Should be provided from [Activity].
   final int maxMembers;
 
+  /// Type of LFG activity.
+  final LFGActivityType type;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -107,7 +114,8 @@ base class LFGPostBuilder implements ILFGPostBuilder {
           bannerUrl == other.bannerUrl &&
           enabled == other.enabled &&
           name == other.name &&
-          maxMembers == other.maxMembers;
+          maxMembers == other.maxMembers &&
+          type == other.type;
 
   @override
   int get hashCode =>
@@ -117,9 +125,10 @@ base class LFGPostBuilder implements ILFGPostBuilder {
       bannerUrl.hashCode ^
       enabled.hashCode ^
       name.hashCode ^
-      maxMembers.hashCode;
+      maxMembers.hashCode ^
+      type.hashCode;
 
-  /// Creates new instance of [LFGPostBuilder] with updated data.
+  /// Creates copy of this builder with new data.
   LFGPostBuilder copyWith({
     Snowflake? authorID,
     String? description,
@@ -128,6 +137,7 @@ base class LFGPostBuilder implements ILFGPostBuilder {
     bool? enabled,
     String? name,
     int? maxMembers,
+    LFGActivityType? type,
   }) {
     return LFGPostBuilder(
       authorID: authorID ?? this.authorID,
@@ -137,6 +147,7 @@ base class LFGPostBuilder implements ILFGPostBuilder {
       enabled: enabled ?? this.enabled,
       name: name ?? this.name,
       maxMembers: maxMembers ?? this.maxMembers,
+      type: type ?? this.type,
     );
   }
 }
@@ -159,6 +170,7 @@ base class LFGPost implements ILFGPost {
     required this.maxMembers,
     required this.members,
     required this.messageID,
+    required this.type,
   });
 
   /// Creates new LFG post from [ILFGPostBuilder].
@@ -179,17 +191,40 @@ base class LFGPost implements ILFGPost {
       maxMembers: builder.maxMembers,
       members: members,
       messageID: messageID,
+      type: builder.type,
     );
   }
 
+  @override
   final int id;
+
+  @override
   final Snowflake authorID;
+
+  @override
   final String description;
+
+  @override
   final int unixDate;
+
+  @override
   final String bannerUrl;
+
+  @override
   final bool enabled;
+
+  @override
   final String name;
+
+  @override
   final int maxMembers;
+
+  @override
   final List<Snowflake> members;
+
+  @override
   final Snowflake messageID;
+
+  @override
+  final LFGActivityType type;
 }

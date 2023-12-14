@@ -1,3 +1,5 @@
+import '../enums/activity_type.dart';
+
 /// Base class for all activities.
 abstract interface class Activity {
   /// Visible name of the activity
@@ -11,6 +13,11 @@ abstract interface class Activity {
 
   /// Is activity enabled
   bool get enabled;
+
+  /// Type of activity
+  ///
+  /// See [LFGActivityType] for more info.
+  LFGActivityType get type;
 
   /// Creates activity from json
   factory Activity.custom(Map<String, Object?> json) => _JsonActivity(
@@ -33,6 +40,7 @@ class _JsonActivity implements Activity {
     required this.maxMembers,
     required this.bannerUrl,
     required this.enabled,
+    this.type = LFGActivityType.custom,
   });
 
   @override
@@ -47,12 +55,16 @@ class _JsonActivity implements Activity {
   @override
   final bool enabled;
 
+  @override
+  final LFGActivityType type;
+
   factory _JsonActivity.dungeon(Map<String, Object?> json) {
     return _JsonActivity(
       name: json['name']! as String,
       maxMembers: 3,
       bannerUrl: json['banner_url']! as String,
       enabled: json['enabled']! as bool,
+      type: LFGActivityType.dungeon,
     );
   }
 
@@ -62,6 +74,7 @@ class _JsonActivity implements Activity {
       maxMembers: 6,
       bannerUrl: json['banner_url']! as String,
       enabled: json['enabled']! as bool,
+      type: LFGActivityType.raid,
     );
   }
 }
