@@ -1,7 +1,6 @@
 import 'package:nyxx/nyxx.dart';
 
 import '../../features/command_manager/command_manager.dart';
-import '../../features/create/handler/create_handle.dart';
 import '../utils/loaders/bot_settings.dart';
 
 class LFGBotCore {
@@ -36,13 +35,9 @@ class LFGBotCore {
       ),
     );
 
-    final commandManager = CommandManager(bot: bot)
-      ..listenInteractions()
-      ..registerCommand(createRaidCommand());
-
     return LFGBotCore(
       bot: bot,
-      commandManager: commandManager,
+      commandManager: CommandManager(bot: bot),
     );
   }
 }

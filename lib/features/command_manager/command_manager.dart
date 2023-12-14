@@ -24,7 +24,9 @@ class CommandManager {
   /// Creates a new [CommandManager] instance for a [bot].
   CommandManager({
     required NyxxGateway bot,
-  }) : _bot = bot;
+  }) : _bot = bot {
+    _listenInteractions();
+  }
 
   // Bot instance which used to manage interactions.
   final NyxxGateway _bot;
@@ -41,7 +43,7 @@ class CommandManager {
   ///
   /// You can register new interactions using the [registerCommand] method. \
   /// If you create new command using the [registerCommand] method, you don't need to call this method again.
-  void listenInteractions() {
+  void _listenInteractions() {
     _bot.onApplicationCommandInteraction.listen((event) {
       print('Received new interaction: "${event.interaction.data.name}"');
       final handler = _commands[_convertInteractionToName(event.interaction.data)]?.handler;
@@ -54,10 +56,17 @@ class CommandManager {
     });
   }
 
+  /// Registers a list of commands to a bot using bulk override.
+  Future<void> registerCommands(List<CommandCreator> commands) async {
+    for (final command in commands) {
+      await registerCommand(command);
+    }
+  }
+
   /// Registers a new command to a bot.
-  void registerCommand(CommandCreator commandCreator) {
+  Future<void> registerCommand(CommandCreator commandCreator) async {
     // register command in Discord Guild
-    _guildManager.manager.create(commandCreator.builder());
+    await _guildManager.manager.create(commandCreator.builder());
     // register command in bot to handle it
     _commands[_convertCommandBuilderToName(commandCreator.builder())] = commandCreator;
     print('Registered new command: "${_commands.entries.last.key}"');

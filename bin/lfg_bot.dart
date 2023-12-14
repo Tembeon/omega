@@ -9,6 +9,7 @@ import 'package:lfg_bot/core/l10n/generated/messages_all_locales.dart';
 import 'package:lfg_bot/core/utils/context/context.dart';
 import 'package:lfg_bot/core/utils/database/tables/posts.dart';
 import 'package:lfg_bot/core/utils/loaders/bot_settings.dart';
+import 'package:lfg_bot/features/create/handler/create_handle.dart';
 import 'package:lfg_bot/features/lfg_manager/lfg_manager.dart';
 import 'package:lfg_bot/features/lfg_manager/message_handler.dart';
 
@@ -49,6 +50,12 @@ Future<void> runner() async {
       'manager': lfgManager,
     }),
   );
+
+  await core.commandManager.registerCommands([
+    createRaidCommand(),
+    createDungeonCommand(),
+    createCustomCommand(),
+  ]);
 }
 
 DynamicLibrary _openSqlite() {
