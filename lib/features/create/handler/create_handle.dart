@@ -1,5 +1,6 @@
-import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/nyxx.dart' hide Activity;
 
+import '../../../core/data/enums/activity_type.dart';
 import '../../../core/utils/context/context.dart';
 import '../../../core/utils/loaders/bot_settings.dart';
 import '../../command_manager/command_manager.dart';
@@ -8,15 +9,31 @@ import '../../lfg_manager/lfg_manager.dart';
 
 CommandCreator createRaidCommand() {
   return (
-    builder: _createBuilder,
-    handler: _createHandler,
+    builder: () => _createBuilder(LFGActivityType.raid),
+    handler: _createActivityHandler,
   );
 }
 
-Future<void> _createHandler(InteractionCreateEvent<ApplicationCommandInteraction> interaction) async {
-  final user = interaction.interaction.member?.id;
-  print('User "$user" is trying to create new LFG post');
-  if (user == null) return; // refuse to work with bots
+CommandCreator createDungeonCommand() {
+  return (
+    builder: () => _createBuilder(LFGActivityType.dungeon),
+    handler: _createActivityHandler,
+  );
+}
+
+CommandCreator createCustomCommand() {
+  return (
+    builder: () => _createBuilder(LFGActivityType.custom),
+    handler: _createActivityHandler,
+  );
+}
+
+Future<void> _createActivityHandler(InteractionCreateEvent<ApplicationCommandInteraction> interaction) async {
+  final member = interaction.interaction.member;
+  if (member == null) return; // refuse to work with bots
+
+  final userName = member.nick ?? member.user?.username;
+  print('User "${userName}" is trying to create new raid LFG post');
 
   final manager = Context.root.get<LFGManager>('manager');
   final settings = Context.root.get<BotSettings>('settings');
@@ -31,31 +48,41 @@ Future<void> _createHandler(InteractionCreateEvent<ApplicationCommandInteraction
 
   final activity = settings.activityData.activities.where((e) => e.name == name).first;
 
-  print('Creating new LFG post for user "$user" with activity "$name" and description "$description"');
+  print('Creating new LFG post for user "$userName" with activity "$name" and description "$description"');
   await manager.create(
     interaction: interaction,
     builder: LFGPostBuilder.fromActivity(
       activity: activity,
-      authorID: user,
+      authorID: member.id,
       description: description,
       unixDate: 1702933200000,
     ),
   );
 }
 
-ApplicationCommandBuilder _createBuilder() {
+List<CommandOptionChoiceBuilder<String>>? _getActivityChoices(LFGActivityType type) {
+  final settings = Context.root.get<BotSettings>('settings');
+  final activities = settings.activityData.activities.where((e) => e.type == type);
+
+  if (activities.isEmpty) return null;
+
+  return activities.map((e) => CommandOptionChoiceBuilder<String>(name: e.name, value: e.name)).toList();
+}
+
+ApplicationCommandBuilder _createBuilder(LFGActivityType type) {
   return ApplicationCommandBuilder(
     name: 'create',
     description: 'Создать активность',
     type: ApplicationCommandType.chatInput,
     options: [
       CommandOptionBuilder.subCommand(
-        name: 'raid',
-        description: 'Создать рейд',
+        name: type.name,
+        description: 'Создать сбор на активность',
         options: [
           CommandOptionBuilder.string(
             name: 'название',
             description: 'Введите название активности',
+            choices: _getActivityChoices(type),
             isRequired: true,
           ),
           CommandOptionBuilder.string(
