@@ -51,11 +51,7 @@ Future<void> runner() async {
     }),
   );
 
-  await core.commandManager.registerCommands([
-    createRaidCommand(),
-    createDungeonCommand(),
-    createCustomCommand(),
-  ]);
+  await core.commandManager.registerCommand(createCategoryCommands());
 }
 
 DynamicLibrary _openSqlite() {

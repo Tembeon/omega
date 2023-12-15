@@ -8,11 +8,21 @@ import '../../core/utils/loaders/bot_settings.dart';
 ///
 /// Parameters:
 /// * [builder] is a function that returns an [ApplicationCommandBuilder] object. Use this object to create a new command.
-/// * [handler] is a function that handles the command. It takes an [InteractionCreateEvent] object as a parameter. \
-///  You can use the [InteractionCreateEvent] object to get the [ApplicationCommandInteraction] object and respond to the interaction.
+/// * [handlers] is a map of handlers for the command. The key is a string that represents the name of the command. \
+///
+/// To example, we have a /create command with three subcommands: raid, dungeon, custom. \
+/// So, we can create a map of handlers for this command:
+/// ```dart
+/// {
+///  'raid': (interaction) => _createActivityHandler(interaction, LFGActivityType.raid),
+///  'dungeon': (interaction) => _createActivityHandler(interaction, LFGActivityType.dungeon),
+///  'custom': (interaction) => _createActivityHandler(interaction, LFGActivityType.custom),
+///  }
+///  ```
+///  This map will be used to match the name of the command with the handler.
 typedef CommandCreator = ({
   ApplicationCommandBuilder Function() builder,
-  FutureOr<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction) handler,
+  Map<String, FutureOr<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction)> handlers,
 });
 
 /// Class which manages bot interactions, such as commands, buttons, etc.
@@ -37,7 +47,8 @@ class CommandManager {
 
   // Map of registered commands.
   // Key is a full command name, value is a function which handles command.
-  final Map<String, CommandCreator> _commands = {};
+  final Map<String, FutureOr<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction)>
+      _commands = {};
 
   /// Starts listening for registered interactions.
   ///
@@ -46,7 +57,17 @@ class CommandManager {
   void _listenInteractions() {
     _bot.onApplicationCommandInteraction.listen((event) {
       print('Received new interaction: "${event.interaction.data.name}"');
-      final handler = _commands[_convertInteractionToName(event.interaction.data)]?.handler;
+
+      final option = _UnifiedOption(
+        name: event.interaction.data.name,
+        type: CommandOptionType.subCommand,
+        options: event.interaction.data.options!.map(_UnifiedOption.fromInteractionOption).toList(),
+      );
+
+      final matches = _getCommandNames([option]);
+      if (matches.length > 1) throw Exception('More than one command matched: $matches');
+
+      final handler = _commands[matches.first];
       if (handler == null) {
         print('Handler for interaction "${event.interaction.data.name}" not found');
         return;
@@ -56,122 +77,75 @@ class CommandManager {
     });
   }
 
-  /// Registers a list of commands to a bot using bulk override.
-  Future<void> registerCommands(List<CommandCreator> commands) async {
-    for (final command in commands) {
-      await registerCommand(command);
-    }
-  }
-
   /// Registers a new command to a bot.
   Future<void> registerCommand(CommandCreator commandCreator) async {
     // register command in Discord Guild
     await _guildManager.manager.create(commandCreator.builder());
     // register command in bot to handle it
-    _commands[_convertCommandBuilderToName(commandCreator.builder())] = commandCreator;
-    print('Registered new command: "${_commands.entries.last.key}"');
-  }
 
-  /// Converts [ApplicationCommandBuilder] to a full command name for matching with interaction.
-  String _convertCommandBuilderToName(ApplicationCommandBuilder builder) {
-    final sb = StringBuffer(builder.name);
+    final option = _UnifiedOption(
+      name: commandCreator.builder().name,
+      type: CommandOptionType.subCommand,
+      options: commandCreator.builder().options!.map(_UnifiedOption.fromCommandOptionBuilder).toList(),
+    );
 
-    // get options of command and convert them to a full command name
-    final options = builder.options;
-    if (options == null || options.isEmpty) {
-      return sb.toString();
+    final commandNames = _getCommandNames([option]);
+    if (commandNames.length != commandCreator.handlers.length) {
+      throw Exception('Different amount of handlers (${commandCreator.handlers.length}) '
+          'and given value in command builder. Expected ${commandNames.length}');
     }
 
-    // if we have options, then we should convert them to a full command name
-    // by documentation, we have [subCommand] and [subCommandGroup] options that can be used to create a full command name
-    // [subCommandGroup] can have up to 25 [subCommand]'s options
-    // [subCommand] can have up to 25 options, and any option can be [subCommandGroup] or [subCommand]
-    // so, we should check if we have [subCommandGroup] or [subCommand] and convert them to a full command name
-    sb.write(_parseCommandBuilderName(options));
-
-    // at this moment we should have a full command name which we can use to match with interaction
-    // to example: `create raid` where `create` is a base command name and `raid` is a sub command name
-    return sb.toString();
+    for (final commandName in commandNames) {
+      _commands[commandName] = commandCreator.handlers[commandName]!;
+      print('Registered new command: "${_commands.entries.last.key}"');
+    }
   }
 
-  /// Converts [ApplicationCommandBuilder] to a full command name for matching with interaction.
-  ///
-  /// See [CommandManager._convertCommandBuilderToName] for more details.
-  // Internal API is different for [CommandOptionBuilder] and [ApplicationCommandInteractionData],
-  // so we need to have two different methods.
-  String _parseCommandBuilderName(final List<CommandOptionBuilder> options) {
-    final sb = StringBuffer();
-    for (final option in options) {
-      if (option.type case CommandOptionType.subCommand) {
-        sb.write(' ${option.name}');
-      } else if (option.type case CommandOptionType.subCommandGroup) {
-        sb.write(' ${option.name}');
-        if (option.options != null) {
-          sb.write(' ${_parseCommandBuilderName(option.options!)}');
+  List<String> _getCommandNames(List<_UnifiedOption> interactionOptions, [String prefix = '']) {
+    print('[GetCommandNames] got options: ${interactionOptions.map((e) => e.name)}');
+    final List<String> commandNames = [];
+    for (final _UnifiedOption interactionOption in interactionOptions) {
+      final String currentPrefix = prefix.isNotEmpty ? '$prefix ${interactionOption.name}' : interactionOption.name;
+      if (interactionOption.type == CommandOptionType.subCommandGroup ||
+          interactionOption.type == CommandOptionType.subCommand) {
+        if (prefix.isNotEmpty) {
+          commandNames.add(currentPrefix);
+        }
+        if (interactionOption.options != null && interactionOption.options!.isNotEmpty) {
+          commandNames.addAll(_getCommandNames(interactionOption.options!, currentPrefix));
+        } else if (interactionOption.type == CommandOptionType.subCommand) {
+          commandNames.add(currentPrefix);
         }
       }
     }
-    return sb.toString();
+    return commandNames;
+  }
+}
+
+class _UnifiedOption {
+  _UnifiedOption({
+    required this.name,
+    required this.type,
+    this.options,
+  });
+
+  final String name;
+  final CommandOptionType type;
+  final List<_UnifiedOption>? options;
+
+  factory _UnifiedOption.fromInteractionOption(InteractionOption option) {
+    return _UnifiedOption(
+      name: option.name,
+      type: option.type,
+      options: option.options?.map(_UnifiedOption.fromInteractionOption).toList(),
+    );
   }
 
-  /// Converts [ApplicationCommandInteractionData] to a full command name for matching with command handler.
-  String _convertInteractionToName(ApplicationCommandInteractionData data) {
-    // local convertor subCommand to command name
-
-    // create sb and write base name of interaction
-    final sb = StringBuffer(data.name);
-    // get options of interaction
-    final options = data.options;
-
-    // if we have no options, then we can return a base name of interaction
-    if (options == null || options.isEmpty) {
-      return sb.toString();
-    }
-
-    // if we have options, then we should convert them to a full command name
-    // by documentation, we have [subCommand] and [subCommandGroup] options that can be used to create a full command name
-    // [subCommandGroup] can have up to 25 [subCommand]'s options
-    // [subCommand] can have up to 25 options, and any option can be [subCommandGroup] or [subCommand]
-    // so, we should check if we have [subCommandGroup] or [subCommand] and convert them to a full command name
-    sb.write(_parseInteractionName(options));
-
-    return sb.toString();
-  }
-
-  /// Parses a list of [InteractionOption] objects and constructs a string that represents the interaction name.
-  ///
-  /// The method iterates over each [InteractionOption] in the provided list.
-  /// For each [InteractionOption], it checks the `type` of the option.
-  ///
-  /// If the `type` of the [InteractionOption] is [CommandOptionType.subCommand],
-  /// it appends the `name` of the option to the string with a leading space.
-  ///
-  /// If the `type` of the [InteractionOption] is [CommandOptionType.subCommandGroup],
-  /// it checks if the `options` property of the [InteractionOption] is not null.
-  ///
-  /// If it's not null, it recursively calls `_parseInteractionName` with the `options` of the [InteractionOption]
-  /// and appends the result to the string with a leading space. \
-  /// Finally, after iterating over all the [InteractionOption] objects in the list,
-  /// the method returns the constructed string.
-  ///
-  /// This method essentially constructs a string that represents the interaction name based on the [InteractionOption] objects provided.
-  /// It handles both `subCommand` and `subCommandGroup` types of options, and it can handle nested options due to its recursive nature.
-  ///
-  /// [options] is a list of [InteractionOption] objects that represent the interaction options.
-  ///
-  /// Returns a string that represents the interaction name.
-  String _parseInteractionName(final List<InteractionOption> options) {
-    final sb = StringBuffer();
-    for (final option in options) {
-      if (option.type case CommandOptionType.subCommand) {
-        sb.write(' ${option.name}');
-      } else if (option.type case CommandOptionType.subCommandGroup) {
-        sb.write(' ${option.name}');
-        if (option.options != null) {
-          sb.write(' ${_parseInteractionName(option.options!)}');
-        }
-      }
-    }
-    return sb.toString();
+  factory _UnifiedOption.fromCommandOptionBuilder(CommandOptionBuilder option) {
+    return _UnifiedOption(
+      name: option.name,
+      type: option.type,
+      options: option.options?.map(_UnifiedOption.fromCommandOptionBuilder).toList(),
+    );
   }
 }

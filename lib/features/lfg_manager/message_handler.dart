@@ -32,7 +32,7 @@ final class MessageHandler implements IMessageHandler {
     required ILFGPostBuilder builder,
     required InteractionCreateEvent<ApplicationCommandInteraction> interaction,
   }) async {
-    final msg = await interaction.interaction.respond(
+    await interaction.interaction.respond(
       MessageBuilder(
         content: 'Raid ${builder.name} created;\n'
             'Meta:\n'
@@ -40,7 +40,10 @@ final class MessageHandler implements IMessageHandler {
       ),
     );
 
-    return Snowflake(0);
+    final msg = await interaction.interaction.fetchOriginalResponse();
+    print(msg.content);
+
+    return msg.id;
   }
 
   @override

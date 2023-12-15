@@ -7,24 +7,14 @@ import '../../command_manager/command_manager.dart';
 import '../../lfg_manager/data/models/register_activity.dart';
 import '../../lfg_manager/lfg_manager.dart';
 
-CommandCreator createRaidCommand() {
+CommandCreator createCategoryCommands() {
   return (
-    builder: () => _createBuilder(LFGActivityType.raid),
-    handler: _createActivityHandler,
-  );
-}
-
-CommandCreator createDungeonCommand() {
-  return (
-    builder: () => _createBuilder(LFGActivityType.dungeon),
-    handler: _createActivityHandler,
-  );
-}
-
-CommandCreator createCustomCommand() {
-  return (
-    builder: () => _createBuilder(LFGActivityType.custom),
-    handler: _createActivityHandler,
+    builder: _createAll,
+    handlers: {
+      'create raid': _createActivityHandler,
+      'create dungeon': _createActivityHandler,
+      'create custom': _createActivityHandler,
+    }
   );
 }
 
@@ -69,44 +59,44 @@ List<CommandOptionChoiceBuilder<String>>? _getActivityChoices(LFGActivityType ty
   return activities.map((e) => CommandOptionChoiceBuilder<String>(name: e.name, value: e.name)).toList();
 }
 
-ApplicationCommandBuilder _createBuilder(LFGActivityType type) {
+ApplicationCommandBuilder _createAll() {
   return ApplicationCommandBuilder(
     name: 'create',
     description: 'Создать активность',
     type: ApplicationCommandType.chatInput,
-    options: [
-      CommandOptionBuilder.subCommand(
-        name: type.name,
-        description: 'Создать сбор на активность',
-        options: [
-          CommandOptionBuilder.string(
-            name: 'название',
-            description: 'Введите название активности',
-            choices: _getActivityChoices(type),
-            isRequired: true,
-          ),
-          CommandOptionBuilder.string(
-            name: 'описание',
-            description: 'Введите описание активности',
-            isRequired: true,
-          ),
-          CommandOptionBuilder.string(
-            name: 'дата',
-            description: 'Введите дату начала активности [15 01 2023]',
-            isRequired: true,
-          ),
-          CommandOptionBuilder.string(
-            name: 'время',
-            description: 'Введите время начала активности [15 01]',
-            isRequired: true,
-          ),
-          CommandOptionBuilder.string(
-            name: 'часовой_пояс',
-            description: 'Введите ваш текущий часовой пояс',
-            isRequired: true,
-          ),
-        ],
-      ),
-    ],
+    options: LFGActivityType.values
+        .map((type) => CommandOptionBuilder.subCommand(
+              name: type.name,
+              description: 'Создать сбор на активность',
+              options: [
+                CommandOptionBuilder.string(
+                  name: 'название',
+                  description: 'Введите название активности',
+                  choices: _getActivityChoices(type),
+                  isRequired: true,
+                ),
+                CommandOptionBuilder.string(
+                  name: 'описание',
+                  description: 'Введите описание активности',
+                  isRequired: true,
+                ),
+                CommandOptionBuilder.string(
+                  name: 'дата',
+                  description: 'Введите дату начала активности [15 01 2023]',
+                  isRequired: true,
+                ),
+                CommandOptionBuilder.string(
+                  name: 'время',
+                  description: 'Введите время начала активности [15 01]',
+                  isRequired: true,
+                ),
+                CommandOptionBuilder.string(
+                  name: 'часовой_пояс',
+                  description: 'Введите ваш текущий часовой пояс',
+                  isRequired: true,
+                ),
+              ],
+            ))
+        .toList(),
   );
 }
