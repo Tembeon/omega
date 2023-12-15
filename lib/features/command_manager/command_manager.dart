@@ -101,24 +101,21 @@ class CommandManager {
     }
   }
 
-  List<String> _getCommandNames(List<_UnifiedOption> interactionOptions, [String prefix = '']) {
-    print('[GetCommandNames] got options: ${interactionOptions.map((e) => e.name)}');
-    final List<String> commandNames = [];
+  Iterable<String> _getCommandNames(List<_UnifiedOption> interactionOptions, [String prefix = '']) sync* {
     for (final _UnifiedOption interactionOption in interactionOptions) {
       final String currentPrefix = prefix.isNotEmpty ? '$prefix ${interactionOption.name}' : interactionOption.name;
       if (interactionOption.type == CommandOptionType.subCommandGroup ||
           interactionOption.type == CommandOptionType.subCommand) {
         if (prefix.isNotEmpty) {
-          commandNames.add(currentPrefix);
+          yield currentPrefix;
         }
         if (interactionOption.options != null && interactionOption.options!.isNotEmpty) {
-          commandNames.addAll(_getCommandNames(interactionOption.options!, currentPrefix));
+          yield* _getCommandNames(interactionOption.options!, currentPrefix);
         } else if (interactionOption.type == CommandOptionType.subCommand) {
-          commandNames.add(currentPrefix);
+          yield currentPrefix;
         }
       }
     }
-    return commandNames;
   }
 }
 
