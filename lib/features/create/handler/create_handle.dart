@@ -7,6 +7,14 @@ import '../../command_manager/command_manager.dart';
 import '../../lfg_manager/data/models/register_activity.dart';
 import '../../lfg_manager/lfg_manager.dart';
 
+/// Builds `/create` command.
+///
+/// This command is used for creating new LFG posts.
+///
+/// This command has 3 subcommands: raid, dungeon, custom.
+/// * raid - creates new LFG post for raid activity.
+/// * dungeon - creates new LFG post for dungeon activity.
+/// * custom - creates new LFG post for custom activity.
 CommandCreator createCategoryCommands() {
   return (
     builder: _createAll,
@@ -23,7 +31,7 @@ Future<void> _createActivityHandler(InteractionCreateEvent<ApplicationCommandInt
   if (member == null) return; // refuse to work with bots
 
   final userName = member.nick ?? member.user?.username;
-  print('User "${userName}" is trying to create new raid LFG post');
+  print('User "$userName" is trying to create new raid LFG post');
 
   final manager = Context.root.get<LFGManager>('manager');
   final settings = Context.root.get<BotSettings>('settings');
@@ -43,7 +51,7 @@ Future<void> _createActivityHandler(InteractionCreateEvent<ApplicationCommandInt
     interaction: interaction,
     builder: LFGPostBuilder.fromActivity(
       activity: activity,
-      authorID: member.id,
+      authorID: member.user!.id,
       description: description,
       unixDate: 1702933200000,
     ),
@@ -57,6 +65,13 @@ List<CommandOptionChoiceBuilder<String>>? _getActivityChoices(LFGActivityType ty
   if (activities.isEmpty) return null;
 
   return activities.map((e) => CommandOptionChoiceBuilder<String>(name: e.name, value: e.name)).toList();
+}
+
+List<CommandOptionChoiceBuilder<int>> _getTimezoneChoices() {
+  final settings = Context.root.get<BotSettings>('settings');
+  final timezones = settings.botConfig.timezones;
+
+  return timezones.entries.map((e) => CommandOptionChoiceBuilder<int>(name: e.key, value: e.value)).toList();
 }
 
 ApplicationCommandBuilder _createAll() {
@@ -90,13 +105,14 @@ ApplicationCommandBuilder _createAll() {
                   description: 'Введите время начала активности [15 01]',
                   isRequired: true,
                 ),
-                CommandOptionBuilder.string(
+                CommandOptionBuilder.integer(
                   name: 'часовой_пояс',
                   description: 'Введите ваш текущий часовой пояс',
+                  choices: _getTimezoneChoices(),
                   isRequired: true,
                 ),
               ],
-            ))
+            ),)
         .toList(),
   );
 }

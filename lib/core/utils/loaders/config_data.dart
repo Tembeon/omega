@@ -23,6 +23,11 @@ abstract final class BotConfig {
   /// then bot will delete a deleted message in the following channel. (I hope you understand what I mean).
   List<String>? get deleteDeletedMessagesFromChannels;
 
+  /// Returns list of timezones that bot should show user when he creates a new LFG.
+  ///
+  /// Key is a name of timezone, value is a difference between UTC and this timezone.
+  Map<String, int> get timezones;
+
   /// Loads all bot settings from configs. [path] is a path to config file.
   factory BotConfig.fromFile(String path) {
     final botConfig = File(path);
@@ -47,6 +52,7 @@ final class _BotConfigLoader implements BotConfig {
     required this.serverID,
     this.promoChannel,
     this.deleteDeletedMessagesFromChannels,
+    required this.timezones,
   });
 
   factory _BotConfigLoader.fromJson(Map<String, Object?> json) {
@@ -60,6 +66,12 @@ final class _BotConfigLoader implements BotConfig {
             (e) => e as String,
           )
           .toList(),
+      timezones: (json['timezones'] as Map<String, Object?>).map(
+        (key, value) => MapEntry(
+          key,
+          value as int,
+        ),
+      ),
     );
   }
 
@@ -77,4 +89,7 @@ final class _BotConfigLoader implements BotConfig {
 
   @override
   final int serverID;
+
+  @override
+  final Map<String, int> timezones;
 }
