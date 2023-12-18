@@ -1,3 +1,5 @@
+include: package:lints/recommended.yaml
+
 analyzer:
   exclude:
     - "**/*.g.dart"
@@ -8,112 +10,187 @@ analyzer:
     - "lib/core/l10n/generated/**"
 
   # For more information see:
-  # https://dart.dev/guides/language/analysis-options#enabling-additional-type-checks
+  # https://dart.dev/tools/analysis#enabling-additional-type-checks
   language:
     strict-casts: true
     strict-inference: true
     strict-raw-types: true
 
   errors:
-    # Treat missing returns as an error, not as a hint or a warning.
-    missing_return: error
-
     # DON'T assign new values to parameters of methods or functions.
+    # See for more information:
     # https://dart-lang.github.io/linter/lints/parameter_assignments.html
-    parameter_assignments: warning
+    parameter_assignments: error
 
     # Allow having TODOs in the code.
-    todo: ignore
+    todo: info
 
-# LINTER Preferences
-#
-# Explicitly disable only the rules we do not want.
+# Additional rule set that aims to:
+# 1. Improve error handling
+# 2. Using strict types
+# 3.
 linter:
   rules:
-    prefer_const_constructors: true
+    # https://dart.dev/tools/linter-rules/prefer_const_constructors
+    - prefer_const_constructors
     # By default, `catch`-block reacts on every type can be thrown,
     # which in fact isn't bound to Exception or Error types in Dart.
     # Thus, you have to put at least Exception as a bound and necessarily not a nullable type.
-    avoid_catches_without_on_clauses: true # Always use an at least Exception type
+    # Always use an at least Exception type
+    # https://dart.dev/tools/linter-rules/avoid_catches_without_on_clauses
+    - avoid_catches_without_on_clauses
     # Errors are not intended to be resolved within a running program.
-    avoid_catching_errors: true
-    # `dynamic` is a js-interop legacy which can introduce nasty things to a codebase and being easily avoidable.
+    # Errors are intended to be resolved by a developer - this is why they are called errors.
+    # https://dart.dev/tools/linter-rules/avoid_catching_errors
+    - avoid_catching_errors
+    # `dynamic` is a js-interop legacy that can introduce nasty things to a codebase and being easily avoidable.
     # Prefer cast or replacing to `Object?` at least.
-    avoid_dynamic_calls: true
+    # https://dart.dev/tools/linter-rules/avoid_dynamic_calls
+    - avoid_dynamic_calls
     # Using getter instead of immediate value setting introduces lazy loading of the value in memory.
-    avoid_field_initializers_in_const_classes: true
+    # https://dart.dev/tools/linter-rules/avoid_field_initializers_in_const_classes
+    - avoid_field_initializers_in_const_classes
     # Notice the `implements` keyword.
     # https://dart-lang.github.io/linter/lints/avoid_implementing_value_types.html
-    avoid_implementing_value_types: true
-    # In common, it messes original order of declarations.
-    avoid_multiple_declarations_per_line: true
+    - avoid_implementing_value_types
     # Positional boolean parameters are a bad practice because they are very ambiguous.
     # Using the named boolean parameters is much more readable
     # because it inherently describes what the boolean value represents.
-    avoid_positional_boolean_parameters: true
-    avoid_setters_without_getters: true
-    # Notice what exact members are used by the lint.
-    avoid_slow_async_io: true
+    # https://dart.dev/tools/linter-rules/avoid_positional_boolean_parameters
+    - avoid_positional_boolean_parameters
+    # Usually, you should provide both setters and getters for a field.
+    # Otherwise, it's a bad practice.
+    # https://dart.dev/tools/linter-rules/avoid_setters_without_getters
+    - avoid_setters_without_getters
+    # Async IO are slow, and it is better to avoid them.
+    # Read more:
+    # 1. https://stackoverflow.com/a/60735352
+    # 2. https://stackoverflow.com/a/61420070
+    # https://dart.dev/tools/linter-rules/avoid_slow_async_io
+    - avoid_slow_async_io
     # Use analog that won't be erased when obfuscated. Do not use runtimeType to check!
-    avoid_type_to_string: true
-    no_runtimeType_toString: true
-    # You should return Future<void>, not just void.
-    # https://dart-lang.github.io/linter/lints/avoid_void_async.html
-    avoid_void_async: true
+    # By the way, you can use `runtimeType` only for debugging purposes.
+    # https://dart.dev/tools/linter-rules/avoid_type_to_string
+    - avoid_type_to_string
+    - no_runtimeType_toString
+    # You must return Future<void>, not just void.
+    # https://dart.dev/tools/linter-rules/avoid_void_async
+    - avoid_void_async
     # You should always close subscriptions
-    # https://dart-lang.github.io/linter/lints/cancel_subscriptions.html
-    cancel_subscriptions: true
-    # https://dart-lang.github.io/linter/lints/cascade_invocations.html
-    cascade_invocations: true
+    # https://dart.dev/tools/linter-rules/cancel_subscriptions
+    - cancel_subscriptions
+    # You should always close sinks (or provide a way to close them).
+    # https://dart.dev/tools/linter-rules/close_sinks
+    - close_sinks
+    # Use cascade notation (..) instead of successive calls to (.), if the object being accessed is the same for all the calls.
+    # https://dart.dev/tools/linter-rules/cascade_invocations
+    - cascade_invocations
     # You should check for nulls before casting to the other type
-    cast_nullable_to_non_nullable: true
-    # You should always close sinks.
-    close_sinks: true
-    conditional_uri_does_not_exist: true
-    deprecated_consistency: true
-    # https://dart-lang.github.io/linter/lints/join_return_with_assignment.html
-    join_return_with_assignment: true
+    # https://dart.dev/tools/linter-rules/cast_nullable_to_non_nullable
+    - cast_nullable_to_non_nullable
+    # Do not use non-existent file for conditional imports
+    # https://dart.dev/tools/linter-rules/conditional_uri_does_not_exist
+    - conditional_uri_does_not_exist
+    # Provide correct deprecations
+    # https://dart.dev/tools/linter-rules/deprecated_consistency
+    - deprecated_consistency
+    # Always join return statements with assignment.
+    # Style rule, you can remove it if you want.
+    # https://dart.dev/tools/linter-rules/join_return_with_assignment
+    - join_return_with_assignment
     # Can help if you accidentally wrote a condition that is always equal to true
-    literal_only_boolean_expressions: true
+    # https://dart.dev/tools/linter-rules/literal_only_boolean_expressions
+    - literal_only_boolean_expressions
     # Can help if you forgot about whitespace
-    missing_whitespace_between_adjacent_strings: true
-    no_adjacent_strings_in_list: true
+    # https://dart.dev/tools/linter-rules/missing_whitespace_between_adjacent_strings
+    - missing_whitespace_between_adjacent_strings
+    # Can help don't make a weird mistake
+    # https://dart.dev/tools/linter-rules/no_adjacent_strings_in_list
+    - no_adjacent_strings_in_list
     # Avoid cases when enum enhanced with a new value that are covered by `default`-case in some `switch`
     # that isn't intended to resolve such a case.
-    # While still able to resolve it from an outside of a `switch`, you will also be warned
+    # While still able to resolve it from the outside of a `switch`, you will also be warned
     # that the case is missing from switch.
-    no_default_cases: true
+    # https://dart.dev/tools/linter-rules/no_default_cases
+    - no_default_cases
     # In addition to bounded `catch`es, this forbids to `throw` any other than `Exception` or `Error`.
-    only_throw_errors: true
+    # https://dart.dev/tools/linter-rules/only_throw_errors
+    - only_throw_errors
     # Can help if you accidentally wrote `toInt` on an int type.
-    noop_primitive_operations: true
+    # https://dart.dev/tools/linter-rules/noop_primitive_operations
+    - noop_primitive_operations
     # All parameters are mutable by default, but you should not reassign them.
-    parameter_assignments: true
-    prefer_final_in_for_each: true
-    require_trailing_commas: true
-    prefer_single_quotes: true
-    sized_box_shrink_expand: true
-    sort_child_properties_last: true
-    prefer_if_elements_to_conditional_expressions: true
-    prefer_final_locals: true
-    # You need to check what type is it, and only then call cast.
-    test_types_in_equals: true
+    # https://dart.dev/tools/linter-rules/parameter_assignments
+    - parameter_assignments
+    # Must use `final` in `for`-loops. If you modify the variable in iteration, you are doing something wrong.
+    # https://dart.dev/tools/linter-rules/prefer_final_in_for_each
+    - prefer_final_in_for_each
+    # A hint to add trailing commas where possible.
+    # Style rule, you can remove it if you want to.
+    # https://dart.dev/tools/linter-rules/require_trailing_commas
+    - require_trailing_commas
+    # In Dart, we use single quotes, so this rule will help you to avoid double quotes.
+    - prefer_single_quotes
+    # Use `if`-statements instead of `?:`-operator.
+    # https://dart.dev/tools/linter-rules/prefer_if_elements_to_conditional_expressions
+    - prefer_if_elements_to_conditional_expressions
+    # If you don't reassign the variable, you should use `final` or `const` keyword.
+    # https://dart.dev/tools/linter-rules/prefer_final_locals
+    - prefer_final_locals
+    # You need to check what type is it, not just cast it.
+    # https://dart.dev/tools/linter-rules/test_types_in_equals
+    - test_types_in_equals
     # Avoid throw errors in finally block. This is not how to need to use try catch block.
-    throw_in_finally: true
-    # This allows the type system to catch problems rather than have them only be caught at run-time.
-    # https://dart-lang.github.io/linter/lints/tighten_type_of_initializing_formals.html
-    tighten_type_of_initializing_formals: true
-    type_annotate_public_apis: true
+    # https://dart.dev/tools/linter-rules/throw_in_finally
+    - throw_in_finally
+    # Strictly set types for parameter instead of asserting them.
+    # https://dart.dev/tools/linter-rules/tighten_type_of_initializing_formals
+    - tighten_type_of_initializing_formals
+    # You must use typesystem. No dynamic!
+    # https://dart.dev/tools/linter-rules/type_annotate_public_apis
+    - type_annotate_public_apis
     # Makes unawaited futures more noticeable to highlight that missing one's a plausible mistake.
     # unawaited(doSomething()); // Explicitly-ignored fire-and-forget.
-    unawaited_futures: true
-    unnecessary_await_in_return: true
-    unnecessary_constructor_name: true
-    unnecessary_lambdas: true
-    unnecessary_statements: true
+    # https://dart.dev/tools/linter-rules/unawaited_futures
+    - unawaited_futures
+    # Another helpful rule to avoid mistakes.
+    # https://dart.dev/tools/linter-rules/unnecessary_await_in_return
+    - unnecessary_await_in_return
+    # Do not use `new` keyword for creating objects (still allows for tear-offs).
+    # https://dart.dev/tools/linter-rules/unnecessary_constructor_name
+    - unnecessary_constructor_name
+    # Prompt to use tear-offs instead of lambdas.
+    # https://dart.dev/tools/linter-rules/unnecessary_lambdas
+    - unnecessary_lambdas
+    # Can help if you accidentally make mistakes when calling methods.
+    # https://dart.dev/tools/linter-rules/unnecessary_statements
+    - unnecessary_statements
+    # Prompt to correct way to handle nullable bools.
+    # https://dart.dev/tools/linter-rules/use_if_null_to_convert_nulls_to_bools
+    - use_if_null_to_convert_nulls_to_bools
+    # use named constants if there is any, instead of magic numbers
+    # https://dart.dev/tools/linter-rules/use_named_constants
+    - use_named_constants
+    # Prefer to use relative imports for files in the same package.
+    # https://dart.dev/tools/linter-rules/prefer_relative_imports
+    - prefer_relative_imports
+
+
+    # Flutter specific rules
+    #
+    # Use SizedBox.shrink(...) and SizedBox.expand(...) constructors appropriately.
+    # https://dart.dev/tools/linter-rules/sized_box_shrink_expand
+    - sized_box_shrink_expand
+    # Use sort_child_properties_last to make your code more readable.
+    # https://dart.dev/tools/linter-rules/sort_child_properties_last
+    - sort_child_properties_last
     # Do not use Container class for providing only color or decoration
-    use_colored_box: true
-    use_decorated_box: true
-    use_if_null_to_convert_nulls_to_bools: true
-    use_named_constants: true
-    prefer_relative_imports: true
+    # https://dart.dev/tools/linter-rules/use_colored_box
+    - use_colored_box
+    # Do not use Container class for providing only decoration
+    # https://dart.dev/tools/linter-rules/use_decorated_box
+    - use_decorated_box
+
+
+
+
