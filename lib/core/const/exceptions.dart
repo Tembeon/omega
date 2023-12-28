@@ -21,6 +21,7 @@ class _FatalException implements FatalException {
   @override
   int get exitCode => ExitCode.unavailable.code;
 
+  @override
   String toString() {
     final sb = StringBuffer()..write('FatalException');
     if (message != null) {
