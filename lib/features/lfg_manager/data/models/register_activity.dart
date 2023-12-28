@@ -73,35 +73,43 @@ base class LFGPostBuilder implements ILFGPostBuilder {
   /// Author of the post.
   ///
   /// This is the user who created the post, and first member of the LFG.
+  @override
   final Snowflake authorID;
 
   /// User-given description of the LFG.
+  @override
   final String description;
 
   /// User-given start date of the LFG.
+  @override
   final int unixDate;
 
   /// Image url for LFG.
   ///
   /// Should be provided from [Activity].
+  @override
   final String bannerUrl;
 
   /// Is LFG enabled. At this moment it's always true.
   ///
   /// If passed false, then bot will refuse to create LFG.
+  @override
   final bool enabled;
 
   /// Name of the LFG.
   ///
   /// Should be provided from [Activity].
+  @override
   final String name;
 
   /// Max members for LFG.
   ///
   /// Should be provided from [Activity].
+  @override
   final int maxMembers;
 
   /// Type of LFG activity.
+  @override
   final LFGActivityType type;
 
   @override

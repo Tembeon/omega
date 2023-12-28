@@ -3,6 +3,7 @@ import 'package:nyxx/nyxx.dart' hide Activity;
 import '../../../core/data/enums/activity_type.dart';
 import '../../../core/utils/context/context.dart';
 import '../../../core/utils/loaders/bot_settings.dart';
+import '../../../core/utils/time_convert.dart';
 import '../../command_manager/command_manager.dart';
 import '../../lfg_manager/data/models/register_activity.dart';
 import '../../lfg_manager/lfg_manager.dart';
@@ -43,6 +44,9 @@ Future<void> _createActivityHandler(InteractionCreateEvent<ApplicationCommandInt
 
   final name = createOptions.firstWhere((e) => e.name == 'название').value as String;
   final description = createOptions.firstWhere((e) => e.name == 'описание').value as String;
+  final date = createOptions.firstWhere((e) => e.name == 'дата').value as String;
+  final time = createOptions.firstWhere((e) => e.name == 'время').value as String;
+  final timezone = createOptions.firstWhere((e) => e.name == 'часовой_пояс').value as int;
 
   final activity = settings.activityData.activities.where((e) => e.name == name).first;
 
@@ -53,7 +57,7 @@ Future<void> _createActivityHandler(InteractionCreateEvent<ApplicationCommandInt
       activity: activity,
       authorID: member.user!.id,
       description: description,
-      unixDate: 1702933200000,
+      unixDate: TimeConverters.userInputToUnix(timeInput: time, dateInput: date, timezoneInput: timezone),
     ),
   );
 }
