@@ -25,6 +25,11 @@ typedef CommandCreator = ({
   Map<String, FutureOr<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction)> handlers,
 });
 
+typedef ComponentCreator = ({
+  String customID,
+  FutureOr<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction) handler,
+});
+
 /// Class which manages bot interactions, such as commands, buttons, etc.
 ///
 /// This class listens for interactions, parses them, and calls the appropriate handler.
@@ -36,6 +41,7 @@ class CommandManager {
     required NyxxGateway bot,
   }) : _bot = bot {
     _listenInteractions();
+    _listenButtons();
   }
 
   // Bot instance which used to manage interactions.
@@ -49,6 +55,11 @@ class CommandManager {
   // Key is a full command name, value is a function which handles command.
   final Map<String, FutureOr<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction)>
       _commands = {};
+
+  // Map of registered components.
+  // Key is a custom ID of the component, value is a function which handles component.
+  final Map<String, FutureOr<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction)>
+      _components = {};
 
   /// Starts listening for registered interactions.
   ///
@@ -77,6 +88,24 @@ class CommandManager {
     });
   }
 
+  /// Starts listening for registered components.
+  ///
+  /// You can register new components using the [registerComponent] method. \
+  /// If you create new component using the [registerComponent] method, you don't need to call this method again.
+  void _listenButtons() {
+    _bot.onMessageComponentInteraction.listen((event) {
+      print('Received new button interaction: "${event.interaction.data.customId}"');
+
+      final handler = _components[event.interaction.data.customId];
+      if (handler == null) {
+        print('Handler for button "${event.interaction.data.customId}" not found');
+        return;
+      } else {
+        handler(event);
+      }
+    });
+  }
+
   /// Registers a new command to a bot.
   Future<void> registerCommand(CommandCreator commandCreator) async {
     // register command in Discord Guild
@@ -101,6 +130,14 @@ class CommandManager {
     }
   }
 
+  /// Registers a new component to a bot.
+  ///
+  /// Component is a button, select menu, etc.
+  Future<void> registerComponent(ComponentCreator componentCreator) async {
+    _components[componentCreator.customID] = componentCreator.handler;
+    print('Registered new component: "${componentCreator.customID}"');
+  }
+
   Iterable<String> _getCommandNames(List<_UnifiedOption> interactionOptions, [String prefix = '']) sync* {
     for (final _UnifiedOption interactionOption in interactionOptions) {
       final String currentPrefix = prefix.isNotEmpty ? '$prefix ${interactionOption.name}' : interactionOption.name;
@@ -120,15 +157,11 @@ class CommandManager {
 }
 
 class _UnifiedOption {
-  _UnifiedOption({
+  const _UnifiedOption({
     required this.name,
     required this.type,
     this.options,
   });
-
-  final String name;
-  final CommandOptionType type;
-  final List<_UnifiedOption>? options;
 
   factory _UnifiedOption.fromInteractionOption(InteractionOption option) {
     return _UnifiedOption(
@@ -145,4 +178,8 @@ class _UnifiedOption {
       options: option.options?.map(_UnifiedOption.fromCommandOptionBuilder).toList(),
     );
   }
+
+  final String name;
+  final CommandOptionType type;
+  final List<_UnifiedOption>? options;
 }

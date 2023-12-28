@@ -4,6 +4,22 @@ import 'dart:io';
 import '../../const/exceptions.dart';
 
 abstract final class BotConfig {
+  /// Loads all bot settings from configs. [path] is a path to config file.
+  factory BotConfig.fromFile(String path) {
+    final botConfig = File(path);
+    if (!botConfig.existsSync()) {
+      throw ConfigFileMissing('bot config', configPath: botConfig.path);
+    }
+
+    final config = jsonDecode(botConfig.readAsStringSync()) as Map<String, Object?>;
+
+    if (config.isEmpty) {
+      throw ConfigFileMissing('bot config is empty', configPath: botConfig.path);
+    }
+
+    return _BotConfigLoader.fromJson(config);
+  }
+
   /// Returns server ID.
   int get serverID;
 
@@ -27,22 +43,6 @@ abstract final class BotConfig {
   ///
   /// Key is a name of timezone, value is a difference between UTC and this timezone.
   Map<String, int> get timezones;
-
-  /// Loads all bot settings from configs. [path] is a path to config file.
-  factory BotConfig.fromFile(String path) {
-    final botConfig = File(path);
-    if (!botConfig.existsSync()) {
-      throw ConfigFileMissing('bot config', configPath: botConfig.path);
-    }
-
-    final config = jsonDecode(botConfig.readAsStringSync()) as Map<String, Object?>;
-
-    if (config.isEmpty) {
-      throw ConfigFileMissing('bot config is empty', configPath: botConfig.path);
-    }
-
-    return _BotConfigLoader.fromJson(config);
-  }
 }
 
 final class _BotConfigLoader implements BotConfig {
@@ -66,10 +66,10 @@ final class _BotConfigLoader implements BotConfig {
             (e) => e as String,
           )
           .toList(),
-      timezones: (json['timezones'] as Map<String, Object?>).map(
+      timezones: (json['timezones']! as Map<String, Object?>).map(
         (key, value) => MapEntry(
           key,
-          value as int,
+          value! as int,
         ),
       ),
     );

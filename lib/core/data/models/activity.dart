@@ -2,6 +2,20 @@ import '../enums/activity_type.dart';
 
 /// Base class for all activities.
 abstract interface class Activity {
+  /// Creates dungeon activity from json
+  factory Activity.dungeon(Map<String, Object?> json) = _JsonActivity.dungeon;
+
+  /// Creates raid activity from json
+  factory Activity.raid(Map<String, Object?> json) = _JsonActivity.raid;
+
+  /// Creates activity from json
+  factory Activity.custom(Map<String, Object?> json) => _JsonActivity(
+        name: json['name']! as String,
+        maxMembers: json['max_members']! as int,
+        bannerUrl: json['banner_url']! as String,
+        enabled: json['enabled']! as bool,
+      );
+
   /// Visible name of the activity
   String get name;
 
@@ -18,20 +32,6 @@ abstract interface class Activity {
   ///
   /// See [LFGActivityType] for more info.
   LFGActivityType get type;
-
-  /// Creates activity from json
-  factory Activity.custom(Map<String, Object?> json) => _JsonActivity(
-        name: json['name']! as String,
-        maxMembers: json['max_members']! as int,
-        bannerUrl: json['banner_url']! as String,
-        enabled: json['enabled']! as bool,
-      );
-
-  /// Creates dungeon activity from json
-  factory Activity.dungeon(Map<String, Object?> json) = _JsonActivity.dungeon;
-
-  /// Creates raid activity from json
-  factory Activity.raid(Map<String, Object?> json) = _JsonActivity.raid;
 }
 
 class _JsonActivity implements Activity {
@@ -42,21 +42,6 @@ class _JsonActivity implements Activity {
     required this.enabled,
     this.type = LFGActivityType.custom,
   });
-
-  @override
-  final String name;
-
-  @override
-  final int maxMembers;
-
-  @override
-  final String bannerUrl;
-
-  @override
-  final bool enabled;
-
-  @override
-  final LFGActivityType type;
 
   factory _JsonActivity.dungeon(Map<String, Object?> json) {
     return _JsonActivity(
@@ -77,4 +62,19 @@ class _JsonActivity implements Activity {
       type: LFGActivityType.raid,
     );
   }
+
+  @override
+  final String name;
+
+  @override
+  final int maxMembers;
+
+  @override
+  final String bannerUrl;
+
+  @override
+  final bool enabled;
+
+  @override
+  final LFGActivityType type;
 }

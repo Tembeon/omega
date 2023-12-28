@@ -1,7 +1,14 @@
 /// Context is a key-value storage for passing data between middlewares and handlers.
 abstract final class Context {
-  static Context? _root;
+  /// Creates new empty context.
+  factory Context.empty() => const _Context(<String, Object>{});
+
+  /// Creates new context from [map].
+  factory Context.from(Map<String, Object> map) => _Context(map);
+
   static UnmodifiableContext get root => UnmodifiableContext(_root ?? _rootIsNotSet());
+
+  static Context? _root;
 
   static Never _rootIsNotSet() => throw Exception('Root context is not set');
 
@@ -23,12 +30,6 @@ abstract final class Context {
   T get<T>(String key) => this[key] as T;
 
   Map<String, Object> toMap();
-
-  /// Creates new empty context.
-  factory Context.empty() => _Context(Map());
-
-  /// Creates new context from [map].
-  factory Context.from(Map<String, Object> map) => _Context(map);
 }
 
 final class _Context implements Context {
