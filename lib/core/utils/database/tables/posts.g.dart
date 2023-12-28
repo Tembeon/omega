@@ -9,21 +9,14 @@ class $PostsTableTable extends PostsTable
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $PostsTableTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
   static const VerificationMeta _postMessageIdMeta =
       const VerificationMeta('postMessageId');
   @override
   late final GeneratedColumn<int> postMessageId = GeneratedColumn<int>(
       'post_message_id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -75,7 +68,6 @@ class $PostsTableTable extends PostsTable
       defaultValue: const Constant(false));
   @override
   List<GeneratedColumn> get $columns => [
-        id,
         postMessageId,
         title,
         description,
@@ -95,9 +87,6 @@ class $PostsTableTable extends PostsTable
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
     if (data.containsKey('post_message_id')) {
       context.handle(
           _postMessageIdMeta,
@@ -152,13 +141,11 @@ class $PostsTableTable extends PostsTable
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   PostsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PostsTableData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       postMessageId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}post_message_id'])!,
       title: attachedDatabase.typeMapping
@@ -185,9 +172,6 @@ class $PostsTableTable extends PostsTable
 }
 
 class PostsTableData extends DataClass implements Insertable<PostsTableData> {
-  /// An integer column named `id`. This is the primary key of the table and it auto increments.
-  final int id;
-
   /// A integer column named `postMessageId`. This stores the messageID of the post.
   final int postMessageId;
 
@@ -212,8 +196,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
   /// A bool column named `isDeleted`. This stores the deletion status of the post.
   final bool isDeleted;
   const PostsTableData(
-      {required this.id,
-      required this.postMessageId,
+      {required this.postMessageId,
       required this.title,
       required this.description,
       required this.author,
@@ -224,7 +207,6 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
     map['post_message_id'] = Variable<int>(postMessageId);
     map['title'] = Variable<String>(title);
     map['description'] = Variable<String>(description);
@@ -238,7 +220,6 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
 
   PostsTableCompanion toCompanion(bool nullToAbsent) {
     return PostsTableCompanion(
-      id: Value(id),
       postMessageId: Value(postMessageId),
       title: Value(title),
       description: Value(description),
@@ -254,7 +235,6 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PostsTableData(
-      id: serializer.fromJson<int>(json['id']),
       postMessageId: serializer.fromJson<int>(json['postMessageId']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String>(json['description']),
@@ -269,7 +249,6 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
       'postMessageId': serializer.toJson<int>(postMessageId),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String>(description),
@@ -282,8 +261,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
   }
 
   PostsTableData copyWith(
-          {int? id,
-          int? postMessageId,
+          {int? postMessageId,
           String? title,
           String? description,
           int? author,
@@ -292,7 +270,6 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
           DateTime? createdAt,
           bool? isDeleted}) =>
       PostsTableData(
-        id: id ?? this.id,
         postMessageId: postMessageId ?? this.postMessageId,
         title: title ?? this.title,
         description: description ?? this.description,
@@ -305,7 +282,6 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
   @override
   String toString() {
     return (StringBuffer('PostsTableData(')
-          ..write('id: $id, ')
           ..write('postMessageId: $postMessageId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
@@ -319,13 +295,12 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
   }
 
   @override
-  int get hashCode => Object.hash(id, postMessageId, title, description, author,
+  int get hashCode => Object.hash(postMessageId, title, description, author,
       maxMembers, date, createdAt, isDeleted);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is PostsTableData &&
-          other.id == this.id &&
           other.postMessageId == this.postMessageId &&
           other.title == this.title &&
           other.description == this.description &&
@@ -337,7 +312,6 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
 }
 
 class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
-  final Value<int> id;
   final Value<int> postMessageId;
   final Value<String> title;
   final Value<String> description;
@@ -346,8 +320,8 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
   final Value<DateTime> date;
   final Value<DateTime> createdAt;
   final Value<bool> isDeleted;
+  final Value<int> rowid;
   const PostsTableCompanion({
-    this.id = const Value.absent(),
     this.postMessageId = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
@@ -356,9 +330,9 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     this.date = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   PostsTableCompanion.insert({
-    this.id = const Value.absent(),
     required int postMessageId,
     required String title,
     required String description,
@@ -367,6 +341,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     required DateTime date,
     this.createdAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
+    this.rowid = const Value.absent(),
   })  : postMessageId = Value(postMessageId),
         title = Value(title),
         description = Value(description),
@@ -374,7 +349,6 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
         maxMembers = Value(maxMembers),
         date = Value(date);
   static Insertable<PostsTableData> custom({
-    Expression<int>? id,
     Expression<int>? postMessageId,
     Expression<String>? title,
     Expression<String>? description,
@@ -383,9 +357,9 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     Expression<DateTime>? date,
     Expression<DateTime>? createdAt,
     Expression<bool>? isDeleted,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (id != null) 'id': id,
       if (postMessageId != null) 'post_message_id': postMessageId,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
@@ -394,21 +368,21 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
       if (date != null) 'date': date,
       if (createdAt != null) 'created_at': createdAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   PostsTableCompanion copyWith(
-      {Value<int>? id,
-      Value<int>? postMessageId,
+      {Value<int>? postMessageId,
       Value<String>? title,
       Value<String>? description,
       Value<int>? author,
       Value<int>? maxMembers,
       Value<DateTime>? date,
       Value<DateTime>? createdAt,
-      Value<bool>? isDeleted}) {
+      Value<bool>? isDeleted,
+      Value<int>? rowid}) {
     return PostsTableCompanion(
-      id: id ?? this.id,
       postMessageId: postMessageId ?? this.postMessageId,
       title: title ?? this.title,
       description: description ?? this.description,
@@ -417,15 +391,13 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
       date: date ?? this.date,
       createdAt: createdAt ?? this.createdAt,
       isDeleted: isDeleted ?? this.isDeleted,
+      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
     if (postMessageId.present) {
       map['post_message_id'] = Variable<int>(postMessageId.value);
     }
@@ -450,13 +422,15 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     if (isDeleted.present) {
       map['is_deleted'] = Variable<bool>(isDeleted.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('PostsTableCompanion(')
-          ..write('id: $id, ')
           ..write('postMessageId: $postMessageId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
@@ -464,7 +438,8 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
           ..write('maxMembers: $maxMembers, ')
           ..write('date: $date, ')
           ..write('createdAt: $createdAt, ')
-          ..write('isDeleted: $isDeleted')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -476,15 +451,6 @@ class $MembersTableTable extends MembersTable
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $MembersTableTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
   static const VerificationMeta _memberMeta = const VerificationMeta('member');
   @override
   late final GeneratedColumn<int> member = GeneratedColumn<int>(
@@ -499,7 +465,7 @@ class $MembersTableTable extends MembersTable
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'REFERENCES posts_table (post_message_id) ON DELETE CASCADE'));
   @override
-  List<GeneratedColumn> get $columns => [id, member, post];
+  List<GeneratedColumn> get $columns => [member, post];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -510,9 +476,6 @@ class $MembersTableTable extends MembersTable
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
     if (data.containsKey('member')) {
       context.handle(_memberMeta,
           member.isAcceptableOrUnknown(data['member']!, _memberMeta));
@@ -529,13 +492,11 @@ class $MembersTableTable extends MembersTable
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   MembersTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return MembersTableData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       member: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}member'])!,
       post: attachedDatabase.typeMapping
@@ -551,20 +512,15 @@ class $MembersTableTable extends MembersTable
 
 class MembersTableData extends DataClass
     implements Insertable<MembersTableData> {
-  /// An integer column named `id`. This is the primary key of the table and it auto increments.
-  final int id;
-
   /// A text column named `member`. This stores the userID of the member.
   final int member;
 
   /// A text column named `post`. This stores the post related to the member.
   final int post;
-  const MembersTableData(
-      {required this.id, required this.member, required this.post});
+  const MembersTableData({required this.member, required this.post});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
     map['member'] = Variable<int>(member);
     map['post'] = Variable<int>(post);
     return map;
@@ -572,7 +528,6 @@ class MembersTableData extends DataClass
 
   MembersTableCompanion toCompanion(bool nullToAbsent) {
     return MembersTableCompanion(
-      id: Value(id),
       member: Value(member),
       post: Value(post),
     );
@@ -582,7 +537,6 @@ class MembersTableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return MembersTableData(
-      id: serializer.fromJson<int>(json['id']),
       member: serializer.fromJson<int>(json['member']),
       post: serializer.fromJson<int>(json['post']),
     );
@@ -591,22 +545,18 @@ class MembersTableData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
       'member': serializer.toJson<int>(member),
       'post': serializer.toJson<int>(post),
     };
   }
 
-  MembersTableData copyWith({int? id, int? member, int? post}) =>
-      MembersTableData(
-        id: id ?? this.id,
+  MembersTableData copyWith({int? member, int? post}) => MembersTableData(
         member: member ?? this.member,
         post: post ?? this.post,
       );
   @override
   String toString() {
     return (StringBuffer('MembersTableData(')
-          ..write('id: $id, ')
           ..write('member: $member, ')
           ..write('post: $post')
           ..write(')'))
@@ -614,63 +564,62 @@ class MembersTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(id, member, post);
+  int get hashCode => Object.hash(member, post);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is MembersTableData &&
-          other.id == this.id &&
           other.member == this.member &&
           other.post == this.post);
 }
 
 class MembersTableCompanion extends UpdateCompanion<MembersTableData> {
-  final Value<int> id;
   final Value<int> member;
   final Value<int> post;
+  final Value<int> rowid;
   const MembersTableCompanion({
-    this.id = const Value.absent(),
     this.member = const Value.absent(),
     this.post = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   MembersTableCompanion.insert({
-    this.id = const Value.absent(),
     required int member,
     required int post,
+    this.rowid = const Value.absent(),
   })  : member = Value(member),
         post = Value(post);
   static Insertable<MembersTableData> custom({
-    Expression<int>? id,
     Expression<int>? member,
     Expression<int>? post,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (id != null) 'id': id,
       if (member != null) 'member': member,
       if (post != null) 'post': post,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   MembersTableCompanion copyWith(
-      {Value<int>? id, Value<int>? member, Value<int>? post}) {
+      {Value<int>? member, Value<int>? post, Value<int>? rowid}) {
     return MembersTableCompanion(
-      id: id ?? this.id,
       member: member ?? this.member,
       post: post ?? this.post,
+      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
     if (member.present) {
       map['member'] = Variable<int>(member.value);
     }
     if (post.present) {
       map['post'] = Variable<int>(post.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -678,9 +627,9 @@ class MembersTableCompanion extends UpdateCompanion<MembersTableData> {
   @override
   String toString() {
     return (StringBuffer('MembersTableCompanion(')
-          ..write('id: $id, ')
           ..write('member: $member, ')
-          ..write('post: $post')
+          ..write('post: $post, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
