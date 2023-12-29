@@ -6,6 +6,8 @@ import '../../core/bot/core.dart';
 import '../../core/const/command_exceptions.dart';
 import '../../core/utils/context/context.dart';
 import '../../core/utils/database/tables/posts.dart';
+import '../../core/utils/loaders/bot_settings.dart';
+import '../scheduler/scheduler.dart';
 import 'data/models/register_activity.dart';
 import 'message_handler.dart';
 
@@ -23,7 +25,7 @@ abstract interface class ILFGManager {
   FutureOr<ILFGPost> update(ILFGPostBuilder builder);
 
   /// Deletes existing LFG.
-  FutureOr<ILFGPost> delete(Snowflake id);
+  FutureOr<void> delete(int id);
 
   /// Reads existing LFG.
   FutureOr<ILFGPost> read(Snowflake id);
@@ -85,6 +87,11 @@ final class LFGManager implements ILFGManager {
       // save to memory post time, which will be used to notify users about LFG
       _posts[dbID] = dbPost.date.value;
 
+      Context.root.get<PostScheduler>('scheduler').schedulePost(
+            startTime: dbPost.date.value,
+            postID: dbPost.postMessageId.value,
+          );
+
       // return LFGPost
       return LFGPost.fromBuilder(
         builder,
@@ -100,9 +107,26 @@ final class LFGManager implements ILFGManager {
   }
 
   @override
-  FutureOr<ILFGPost> delete(Snowflake id) {
-    // TODO: implement delete
-    throw UnimplementedError();
+  FutureOr<void> delete(int id) async {
+    final post = await _database.findPost(id);
+    if (post == null) throw CantRespondException('LFG $id не найден');
+
+    final bot = Context.root.get<LFGBotCore>('core').bot;
+    final settings = Context.root.get<BotSettings>('settings');
+
+    final channel = await bot.channels.fetch(Snowflake(settings.botConfig.lfgChannel));
+    if (channel.type != ChannelType.guildText) {
+      throw CantRespondException(
+        'Канал LFG не найден или настроен неправильно\n'
+        'ID: ${settings.botConfig.lfgChannel}',
+      );
+    }
+
+    print('[LFGManager] Deleting post with id $id from database');
+    await _database.deletePost(id);
+
+    print('[LFGManager] Deleting post with id $id');
+    await (channel as GuildTextChannel).messages.fetch(Snowflake(post.postMessageId)).then((value) => value.delete());
   }
 
   @override
@@ -112,7 +136,6 @@ final class LFGManager implements ILFGManager {
 
   @override
   FutureOr<ILFGPost> update(ILFGPostBuilder builder) {
-    // TODO: implement update
     throw UnimplementedError();
   }
 
