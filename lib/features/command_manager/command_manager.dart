@@ -67,7 +67,7 @@ class CommandManager {
   /// If you create new command using the [registerCommand] method, you don't need to call this method again.
   void _listenInteractions() {
     _bot.onApplicationCommandInteraction.listen((event) {
-      print('Received new interaction: "${event.interaction.data.name}"');
+      print('[CommandManager] Received new interaction: "${event.interaction.data.name}"');
 
       final option = _UnifiedOption(
         name: event.interaction.data.name,
@@ -80,7 +80,7 @@ class CommandManager {
 
       final handler = _commands[matches.first];
       if (handler == null) {
-        print('Handler for interaction "${event.interaction.data.name}" not found');
+        print('[CommandManager] Handler for interaction "${event.interaction.data.name}" not found');
         return;
       }
 
@@ -94,11 +94,14 @@ class CommandManager {
   /// If you create new component using the [registerComponent] method, you don't need to call this method again.
   void _listenButtons() {
     _bot.onMessageComponentInteraction.listen((event) {
-      print('Received new button interaction: "${event.interaction.data.customId}"');
+      print(
+        '[CommandManager] Received new button interaction: "${event.interaction.data.customId}" '
+        'for ${event.interaction.member?.user?.username}',
+      );
 
       final handler = _components[event.interaction.data.customId];
       if (handler == null) {
-        print('Handler for button "${event.interaction.data.customId}" not found');
+        print('[CommandManager] Handler for button "${event.interaction.data.customId}" not found');
         return;
       } else {
         handler(event);
@@ -126,7 +129,7 @@ class CommandManager {
 
     for (final commandName in commandNames) {
       _commands[commandName] = commandCreator.handlers[commandName]!;
-      print('Registered new command: "${_commands.entries.last.key}"');
+      print('[CommandManager] Registered new command: "${_commands.entries.last.key}"');
     }
   }
 
@@ -135,7 +138,7 @@ class CommandManager {
   /// Component is a button, select menu, etc.
   Future<void> registerComponent(ComponentCreator componentCreator) async {
     _components[componentCreator.customID] = componentCreator.handler;
-    print('Registered new component: "${componentCreator.customID}"');
+    print('[CommandManager] Registered new component: "${componentCreator.customID}"');
   }
 
   Iterable<String> _getCommandNames(List<_UnifiedOption> interactionOptions, [String prefix = '']) sync* {

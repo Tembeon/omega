@@ -10,11 +10,17 @@ import 'package:lfg_bot/core/utils/context/context.dart';
 import 'package:lfg_bot/core/utils/database/tables/posts.dart';
 import 'package:lfg_bot/core/utils/loaders/bot_settings.dart';
 import 'package:lfg_bot/features/create/handler/create_handle.dart';
+import 'package:lfg_bot/features/join/handler/join_handle.dart';
+import 'package:lfg_bot/features/leave/handler/leave_handler.dart';
 import 'package:lfg_bot/features/lfg_manager/lfg_manager.dart';
 import 'package:lfg_bot/features/lfg_manager/message_handler.dart';
+import 'package:lfg_bot/features/scheduler/scheduler.dart';
 
 void main(List<String> arguments) => runZonedGuarded(
       runner,
+      zoneSpecification: ZoneSpecification(
+        print: (self, parent, zone, message) => l.i('[${DateTime.now()}] $message'),
+      ),
       (error, stack) {
         l.e('Root level exception:\n$error\n\n$stack');
 
@@ -41,6 +47,7 @@ Future<void> runner() async {
   if (!isLocaleInitialized) throw FatalException('Failed to initialize locale: ${settings.locale}');
 
   final lfgManager = LFGManager(database: database, messageHandler: const MessageHandler());
+  final scheduler = PostScheduler(database: database, core: core, lfgManager: lfgManager);
 
   Context.setRoot(
     Context.from({
@@ -48,10 +55,13 @@ Future<void> runner() async {
       'core': core,
       'db': database,
       'manager': lfgManager,
+      'scheduler': scheduler,
     }),
   );
 
   await core.commandManager.registerCommand(createCategoryCommands());
+  await core.commandManager.registerComponent(joinComponentHandler());
+  await core.commandManager.registerComponent(leaveComponentHandler());
 }
 
 DynamicLibrary _openSqlite() {
