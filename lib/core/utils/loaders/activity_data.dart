@@ -5,6 +5,20 @@ import '../../data/models/activity.dart';
 import '../../const/exceptions.dart';
 
 abstract final class ActivityData {
+
+  /// Loads activities from file.
+  factory ActivityData.fromFiles({
+    required String raidsPath,
+    required String dungeonsPath,
+    required String customsPath,
+  }) {
+    return _ActivityDataLoader(
+      dungeons: _loadDataFromFile(File(dungeonsPath)).map(Activity.dungeon).toList(),
+      raids: _loadDataFromFile(File(raidsPath)).map(Activity.raid).toList(),
+      customs: _loadDataFromFile(File(customsPath)).map(Activity.custom).toList(),
+    );
+  }
+
   /// Returns all activities.
   List<Activity> get activities;
 
@@ -19,19 +33,6 @@ abstract final class ActivityData {
 
   /// Returns activity by name.
   Activity get(String name);
-
-  /// Loads activities from file.
-  factory ActivityData.fromFiles({
-    required String raidsPath,
-    required String dungeonsPath,
-    required String customsPath,
-  }) {
-    return _ActivityDataLoader(
-      dungeons: _loadDataFromFile(File(dungeonsPath)).map(Activity.dungeon).toList(),
-      raids: _loadDataFromFile(File(raidsPath)).map(Activity.raid).toList(),
-      customs: _loadDataFromFile(File(customsPath)).map(Activity.custom).toList(),
-    );
-  }
 
   static List<Map<String, Object?>> _loadDataFromFile(File file) {
     if (!file.existsSync()) {

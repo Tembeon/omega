@@ -1,7 +1,14 @@
 /// Context is a key-value storage for passing data between middlewares and handlers.
 abstract final class Context {
-  static Context? _root;
+  /// Creates new empty context.
+  factory Context.empty() => const _Context(<String, Object>{});
+
+  /// Creates new context from [map].
+  factory Context.from(Map<String, Object> map) => _Context(map);
+
   static UnmodifiableContext get root => UnmodifiableContext(_root ?? _rootIsNotSet());
+
+  static Context? _root;
 
   static Never _rootIsNotSet() => throw Exception('Root context is not set');
 
@@ -15,16 +22,14 @@ abstract final class Context {
   /// Puts value to context.
   void operator []=(String key, Object value);
 
+  void put(String key, Object value) => this[key] = value;
+
   /// Returns value from context.
   Object operator [](String key);
 
+  T get<T>(String key) => this[key] as T;
+
   Map<String, Object> toMap();
-
-  /// Creates new empty context.
-  factory Context.empty() => _Context(Map());
-
-  /// Creates new context from [map].
-  factory Context.from(Map<String, Object> map) => _Context(map);
 }
 
 final class _Context implements Context {
@@ -37,7 +42,19 @@ final class _Context implements Context {
   Object operator [](String key) => _map[key] ?? _throwKeyNotFound(key);
 
   @override
+  void put(String key, Object value) => _map[key] = value;
+
+  @override
   void operator []=(String key, Object value) => _map[key] = value;
+
+  @override
+  T get<T>(String key) {
+    final value = _map[key];
+    if (value == null) {
+      _throwKeyNotFound(key);
+    }
+    return value as T;
+  }
 
   @override
   Map<String, Object> toMap() => _map;
@@ -55,7 +72,13 @@ final class UnmodifiableContext implements Context {
   Object operator [](String key) => _context[key];
 
   @override
+  T get<T>(String key) => this[key] as T;
+
+  @override
   void operator []=(String key, Object value) => throw Exception('Context is unmodifiable');
+
+  @override
+  void put(String key, Object value) => throw Exception('Context is unmodifiable');
 
   @override
   Map<String, Object> toMap() => _context.toMap();

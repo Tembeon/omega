@@ -3,5 +3,16 @@
   "bot_token": "BOT_TOKEN",
   "lfg_channel": "CHANNEL_ID",
   "promo_channel": "CHANNEL_ID",
-  "events_channels": ["CHANNEL_ID"]
+  "events_channels": ["CHANNEL_ID"],
+  "timezones": {
+    "EST": -5,
+    "CST": -6,
+    "MST": -7,
+    "PST": -8,
+    "GMT": 0,
+    "CET": 1,
+    "EET": 2,
+    "AEST": 10,
+    "AWST": 8
+  }
 }

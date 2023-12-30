@@ -60,3 +60,9 @@ String commandOptionTimezoneDescription = Intl.message(
   name: 'commandOptionTimezoneDescription',
   desc: 'A description text for "timezone" option in command',
 );
+
+String commandDescriptionCreateRaid = Intl.message(
+  'Создать рейд',
+  name: 'commandDescriptionCreateRaid',
+  desc: 'A description text for "/create raid" command',
+);

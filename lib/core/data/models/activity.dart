@@ -1,7 +1,21 @@
-import 'package:nyxx/nyxx.dart';
+import '../enums/activity_type.dart';
 
 /// Base class for all activities.
 abstract interface class Activity {
+  /// Creates dungeon activity from json
+  factory Activity.dungeon(Map<String, Object?> json) = _JsonActivity.dungeon;
+
+  /// Creates raid activity from json
+  factory Activity.raid(Map<String, Object?> json) = _JsonActivity.raid;
+
+  /// Creates activity from json
+  factory Activity.custom(Map<String, Object?> json) => _JsonActivity(
+        name: json['name']! as String,
+        maxMembers: json['max_members']! as int,
+        bannerUrl: json['banner_url']! as String,
+        enabled: json['enabled']! as bool,
+      );
+
   /// Visible name of the activity
   String get name;
 
@@ -14,48 +28,20 @@ abstract interface class Activity {
   /// Is activity enabled
   bool get enabled;
 
-  /// Creates activity from json
-  factory Activity.custom(Map<String, Object?> json) => _JsonActivity(
-        name: json['name']! as String,
-        maxMembers: json['max_members']! as int,
-        bannerUrl: json['banner_url']! as String,
-        enabled: json['enabled']! as bool,
-      );
-
-  /// Creates dungeon activity from json
-  factory Activity.dungeon(Map<String, Object?> json) = _JsonActivity.dungeon;
-
-  /// Creates raid activity from json
-  factory Activity.raid(Map<String, Object?> json) = _JsonActivity.raid;
+  /// Type of activity
+  ///
+  /// See [LFGActivityType] for more info.
+  LFGActivityType get type;
 }
 
 class _JsonActivity implements Activity {
   const _JsonActivity({
-    required String name,
-    required int maxMembers,
-    required String bannerUrl,
-    required bool enabled,
-  })  : _name = name,
-        _maxMembers = maxMembers,
-        _bannerUrl = bannerUrl,
-        _enabled = enabled;
-
-  final String _name;
-  final int _maxMembers;
-  final String _bannerUrl;
-  final bool _enabled;
-
-  @override
-  String get name => _name;
-
-  @override
-  int get maxMembers => _maxMembers;
-
-  @override
-  String get bannerUrl => _bannerUrl;
-
-  @override
-  bool get enabled => _enabled;
+    required this.name,
+    required this.maxMembers,
+    required this.bannerUrl,
+    required this.enabled,
+    this.type = LFGActivityType.custom,
+  });
 
   factory _JsonActivity.dungeon(Map<String, Object?> json) {
     return _JsonActivity(
@@ -63,6 +49,7 @@ class _JsonActivity implements Activity {
       maxMembers: 3,
       bannerUrl: json['banner_url']! as String,
       enabled: json['enabled']! as bool,
+      type: LFGActivityType.dungeon,
     );
   }
 
@@ -72,54 +59,22 @@ class _JsonActivity implements Activity {
       maxMembers: 6,
       bannerUrl: json['banner_url']! as String,
       enabled: json['enabled']! as bool,
+      type: LFGActivityType.raid,
     );
   }
-}
-
-/// Represents activity for LFG Builder
-final class LFGActivity implements Activity {
-  const LFGActivity({
-    required String name,
-    required int maxMembers,
-    required String bannerUrl,
-    required bool enabled,
-    required String description,
-    required Snowflake author,
-    required int id,
-  })  : _name = name,
-        _description = description,
-        _maxMembers = maxMembers,
-        _bannerUrl = bannerUrl,
-        _enabled = enabled,
-        _author = author,
-        _id = id;
-
-  final String _name;
-  final String _description;
-  final String _bannerUrl;
-  final bool _enabled;
-  final int _maxMembers;
-  final Snowflake _author;
-  final int _id;
 
   @override
-  String get name => _name;
-
-  /// Description of the activity, passed by the user.
-  String get description => _description;
-
-  /// Author of the activity.
-  Snowflake get author => _author;
-
-  /// Activity id. Provided by the database.
-  int get id => _id;
+  final String name;
 
   @override
-  String get bannerUrl => _bannerUrl;
+  final int maxMembers;
 
   @override
-  bool get enabled => _enabled;
+  final String bannerUrl;
 
   @override
-  int get maxMembers => _maxMembers;
+  final bool enabled;
+
+  @override
+  final LFGActivityType type;
 }
