@@ -159,7 +159,13 @@ final class PostScheduler {
     required final int postID,
   }) {
     final post = _posts.entries.firstWhere((e) => e.value == postID);
-    _posts.remove(post.key);
+    final value = _posts.remove(post.key);
+
+    if (value != null) {
+      print('[Scheduler] Post with id $postID was removed from scheduler');
+    } else {
+      print('[Scheduler] Post with id $postID was not found in scheduler');
+    }
   }
 
   /// Edits time of post with [postID] to [newTime].

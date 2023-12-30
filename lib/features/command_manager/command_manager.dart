@@ -25,6 +25,11 @@ typedef CommandCreator = ({
   Map<String, FutureOr<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction)> handlers,
 });
 
+/// Typedef for creating a new component with a handler.
+///
+/// Parameters:
+/// * [customID] is a custom ID of the component.
+/// * [handler] is a function that handles the component.
 typedef ComponentCreator = ({
   String customID,
   FutureOr<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction) handler,
@@ -35,7 +40,7 @@ typedef ComponentCreator = ({
 /// This class listens for interactions, parses them, and calls the appropriate handler.
 ///
 /// To register a new command, use the [registerCommand] method, which takes a [CommandCreator] as a parameter.
-class CommandManager {
+base class CommandManager {
   /// Creates a new [CommandManager] instance for a [bot].
   CommandManager({
     required NyxxGateway bot,
@@ -72,7 +77,7 @@ class CommandManager {
       final option = _UnifiedOption(
         name: event.interaction.data.name,
         type: CommandOptionType.subCommand,
-        options: event.interaction.data.options!.map(_UnifiedOption.fromInteractionOption).toList(),
+        options: event.interaction.data.options?.map(_UnifiedOption.fromInteractionOption).toList(),
       );
 
       final matches = _getCommandNames([option]);
@@ -118,7 +123,7 @@ class CommandManager {
     final option = _UnifiedOption(
       name: commandCreator.builder().name,
       type: CommandOptionType.subCommand,
-      options: commandCreator.builder().options!.map(_UnifiedOption.fromCommandOptionBuilder).toList(),
+      options: commandCreator.builder().options?.map(_UnifiedOption.fromCommandOptionBuilder).toList(),
     );
 
     final commandNames = _getCommandNames([option]);
@@ -129,7 +134,7 @@ class CommandManager {
 
     for (final commandName in commandNames) {
       _commands[commandName] = commandCreator.handlers[commandName]!;
-      print('[CommandManager] Registered new command: "${_commands.entries.last.key}"');
+      print('[CommandManager] Registered command: "${_commands.entries.last.key}"');
     }
   }
 
@@ -138,7 +143,7 @@ class CommandManager {
   /// Component is a button, select menu, etc.
   Future<void> registerComponent(ComponentCreator componentCreator) async {
     _components[componentCreator.customID] = componentCreator.handler;
-    print('[CommandManager] Registered new component: "${componentCreator.customID}"');
+    print('[CommandManager] Registered component: "${componentCreator.customID}"');
   }
 
   Iterable<String> _getCommandNames(List<_UnifiedOption> interactionOptions, [String prefix = '']) sync* {

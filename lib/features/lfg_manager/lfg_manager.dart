@@ -127,6 +127,9 @@ final class LFGManager implements ILFGManager {
 
     print('[LFGManager] Deleting post with id $id');
     await (channel as GuildTextChannel).messages.fetch(Snowflake(post.postMessageId)).then((value) => value.delete());
+
+    print('[LFGManager] Unsheduling post with id $id');
+    Context.root.get<PostScheduler>('scheduler').cancelPost(postID: id);
   }
 
   @override
