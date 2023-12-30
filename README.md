@@ -40,7 +40,7 @@ See table for a list of commands.
 
 ## Build from source
 ### Requirements
-- [Dart SDK](https://dart.dev/get-dart) (Requires Dart 3.1)
+- [Dart SDK](https://dart.dev/get-dart) (Requires Dart 3.2)
 
 ### Steps
 1. Clone this repository
