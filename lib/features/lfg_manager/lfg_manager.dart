@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:drift/drift.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/bot/core.dart';
@@ -16,29 +17,33 @@ abstract interface class ILFGManager {
   const ILFGManager();
 
   /// Creates new LFG.
-  FutureOr<ILFGPost> create({
+  Future<ILFGPost> create({
     required ILFGPostBuilder builder,
     required InteractionCreateEvent<ApplicationCommandInteraction> interaction,
   });
 
   /// Updates existing LFG.
-  FutureOr<ILFGPost> update(ILFGPostBuilder builder);
+  Future<void> update(
+    Message message, {
+    final String? description,
+    final int? unixTime,
+  });
 
   /// Deletes existing LFG.
-  FutureOr<void> delete(int id);
+  Future<void> delete(int id);
 
   /// Reads existing LFG.
-  FutureOr<ILFGPost> read(Snowflake id);
+  Future<ILFGPost> read(Snowflake id);
 
   /// Adds new member to LFG.
-  FutureOr<void> addMemberTo(
+  Future<void> addMemberTo(
     Message message,
     User user, {
     bool fromCreate = false,
   });
 
   /// Removes member from LFG.
-  FutureOr<void> removeMemberFrom(Message message, User user);
+  Future<void> removeMemberFrom(Message message, User user);
 }
 
 final class LFGManager implements ILFGManager {
@@ -54,14 +59,8 @@ final class LFGManager implements ILFGManager {
   /// Discord LFG message handler.
   final IMessageHandler _messageHandler;
 
-  /// Map of all LFG posts.
-  ///
-  /// Value is the date of the post. \
-  /// Key is the ID of the post in database.
-  final Map<int, DateTime> _posts = {};
-
   @override
-  FutureOr<ILFGPost> create({
+  Future<ILFGPost> create({
     required ILFGPostBuilder builder,
     required InteractionCreateEvent<ApplicationCommandInteraction> interaction,
   }) async {
@@ -84,9 +83,6 @@ final class LFGManager implements ILFGManager {
       final dbID = await _database.insertPost(dbPost);
       await addMemberTo(discordLfgPost, interaction.interaction.member!.user!, fromCreate: true);
 
-      // save to memory post time, which will be used to notify users about LFG
-      _posts[dbID] = dbPost.date.value;
-
       Context.root.get<PostScheduler>('scheduler').schedulePost(
             startTime: dbPost.date.value,
             postID: dbPost.postMessageId.value,
@@ -107,7 +103,7 @@ final class LFGManager implements ILFGManager {
   }
 
   @override
-  FutureOr<void> delete(int id) async {
+  Future<void> delete(int id) async {
     final post = await _database.findPost(id);
     if (post == null) throw CantRespondException('LFG $id не найден');
 
@@ -133,17 +129,43 @@ final class LFGManager implements ILFGManager {
   }
 
   @override
-  FutureOr<ILFGPost> read(Snowflake id) {
+  Future<ILFGPost> read(Snowflake id) {
     throw UnimplementedError();
   }
 
   @override
-  FutureOr<ILFGPost> update(ILFGPostBuilder builder) {
-    throw UnimplementedError();
+  Future<void> update(
+    Message message, {
+    final String? description,
+    final int? unixTime,
+  }) async {
+    final post = await _database.findPost(message.id.value);
+    if (post == null) throw CantRespondException('LFG ${message.id.value} не найден');
+
+    await _database.updatePost(
+      post.postMessageId,
+      PostsTableCompanion(
+        date: Value(unixTime != null ? DateTime.fromMillisecondsSinceEpoch(unixTime) : post.date),
+        description: Value(description ?? post.description),
+      ),
+    );
+
+    await _messageHandler.updatePost(
+      message,
+      description: description,
+      unixTime: unixTime,
+    );
+
+    if (unixTime != null) {
+      Context.root.get<PostScheduler>('scheduler').editTime(
+            postID: post.postMessageId,
+            newTime: DateTime.fromMillisecondsSinceEpoch(unixTime),
+          );
+    }
   }
 
   @override
-  FutureOr<void> addMemberTo(
+  Future<void> addMemberTo(
     Message message,
     User user, {
     bool fromCreate = false,
@@ -185,7 +207,7 @@ final class LFGManager implements ILFGManager {
   }
 
   @override
-  FutureOr<void> removeMemberFrom(Message message, User user) async {
+  Future<void> removeMemberFrom(Message message, User user) async {
     // for first, check if post exists
     final post = await _database.findPost(message.id.value);
     if (post == null) throw CantRespondException('LFG ${message.id.value} не найден');

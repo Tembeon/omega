@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:nyxx/nyxx.dart';
 
+import '../../core/const/command_exceptions.dart';
 import '../../core/utils/loaders/bot_settings.dart';
 
 /// Typedef for creating a new command with a handler.
@@ -22,7 +23,7 @@ import '../../core/utils/loaders/bot_settings.dart';
 ///  This map will be used to match the name of the command with the handler.
 typedef CommandCreator = ({
   ApplicationCommandBuilder Function() builder,
-  Map<String, FutureOr<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction)> handlers,
+  Map<String, Future<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction)> handlers,
 });
 
 /// Typedef for creating a new component with a handler.
@@ -32,7 +33,12 @@ typedef CommandCreator = ({
 /// * [handler] is a function that handles the component.
 typedef ComponentCreator = ({
   String customID,
-  FutureOr<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction) handler,
+  Future<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction) handler,
+});
+
+typedef ModalCreator = ({
+  String customID,
+  Future<void> Function(InteractionCreateEvent<ModalSubmitInteraction> interaction) handler,
 });
 
 /// Class which manages bot interactions, such as commands, buttons, etc.
@@ -47,6 +53,7 @@ base class CommandManager {
   }) : _bot = bot {
     _listenInteractions();
     _listenButtons();
+    _listenModals();
   }
 
   // Bot instance which used to manage interactions.
@@ -58,13 +65,16 @@ base class CommandManager {
 
   // Map of registered commands.
   // Key is a full command name, value is a function which handles command.
-  final Map<String, FutureOr<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction)>
+  final Map<String, Future<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction)>
       _commands = {};
 
   // Map of registered components.
   // Key is a custom ID of the component, value is a function which handles component.
-  final Map<String, FutureOr<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction)>
+  final Map<String, Future<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction)>
       _components = {};
+
+  final Map<String, Future<void> Function(InteractionCreateEvent<ModalSubmitInteraction> interaction)> _modals = {};
+  final Map<String, Timer> _modalsSubsTimers = {};
 
   /// Starts listening for registered interactions.
   ///
@@ -114,6 +124,31 @@ base class CommandManager {
     });
   }
 
+  void _listenModals() {
+    _bot.onModalSubmitInteraction.listen((event) {
+      print('[CommandManager] Received new modal interaction: "${event.interaction.data.customId}"');
+
+      final handler = _modals[event.interaction.data.customId];
+      if (handler == null) {
+        print('[CommandManager] Handler for modal "${event.interaction.data.customId}" not found');
+      } else {
+        handler(event);
+      }
+
+
+      final userId = event.interaction.user?.id.value ?? event.interaction.member?.user?.id.value;
+      if (userId == null) throw const CantRespondException('No user ID found in interaction');
+      final subscriberString = '${event.interaction.data.customId}_subscriber_$userId';
+      final subscriberHandler = _modals[subscriberString];
+      if (subscriberHandler != null) {
+        subscriberHandler(event);
+        _modals.remove(subscriberString);
+        _modalsSubsTimers[subscriberString]?.cancel();
+        _modalsSubsTimers.remove(subscriberString);
+      }
+    });
+  }
+
   /// Registers a new command to a bot.
   Future<void> registerCommand(CommandCreator commandCreator) async {
     // register command in Discord Guild
@@ -144,6 +179,37 @@ base class CommandManager {
   Future<void> registerComponent(ComponentCreator componentCreator) async {
     _components[componentCreator.customID] = componentCreator.handler;
     print('[CommandManager] Registered component: "${componentCreator.customID}"');
+  }
+
+  Future<void> registerModal(ModalCreator modalCreator) async {
+    _modals[modalCreator.customID] = modalCreator.handler;
+    print('[CommandManager] Registered modal: "${modalCreator.customID}"');
+  }
+
+  /// Registers a callback that will be called when the bot receives a new modal interaction with the given [modalID].
+  ///
+  /// Subscribers are one-time handlers that are called only once when the bot receives a modal interaction with the given [modalID].
+  void subscribeToModal({
+    required final String modalID,
+    required final int authorID,
+    required final Future<void> Function(InteractionCreateEvent<ModalSubmitInteraction> interaction) handler,
+    final Duration timeout = const Duration(minutes: 5), // time after which the handler will be removed
+  }) {
+    final subId = '${modalID}_subscriber_$authorID';
+    _modals[subId] = handler;
+    print('[CommandManager] Subscribed to modal: "$modalID"');
+    _modalsSubsTimers[subId] = Timer(timeout, () {
+      print('[CommandManager] Timeout for $subId reached');
+      unsubscribeFromModal(customID: modalID, authorID: authorID);
+    });
+  }
+
+  void unsubscribeFromModal({
+    required final String customID,
+    required final int authorID,
+  }) {
+    _modals.remove('${customID}_subscriber_$authorID');
+    print('[CommandManager] Unsubscribed from modal: "$customID"');
   }
 
   Iterable<String> _getCommandNames(List<_UnifiedOption> interactionOptions, [String prefix = '']) sync* {
