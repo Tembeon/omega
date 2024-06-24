@@ -21,7 +21,7 @@ class CreatorCannotLeaveException implements CommandException {
 
   @override
   String toHumanMessage() => 'Невозможно покинуть сбор, так как вы являетесь его создателем. '
-      'Если вы хотите удалить сбор, воспользуйтесь командой `/delete`.';
+      'Если вы хотите удалить сбор, нажмите ПКМ по сообщению, выберите "Приложения", затем "Удалить LFG".';
 }
 
 /// Exception thrown when a player tries to join an activity they are already in.
