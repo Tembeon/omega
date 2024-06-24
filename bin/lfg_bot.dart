@@ -11,6 +11,7 @@ import 'package:lfg_bot/core/utils/database/tables/posts.dart';
 import 'package:lfg_bot/core/utils/loaders/bot_settings.dart';
 import 'package:lfg_bot/features/create/handler/create_handle.dart';
 import 'package:lfg_bot/features/delete/handler/delete_handler.dart';
+import 'package:lfg_bot/features/edit/handler/edit_handler.dart';
 import 'package:lfg_bot/features/join/handler/join_handle.dart';
 import 'package:lfg_bot/features/leave/handler/leave_handler.dart';
 import 'package:lfg_bot/features/lfg_manager/lfg_manager.dart';
@@ -62,6 +63,7 @@ Future<void> runner() async {
 
   await core.commandManager.registerCommand(createCategoryCommands());
   await core.commandManager.registerCommand(deleteCommand());
+  await core.commandManager.registerCommand(editComponentHandler());
 
   await core.commandManager.registerComponent(joinComponentHandler());
   await core.commandManager.registerComponent(leaveComponentHandler());
