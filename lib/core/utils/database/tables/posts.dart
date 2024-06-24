@@ -113,6 +113,10 @@ class PostsDatabase extends _$PostsDatabase {
     return (update(postsTable)..where((post) => post.postMessageId.equals(postID)))
         .write(const PostsTableCompanion(isDeleted: Value(true)));
   }
+
+  Future<int> updatePost(int postID, PostsTableCompanion post) {
+    return (update(postsTable)..where((post) => post.postMessageId.equals(postID))).write(post);
+  }
 }
 
 LazyDatabase _openConnection() {
