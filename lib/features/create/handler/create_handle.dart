@@ -12,10 +12,10 @@ import '../../lfg_manager/lfg_manager.dart';
 ///
 /// This command is used for creating new LFG posts.
 ///
-/// This command has 3 subcommands: raid, dungeon, custom.
+/// This command has 3 subcommands: raid, dungeon, activity.
 /// * raid - creates new LFG post for raid activity.
 /// * dungeon - creates new LFG post for dungeon activity.
-/// * custom - creates new LFG post for custom activity.
+/// * activity - creates new LFG post for custom activity.
 CommandCreator createCategoryCommands() {
   return (
     builder: _createAll,
