@@ -30,8 +30,8 @@ abstract interface class Activity {
 
   /// Type of activity
   ///
-  /// See [LFGActivityType] for more info.
-  LFGActivityType get type;
+  /// See [LFGType] for more info.
+  LFGType get type;
 }
 
 class _JsonActivity implements Activity {
@@ -40,7 +40,7 @@ class _JsonActivity implements Activity {
     required this.maxMembers,
     required this.bannerUrl,
     required this.enabled,
-    this.type = LFGActivityType.custom,
+    this.type = LFGType.activity,
   });
 
   factory _JsonActivity.dungeon(Map<String, Object?> json) {
@@ -49,7 +49,7 @@ class _JsonActivity implements Activity {
       maxMembers: 3,
       bannerUrl: json['banner_url']! as String,
       enabled: json['enabled']! as bool,
-      type: LFGActivityType.dungeon,
+      type: LFGType.dungeon,
     );
   }
 
@@ -59,7 +59,7 @@ class _JsonActivity implements Activity {
       maxMembers: 6,
       bannerUrl: json['banner_url']! as String,
       enabled: json['enabled']! as bool,
-      type: LFGActivityType.raid,
+      type: LFGType.raid,
     );
   }
 
@@ -76,5 +76,5 @@ class _JsonActivity implements Activity {
   final bool enabled;
 
   @override
-  final LFGActivityType type;
+  final LFGType type;
 }

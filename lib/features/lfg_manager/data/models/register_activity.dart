@@ -48,7 +48,7 @@ base class LFGPostBuilder implements ILFGPostBuilder {
     required this.name,
     required this.maxMembers,
     this.enabled = true,
-    this.type = LFGActivityType.custom,
+    this.type = LFGType.activity,
   });
 
   /// Creates new LFG post builder using data from [Activity].
@@ -110,7 +110,7 @@ base class LFGPostBuilder implements ILFGPostBuilder {
 
   /// Type of LFG activity.
   @override
-  final LFGActivityType type;
+  final LFGType type;
 
   @override
   bool operator ==(Object other) =>
@@ -145,7 +145,7 @@ base class LFGPostBuilder implements ILFGPostBuilder {
     bool? enabled,
     String? name,
     int? maxMembers,
-    LFGActivityType? type,
+    LFGType? type,
   }) {
     return LFGPostBuilder(
       authorID: authorID ?? this.authorID,
@@ -234,5 +234,5 @@ base class LFGPost implements ILFGPost {
   final Snowflake messageID;
 
   @override
-  final LFGActivityType type;
+  final LFGType type;
 }
