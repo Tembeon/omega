@@ -4,33 +4,31 @@ version: 1.0.0
 repository: https://github.com/Tembeon/lfg_bot
 
 environment:
-  sdk: '>=3.2.0 <3.3.0'
+  sdk: '>=3.4.0 <4.0.0'
 
 # Add regular dependencies here.
 dependencies:
 
   # bot core
-  nyxx: ^6.1.0
+  nyxx: ^6.2.1
 
   # platform
-  path_provider: ^2.1.1
   path: ^1.9.0
   io: ^1.0.4
 
   # database
-  drift: ^2.14.1
-  sqlite3: ^2.3.0
+  drift: ^2.18.0
+  sqlite3: ^2.4.4
 
   # utils
   l: ^4.0.2
 
   # localization
-  intl: ^0.18.1
-  intl_translation: ^0.18.2
+  intl: ^0.19.0
+#  intl_translation: ^0.19.0
 
 dev_dependencies:
-  lints: ^3.0.0
-  test: ^1.25.0
-  build_runner: ^2.4.7
-  drift_dev: ^2.14.1
-
+  lints: ^4.0.0
+  test: ^1.25.7
+  build_runner: ^2.4.11
+  drift_dev: ^2.18.0
