@@ -40,7 +40,7 @@ class _JsonActivity implements Activity {
     required this.maxMembers,
     required this.bannerUrl,
     required this.enabled,
-    this.type = LFGActivityType.custom,
+    this.type = LFGActivityType.activity,
   });
 
   factory _JsonActivity.dungeon(Map<String, Object?> json) {

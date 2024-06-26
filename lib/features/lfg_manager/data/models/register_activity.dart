@@ -48,7 +48,7 @@ base class LFGPostBuilder implements ILFGPostBuilder {
     required this.name,
     required this.maxMembers,
     this.enabled = true,
-    this.type = LFGActivityType.custom,
+    this.type = LFGActivityType.activity,
   });
 
   /// Creates new LFG post builder using data from [Activity].

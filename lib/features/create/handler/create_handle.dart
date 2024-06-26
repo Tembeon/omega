@@ -22,7 +22,7 @@ CommandCreator createCategoryCommands() {
     handlers: {
       'create raid': _createActivityHandler,
       'create dungeon': _createActivityHandler,
-      'create custom': _createActivityHandler,
+      'create activity': _createActivityHandler,
     }
   );
 }
@@ -37,7 +37,7 @@ Future<void> _createActivityHandler(InteractionCreateEvent<ApplicationCommandInt
   final manager = Context.root.get<LFGManager>('manager');
   final settings = Context.root.get<BotSettings>('settings');
 
-  // create command always has 1 subcommand: raid, dungeon, custom.
+  // create command always has 1 subcommand: raid, dungeon, activity.
   // So we can just use first to get options of subcommand.
   // All options for `/create` command are equal for all subcommands.
   final createOptions = interaction.interaction.data.options!.first.options!;
