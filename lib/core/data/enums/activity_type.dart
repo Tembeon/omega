@@ -9,8 +9,8 @@ enum LFGActivityType {
   ///
   /// See [Activity.custom] for more info.
   ///
-  /// All custom activities registers in `/create custom` command.
-  custom,
+  /// All custom activities registers in `/create activity` command.
+  activity,
 
   /// Dungeon activity, stored in `/activities/dungeons.json` file.
   ///
