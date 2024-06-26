@@ -62,7 +62,7 @@ Future<void> _createActivityHandler(InteractionCreateEvent<ApplicationCommandInt
   );
 }
 
-List<CommandOptionChoiceBuilder<String>>? _getActivityChoices(LFGActivityType type) {
+List<CommandOptionChoiceBuilder<String>>? _getActivityChoices(LFGType type) {
   final settings = Context.root.get<BotSettings>('settings');
   final activities = settings.activityData.activities.where((e) => e.type == type);
 
@@ -83,7 +83,7 @@ ApplicationCommandBuilder _createAll() {
     name: 'create',
     description: 'Создать активность',
     type: ApplicationCommandType.chatInput,
-    options: LFGActivityType.values
+    options: LFGType.values
         .map((type) => CommandOptionBuilder.subCommand(
               name: type.name,
               description: 'Создать сбор на активность',

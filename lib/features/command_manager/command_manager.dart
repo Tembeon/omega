@@ -14,9 +14,9 @@ import '../../core/utils/loaders/bot_settings.dart';
 /// So, we can create a map of handlers for this command:
 /// ```dart
 /// {
-///  'raid': (interaction) => _createActivityHandler(interaction, LFGActivityType.raid),
-///  'dungeon': (interaction) => _createActivityHandler(interaction, LFGActivityType.dungeon),
-///  'activity': (interaction) => _createActivityHandler(interaction, LFGActivityType.activity),
+///  'raid': (interaction) => _createActivityHandler(interaction, LFGType.raid),
+///  'dungeon': (interaction) => _createActivityHandler(interaction, LFGType.dungeon),
+///  'activity': (interaction) => _createActivityHandler(interaction, LFGType.activity),
 ///  }
 ///  ```
 ///  This map will be used to match the name of the command with the handler.

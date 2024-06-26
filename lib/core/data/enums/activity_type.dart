@@ -1,5 +1,5 @@
 /// Enum for activity types.
-enum LFGActivityType {
+enum LFGType {
 
   /// Custom activity, stored in `/activities/custom.json` file.
   ///
@@ -14,7 +14,7 @@ enum LFGActivityType {
 
   /// Dungeon activity, stored in `/activities/dungeons.json` file.
   ///
-  /// Main difference from [LFGActivityType.activity] is that it has fixed number of members: 3.
+  /// Main difference from [LFGType.activity] is that it has fixed number of members: 3.
   ///
   /// See [Activity.dungeon] for more info.
   ///
@@ -23,7 +23,7 @@ enum LFGActivityType {
 
   /// Raid activity, stored in `/activities/raids.json` file.
   ///
-  /// Main difference from [LFGActivityType.activity] is that it has fixed number of members: 6.
+  /// Main difference from [LFGType.activity] is that it has fixed number of members: 6.
   ///
   /// See [Activity.raid] for more info.
   ///
