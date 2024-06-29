@@ -32,6 +32,9 @@ class PostsTable extends Table {
   /// A DateTime column named `date`. This stores the start date of the post.
   DateTimeColumn get date => dateTime().check(date.isBiggerThan(currentDateAndTime))();
 
+  /// A integer column named `timezone`. This stores the timezone of the post.
+  IntColumn get timezone => integer()();
+
   /// A DateTime column named `createdAt`. This stores the creation date of the post.
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 

@@ -128,17 +128,9 @@ base class CommandManager {
     _bot.onModalSubmitInteraction.listen((event) {
       print('[CommandManager] Received new modal interaction: "${event.interaction.data.customId}"');
 
-      final handler = _modals[event.interaction.data.customId];
-      if (handler == null) {
-        print('[CommandManager] Handler for modal "${event.interaction.data.customId}" not found');
-      } else {
-        handler(event);
-      }
-
-
       final userId = event.interaction.user?.id.value ?? event.interaction.member?.user?.id.value;
       if (userId == null) throw const CantRespondException('No user ID found in interaction');
-      final subscriberString = '${event.interaction.data.customId}_subscriber_$userId';
+      final subscriberString = '${event.interaction.data.customId}_subscriber';
       final subscriberHandler = _modals[subscriberString];
       if (subscriberHandler != null) {
         subscriberHandler(event);
@@ -191,24 +183,22 @@ base class CommandManager {
   /// Subscribers are one-time handlers that are called only once when the bot receives a modal interaction with the given [modalID].
   void subscribeToModal({
     required final String modalID,
-    required final int authorID,
     required final Future<void> Function(InteractionCreateEvent<ModalSubmitInteraction> interaction) handler,
     final Duration timeout = const Duration(minutes: 5), // time after which the handler will be removed
   }) {
-    final subId = '${modalID}_subscriber_$authorID';
+    final subId = '${modalID}_subscriber';
     _modals[subId] = handler;
     print('[CommandManager] Subscribed to modal: "$modalID"');
     _modalsSubsTimers[subId] = Timer(timeout, () {
       print('[CommandManager] Timeout for $subId reached');
-      unsubscribeFromModal(customID: modalID, authorID: authorID);
+      unsubscribeFromModal(customID: modalID);
     });
   }
 
   void unsubscribeFromModal({
     required final String customID,
-    required final int authorID,
   }) {
-    _modals.remove('${customID}_subscriber_$authorID');
+    _modals.remove('${customID}_subscriber');
     print('[CommandManager] Unsubscribed from modal: "$customID"');
   }
 

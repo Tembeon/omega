@@ -4,6 +4,7 @@ import 'package:nyxx/nyxx.dart' hide Activity;
 import '../../../core/bot/core.dart';
 import '../../../core/utils/context/context.dart';
 import '../../../core/utils/database/tables/posts.dart';
+import '../../../core/utils/time_convert.dart';
 import '../../command_manager/command_manager.dart';
 import '../../lfg_manager/lfg_manager.dart';
 
@@ -56,9 +57,16 @@ Future<void> _handleEditInteraction(InteractionCreateEvent<ApplicationCommandInt
     return;
   }
 
+  Context.root.get<LFGBotCore>('core').commandManager.unsubscribeFromModal(
+        customID: 'edit_modal_${postData.postMessageId}',
+        // authorID: event.interaction.user?.id.value ?? event.interaction.member?.user?.id.value ?? postData.author,
+      );
+
+  print('[EditHandler] Detected timezone: ${postData.timezone}');
+
   await event.interaction.respondModal(
     ModalBuilder(
-      customId: 'edit_modal',
+      customId: 'edit_modal_${postData.postMessageId}',
       title: 'Редактирование LFG',
       components: [
         ActionRowBuilder(
@@ -76,53 +84,39 @@ Future<void> _handleEditInteraction(InteractionCreateEvent<ApplicationCommandInt
         ActionRowBuilder(
           components: [
             TextInputBuilder(
-              customId: 'edit_time',
-              label: 'Время начала',
+              customId: 'edit_date',
+              label: 'Дата начала',
               placeholder: 'Введите новое время начала',
-              value: DateFormat('dd MM yyyy').format(postData.date),
+              value: DateFormat('dd MM yyyy').format(postData.date.add(Duration(hours: postData.timezone)).toUtc()),
               style: TextInputStyle.short,
             ),
           ],
         ),
-        // ActionRowBuilder(
-        //   components: [
-        //     // SelectMenuBuilder.stringSelect(
-        //     //   customId: 'edit_timezone',
-        //     //   // placeholder: 'Выберите часовой пояс',
-        //     //   minValues: 1, // TODO: остановился на добавлении пикера часового пояса. Дискорд отдает ошибку Value of field "type" must be one of (4,)., хотя в документации указано, что ActionRow может содержать любой type
-        //     //   maxValues: 1,
-        //     //   options: /*Context.root
-        //     //       .get<BotSettings>('settings')
-        //     //       .botConfig
-        //     //       .timezones */
-        //     //       {
-        //     //     '1': '1',
-        //     //     '2': '2',
-        //     //     '3': '3',
-        //     //   }
-        //     //           .entries
-        //     //           .map(
-        //     //             (e) => SelectMenuOptionBuilder(
-        //     //               label: e.key,
-        //     //               value: e.value.toString(),
-        //     //             ),
-        //     //           )
-        //     //           .toList(),
-        //     // ),
-        //   ],
-        // ),
+        ActionRowBuilder(
+          components: [
+            TextInputBuilder(
+              customId: 'edit_time',
+              label: 'Время начала',
+              placeholder: 'Введите новое время начала',
+              value: DateFormat('HH mm').format(postData.date.add(Duration(hours: postData.timezone)).toUtc()),
+              style: TextInputStyle.short,
+            ),
+          ],
+        ),
       ],
     ),
   );
 
   Context.root.get<LFGBotCore>('core').commandManager.subscribeToModal(
-        authorID: event.interaction.user?.id.value ?? event.interaction.member?.user?.id.value ?? 0,
-        modalID: 'edit_modal',
+        // authorID: event.interaction.user?.id.value ?? event.interaction.member?.user?.id.value ?? 0,
+        modalID: 'edit_modal_${postData.postMessageId}',
         handler: (interaction) async {
+
           await _editLFGMessage(
             postId: message.value,
             origin: event,
             modalEvent: interaction,
+            timezone: postData.timezone,
           );
         },
       );
@@ -132,32 +126,36 @@ Future<void> _editLFGMessage({
   required int postId,
   required InteractionCreateEvent<ApplicationCommandInteraction> origin,
   required InteractionCreateEvent<ModalSubmitInteraction> modalEvent,
+  required int timezone,
 }) async {
   // at this moment we can be sure that user is the author of the post
   print('[EditHandler] Editing LFG message with id: $postId');
 
   String? newDescription;
   int? newUnixTime;
+  String? newDate;
+  String? newTime;
 
   void save(List<MessageComponent> components) {
     for (final component in components) {
       if (component is ActionRowComponent) save(component.components);
       if (component is TextInputComponent) {
+        print('Component: ${component.customId} => ${component.value}');
         switch (component.customId) {
           case 'edit_description':
             newDescription = component.value;
-          // case 'edit_time':
-          //   newUnixTime = TimeConverters.userInputToUnix(
-          //     timeInput: component.value,
-          //     dateInput: DateFormat('dd MM yyyy').format(DateTime.now()),
-          //     timezoneInput: 0,
-          //   );
+          case 'edit_time':
+            newTime = component.value;
+          case 'edit_date':
+            newDate = component.value;
         }
       }
     }
   }
 
   save(modalEvent.interaction.data.components);
+
+  newUnixTime = TimeConverters.userInputToUnix(timeInput: newTime!, dateInput: newDate!, timezoneInput: timezone);
 
   final messageId = origin.interaction.data.targetId;
   final channel = (await origin.interaction.channel?.get()) as GuildTextChannel?;

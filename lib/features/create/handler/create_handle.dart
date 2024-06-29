@@ -57,6 +57,7 @@ Future<void> _createActivityHandler(InteractionCreateEvent<ApplicationCommandInt
       activity: activity,
       authorID: member.user!.id,
       description: description,
+      timezone: timezone,
       unixDate: TimeConverters.userInputToUnix(timeInput: time, dateInput: date, timezoneInput: timezone),
     ),
   );

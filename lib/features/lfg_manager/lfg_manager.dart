@@ -75,6 +75,7 @@ final class LFGManager implements ILFGManager {
         title: builder.name,
         description: builder.description,
         date: DateTime.fromMillisecondsSinceEpoch(builder.unixDate),
+        timezone: builder.timezone,
         author: builder.authorID.value,
         postMessageId: (discordLfgPost.id.value),
         maxMembers: builder.maxMembers,
