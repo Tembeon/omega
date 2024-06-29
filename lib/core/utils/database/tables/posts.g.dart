@@ -48,6 +48,12 @@ class $PostsTableTable extends PostsTable
       check: () => date.isBiggerThan(currentDateAndTime),
       type: DriftSqlType.dateTime,
       requiredDuringInsert: true);
+  static const VerificationMeta _timezoneMeta =
+      const VerificationMeta('timezone');
+  @override
+  late final GeneratedColumn<int> timezone = GeneratedColumn<int>(
+      'timezone', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -74,6 +80,7 @@ class $PostsTableTable extends PostsTable
         author,
         maxMembers,
         date,
+        timezone,
         createdAt,
         isDeleted
       ];
@@ -129,6 +136,12 @@ class $PostsTableTable extends PostsTable
     } else if (isInserting) {
       context.missing(_dateMeta);
     }
+    if (data.containsKey('timezone')) {
+      context.handle(_timezoneMeta,
+          timezone.isAcceptableOrUnknown(data['timezone']!, _timezoneMeta));
+    } else if (isInserting) {
+      context.missing(_timezoneMeta);
+    }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
@@ -158,6 +171,8 @@ class $PostsTableTable extends PostsTable
           .read(DriftSqlType.int, data['${effectivePrefix}max_members'])!,
       date: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
+      timezone: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}timezone'])!,
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       isDeleted: attachedDatabase.typeMapping
@@ -190,6 +205,9 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
   /// A DateTime column named `date`. This stores the start date of the post.
   final DateTime date;
 
+  /// A integer column named `timezone`. This stores the timezone of the post.
+  final int timezone;
+
   /// A DateTime column named `createdAt`. This stores the creation date of the post.
   final DateTime createdAt;
 
@@ -202,6 +220,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
       required this.author,
       required this.maxMembers,
       required this.date,
+      required this.timezone,
       required this.createdAt,
       required this.isDeleted});
   @override
@@ -213,6 +232,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
     map['author'] = Variable<int>(author);
     map['max_members'] = Variable<int>(maxMembers);
     map['date'] = Variable<DateTime>(date);
+    map['timezone'] = Variable<int>(timezone);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['is_deleted'] = Variable<bool>(isDeleted);
     return map;
@@ -226,6 +246,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
       author: Value(author),
       maxMembers: Value(maxMembers),
       date: Value(date),
+      timezone: Value(timezone),
       createdAt: Value(createdAt),
       isDeleted: Value(isDeleted),
     );
@@ -241,6 +262,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
       author: serializer.fromJson<int>(json['author']),
       maxMembers: serializer.fromJson<int>(json['maxMembers']),
       date: serializer.fromJson<DateTime>(json['date']),
+      timezone: serializer.fromJson<int>(json['timezone']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
     );
@@ -255,6 +277,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
       'author': serializer.toJson<int>(author),
       'maxMembers': serializer.toJson<int>(maxMembers),
       'date': serializer.toJson<DateTime>(date),
+      'timezone': serializer.toJson<int>(timezone),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
     };
@@ -267,6 +290,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
           int? author,
           int? maxMembers,
           DateTime? date,
+          int? timezone,
           DateTime? createdAt,
           bool? isDeleted}) =>
       PostsTableData(
@@ -276,6 +300,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
         author: author ?? this.author,
         maxMembers: maxMembers ?? this.maxMembers,
         date: date ?? this.date,
+        timezone: timezone ?? this.timezone,
         createdAt: createdAt ?? this.createdAt,
         isDeleted: isDeleted ?? this.isDeleted,
       );
@@ -288,6 +313,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
           ..write('author: $author, ')
           ..write('maxMembers: $maxMembers, ')
           ..write('date: $date, ')
+          ..write('timezone: $timezone, ')
           ..write('createdAt: $createdAt, ')
           ..write('isDeleted: $isDeleted')
           ..write(')'))
@@ -296,7 +322,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
 
   @override
   int get hashCode => Object.hash(postMessageId, title, description, author,
-      maxMembers, date, createdAt, isDeleted);
+      maxMembers, date, timezone, createdAt, isDeleted);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -307,6 +333,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
           other.author == this.author &&
           other.maxMembers == this.maxMembers &&
           other.date == this.date &&
+          other.timezone == this.timezone &&
           other.createdAt == this.createdAt &&
           other.isDeleted == this.isDeleted);
 }
@@ -318,6 +345,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
   final Value<int> author;
   final Value<int> maxMembers;
   final Value<DateTime> date;
+  final Value<int> timezone;
   final Value<DateTime> createdAt;
   final Value<bool> isDeleted;
   final Value<int> rowid;
@@ -328,6 +356,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     this.author = const Value.absent(),
     this.maxMembers = const Value.absent(),
     this.date = const Value.absent(),
+    this.timezone = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -339,6 +368,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     required int author,
     required int maxMembers,
     required DateTime date,
+    required int timezone,
     this.createdAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -347,7 +377,8 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
         description = Value(description),
         author = Value(author),
         maxMembers = Value(maxMembers),
-        date = Value(date);
+        date = Value(date),
+        timezone = Value(timezone);
   static Insertable<PostsTableData> custom({
     Expression<int>? postMessageId,
     Expression<String>? title,
@@ -355,6 +386,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     Expression<int>? author,
     Expression<int>? maxMembers,
     Expression<DateTime>? date,
+    Expression<int>? timezone,
     Expression<DateTime>? createdAt,
     Expression<bool>? isDeleted,
     Expression<int>? rowid,
@@ -366,6 +398,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
       if (author != null) 'author': author,
       if (maxMembers != null) 'max_members': maxMembers,
       if (date != null) 'date': date,
+      if (timezone != null) 'timezone': timezone,
       if (createdAt != null) 'created_at': createdAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (rowid != null) 'rowid': rowid,
@@ -379,6 +412,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
       Value<int>? author,
       Value<int>? maxMembers,
       Value<DateTime>? date,
+      Value<int>? timezone,
       Value<DateTime>? createdAt,
       Value<bool>? isDeleted,
       Value<int>? rowid}) {
@@ -389,6 +423,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
       author: author ?? this.author,
       maxMembers: maxMembers ?? this.maxMembers,
       date: date ?? this.date,
+      timezone: timezone ?? this.timezone,
       createdAt: createdAt ?? this.createdAt,
       isDeleted: isDeleted ?? this.isDeleted,
       rowid: rowid ?? this.rowid,
@@ -416,6 +451,9 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
     }
+    if (timezone.present) {
+      map['timezone'] = Variable<int>(timezone.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -437,6 +475,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
           ..write('author: $author, ')
           ..write('maxMembers: $maxMembers, ')
           ..write('date: $date, ')
+          ..write('timezone: $timezone, ')
           ..write('createdAt: $createdAt, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('rowid: $rowid')
@@ -637,6 +676,7 @@ class MembersTableCompanion extends UpdateCompanion<MembersTableData> {
 
 abstract class _$PostsDatabase extends GeneratedDatabase {
   _$PostsDatabase(QueryExecutor e) : super(e);
+  _$PostsDatabaseManager get managers => _$PostsDatabaseManager(this);
   late final $PostsTableTable postsTable = $PostsTableTable(this);
   late final $MembersTableTable membersTable = $MembersTableTable(this);
   @override
@@ -657,4 +697,340 @@ abstract class _$PostsDatabase extends GeneratedDatabase {
           ),
         ],
       );
+}
+
+typedef $$PostsTableTableInsertCompanionBuilder = PostsTableCompanion Function({
+  required int postMessageId,
+  required String title,
+  required String description,
+  required int author,
+  required int maxMembers,
+  required DateTime date,
+  required int timezone,
+  Value<DateTime> createdAt,
+  Value<bool> isDeleted,
+  Value<int> rowid,
+});
+typedef $$PostsTableTableUpdateCompanionBuilder = PostsTableCompanion Function({
+  Value<int> postMessageId,
+  Value<String> title,
+  Value<String> description,
+  Value<int> author,
+  Value<int> maxMembers,
+  Value<DateTime> date,
+  Value<int> timezone,
+  Value<DateTime> createdAt,
+  Value<bool> isDeleted,
+  Value<int> rowid,
+});
+
+class $$PostsTableTableTableManager extends RootTableManager<
+    _$PostsDatabase,
+    $PostsTableTable,
+    PostsTableData,
+    $$PostsTableTableFilterComposer,
+    $$PostsTableTableOrderingComposer,
+    $$PostsTableTableProcessedTableManager,
+    $$PostsTableTableInsertCompanionBuilder,
+    $$PostsTableTableUpdateCompanionBuilder> {
+  $$PostsTableTableTableManager(_$PostsDatabase db, $PostsTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$PostsTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$PostsTableTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$PostsTableTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> postMessageId = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> description = const Value.absent(),
+            Value<int> author = const Value.absent(),
+            Value<int> maxMembers = const Value.absent(),
+            Value<DateTime> date = const Value.absent(),
+            Value<int> timezone = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<bool> isDeleted = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              PostsTableCompanion(
+            postMessageId: postMessageId,
+            title: title,
+            description: description,
+            author: author,
+            maxMembers: maxMembers,
+            date: date,
+            timezone: timezone,
+            createdAt: createdAt,
+            isDeleted: isDeleted,
+            rowid: rowid,
+          ),
+          getInsertCompanionBuilder: ({
+            required int postMessageId,
+            required String title,
+            required String description,
+            required int author,
+            required int maxMembers,
+            required DateTime date,
+            required int timezone,
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<bool> isDeleted = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              PostsTableCompanion.insert(
+            postMessageId: postMessageId,
+            title: title,
+            description: description,
+            author: author,
+            maxMembers: maxMembers,
+            date: date,
+            timezone: timezone,
+            createdAt: createdAt,
+            isDeleted: isDeleted,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$PostsTableTableProcessedTableManager extends ProcessedTableManager<
+    _$PostsDatabase,
+    $PostsTableTable,
+    PostsTableData,
+    $$PostsTableTableFilterComposer,
+    $$PostsTableTableOrderingComposer,
+    $$PostsTableTableProcessedTableManager,
+    $$PostsTableTableInsertCompanionBuilder,
+    $$PostsTableTableUpdateCompanionBuilder> {
+  $$PostsTableTableProcessedTableManager(super.$state);
+}
+
+class $$PostsTableTableFilterComposer
+    extends FilterComposer<_$PostsDatabase, $PostsTableTable> {
+  $$PostsTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get postMessageId => $state.composableBuilder(
+      column: $state.table.postMessageId,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get description => $state.composableBuilder(
+      column: $state.table.description,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get author => $state.composableBuilder(
+      column: $state.table.author,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get maxMembers => $state.composableBuilder(
+      column: $state.table.maxMembers,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get date => $state.composableBuilder(
+      column: $state.table.date,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get timezone => $state.composableBuilder(
+      column: $state.table.timezone,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get isDeleted => $state.composableBuilder(
+      column: $state.table.isDeleted,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter membersTableRefs(
+      ComposableFilter Function($$MembersTableTableFilterComposer f) f) {
+    final $$MembersTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.postMessageId,
+        referencedTable: $state.db.membersTable,
+        getReferencedColumn: (t) => t.post,
+        builder: (joinBuilder, parentComposers) =>
+            $$MembersTableTableFilterComposer(ComposerState($state.db,
+                $state.db.membersTable, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$PostsTableTableOrderingComposer
+    extends OrderingComposer<_$PostsDatabase, $PostsTableTable> {
+  $$PostsTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get postMessageId => $state.composableBuilder(
+      column: $state.table.postMessageId,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get description => $state.composableBuilder(
+      column: $state.table.description,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get author => $state.composableBuilder(
+      column: $state.table.author,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get maxMembers => $state.composableBuilder(
+      column: $state.table.maxMembers,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get date => $state.composableBuilder(
+      column: $state.table.date,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get timezone => $state.composableBuilder(
+      column: $state.table.timezone,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get isDeleted => $state.composableBuilder(
+      column: $state.table.isDeleted,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$MembersTableTableInsertCompanionBuilder = MembersTableCompanion
+    Function({
+  required int member,
+  required int post,
+  Value<int> rowid,
+});
+typedef $$MembersTableTableUpdateCompanionBuilder = MembersTableCompanion
+    Function({
+  Value<int> member,
+  Value<int> post,
+  Value<int> rowid,
+});
+
+class $$MembersTableTableTableManager extends RootTableManager<
+    _$PostsDatabase,
+    $MembersTableTable,
+    MembersTableData,
+    $$MembersTableTableFilterComposer,
+    $$MembersTableTableOrderingComposer,
+    $$MembersTableTableProcessedTableManager,
+    $$MembersTableTableInsertCompanionBuilder,
+    $$MembersTableTableUpdateCompanionBuilder> {
+  $$MembersTableTableTableManager(_$PostsDatabase db, $MembersTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$MembersTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$MembersTableTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$MembersTableTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> member = const Value.absent(),
+            Value<int> post = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MembersTableCompanion(
+            member: member,
+            post: post,
+            rowid: rowid,
+          ),
+          getInsertCompanionBuilder: ({
+            required int member,
+            required int post,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MembersTableCompanion.insert(
+            member: member,
+            post: post,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$MembersTableTableProcessedTableManager extends ProcessedTableManager<
+    _$PostsDatabase,
+    $MembersTableTable,
+    MembersTableData,
+    $$MembersTableTableFilterComposer,
+    $$MembersTableTableOrderingComposer,
+    $$MembersTableTableProcessedTableManager,
+    $$MembersTableTableInsertCompanionBuilder,
+    $$MembersTableTableUpdateCompanionBuilder> {
+  $$MembersTableTableProcessedTableManager(super.$state);
+}
+
+class $$MembersTableTableFilterComposer
+    extends FilterComposer<_$PostsDatabase, $MembersTableTable> {
+  $$MembersTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get member => $state.composableBuilder(
+      column: $state.table.member,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$PostsTableTableFilterComposer get post {
+    final $$PostsTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.post,
+        referencedTable: $state.db.postsTable,
+        getReferencedColumn: (t) => t.postMessageId,
+        builder: (joinBuilder, parentComposers) =>
+            $$PostsTableTableFilterComposer(ComposerState($state.db,
+                $state.db.postsTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$MembersTableTableOrderingComposer
+    extends OrderingComposer<_$PostsDatabase, $MembersTableTable> {
+  $$MembersTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get member => $state.composableBuilder(
+      column: $state.table.member,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$PostsTableTableOrderingComposer get post {
+    final $$PostsTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.post,
+        referencedTable: $state.db.postsTable,
+        getReferencedColumn: (t) => t.postMessageId,
+        builder: (joinBuilder, parentComposers) =>
+            $$PostsTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.postsTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class _$PostsDatabaseManager {
+  final _$PostsDatabase _db;
+  _$PostsDatabaseManager(this._db);
+  $$PostsTableTableTableManager get postsTable =>
+      $$PostsTableTableTableManager(_db, _db.postsTable);
+  $$MembersTableTableTableManager get membersTable =>
+      $$MembersTableTableTableManager(_db, _db.membersTable);
 }

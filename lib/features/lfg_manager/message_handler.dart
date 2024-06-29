@@ -16,13 +16,13 @@ abstract interface class IMessageHandler {
   /// Creates new LFG post.
   ///
   /// Returns ID of the message.
-  FutureOr<Message> createPost({
+  Future<Message> createPost({
     required ILFGPostBuilder builder,
     required InteractionCreateEvent<ApplicationCommandInteraction> interaction,
   });
 
   /// Updates existing LFG post.
-  FutureOr<void> updatePost(
+  Future<void> updatePost(
     final Message message, {
     final List<String>? newMembers,
     final int? maxMembers,
@@ -32,7 +32,7 @@ abstract interface class IMessageHandler {
   });
 
   /// Deletes existing LFG post.
-  FutureOr<void> deletePost(Message message);
+  Future<void> deletePost(Message message);
 }
 
 /// Discord message handler.
@@ -95,7 +95,7 @@ final class MessageHandler implements IMessageHandler {
   }
 
   @override
-  FutureOr<Message> createPost({
+  Future<Message> createPost({
     required ILFGPostBuilder builder,
     required InteractionCreateEvent<ApplicationCommandInteraction> interaction,
   }) async {
@@ -107,12 +107,12 @@ final class MessageHandler implements IMessageHandler {
   }
 
   @override
-  FutureOr<void> deletePost(Message message) async {
+  Future<void> deletePost(Message message) async {
     await message.delete();
   }
 
   @override
-  FutureOr<void> updatePost(
+  Future<void> updatePost(
     final Message message, {
     final List<String>? newMembers,
     final int? maxMembers,

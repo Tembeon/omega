@@ -11,6 +11,7 @@ import 'package:lfg_bot/core/utils/database/tables/posts.dart';
 import 'package:lfg_bot/core/utils/loaders/bot_settings.dart';
 import 'package:lfg_bot/features/create/handler/create_handle.dart';
 import 'package:lfg_bot/features/delete/handler/delete_handler.dart';
+import 'package:lfg_bot/features/edit/handler/edit_handler.dart';
 import 'package:lfg_bot/features/join/handler/join_handle.dart';
 import 'package:lfg_bot/features/leave/handler/leave_handler.dart';
 import 'package:lfg_bot/features/lfg_manager/lfg_manager.dart';
@@ -62,6 +63,7 @@ Future<void> runner() async {
 
   await core.commandManager.registerCommand(createCategoryCommands());
   await core.commandManager.registerCommand(deleteCommand());
+  await core.commandManager.registerCommand(editComponentHandler());
 
   await core.commandManager.registerComponent(joinComponentHandler());
   await core.commandManager.registerComponent(leaveComponentHandler());
@@ -76,6 +78,19 @@ String get _sqliteLibraryPath {
   final libraryNextToScript = File('${scriptDir.path}/data/dependencies');
   if (Platform.isWindows) return '${libraryNextToScript.path}/dll/sqlite3.dll';
   if (Platform.isLinux) return '${libraryNextToScript.path}/so/sqlite3';
+  if (Platform.isMacOS) return '${libraryNextToScript.path}/osx/sqlite3_arm64';
 
   throw FatalException('Unsupported platform: ${Platform.operatingSystem}');
+}
+
+Future<String> getCPUArchitecture() async {
+  if (Platform.isWindows) {
+    final cpu = Platform.environment['PROCESSOR_ARCHITECTURE'];
+    if (cpu == null) throw FatalException('Failed to get CPU architecture');
+    return cpu;
+  } else {
+    final info = await Process.run('uname', ['-m']);
+    final cpu = info.stdout.toString().replaceAll('\n', '');
+    return cpu;
+  }
 }
