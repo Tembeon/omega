@@ -12,17 +12,17 @@ import '../../lfg_manager/lfg_manager.dart';
 ///
 /// This command is used for creating new LFG posts.
 ///
-/// This command has 3 subcommands: raid, dungeon, custom.
+/// This command has 3 subcommands: raid, dungeon, activity.
 /// * raid - creates new LFG post for raid activity.
 /// * dungeon - creates new LFG post for dungeon activity.
-/// * custom - creates new LFG post for custom activity.
+/// * activity - creates new LFG post for custom activity.
 CommandCreator createCategoryCommands() {
   return (
     builder: _createAll,
     handlers: {
       'create raid': _createActivityHandler,
       'create dungeon': _createActivityHandler,
-      'create custom': _createActivityHandler,
+      'create activity': _createActivityHandler,
     }
   );
 }
@@ -37,7 +37,7 @@ Future<void> _createActivityHandler(InteractionCreateEvent<ApplicationCommandInt
   final manager = Context.root.get<LFGManager>('manager');
   final settings = Context.root.get<BotSettings>('settings');
 
-  // create command always has 1 subcommand: raid, dungeon, custom.
+  // create command always has 1 subcommand: raid, dungeon, activity.
   // So we can just use first to get options of subcommand.
   // All options for `/create` command are equal for all subcommands.
   final createOptions = interaction.interaction.data.options!.first.options!;
@@ -63,7 +63,7 @@ Future<void> _createActivityHandler(InteractionCreateEvent<ApplicationCommandInt
   );
 }
 
-List<CommandOptionChoiceBuilder<String>>? _getActivityChoices(LFGActivityType type) {
+List<CommandOptionChoiceBuilder<String>>? _getActivityChoices(LFGType type) {
   final settings = Context.root.get<BotSettings>('settings');
   final activities = settings.activityData.activities.where((e) => e.type == type);
 
@@ -84,7 +84,7 @@ ApplicationCommandBuilder _createAll() {
     name: 'create',
     description: 'Создать активность',
     type: ApplicationCommandType.chatInput,
-    options: LFGActivityType.values
+    options: LFGType.values
         .map((type) => CommandOptionBuilder.subCommand(
               name: type.name,
               description: 'Создать сбор на активность',

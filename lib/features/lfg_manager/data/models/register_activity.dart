@@ -50,7 +50,7 @@ base class LFGPostBuilder implements ILFGPostBuilder {
     required this.name,
     required this.maxMembers,
     this.enabled = true,
-    this.type = LFGActivityType.custom,
+    this.type = LFGType.activity,
     required this.timezone,
   });
 
@@ -115,7 +115,7 @@ base class LFGPostBuilder implements ILFGPostBuilder {
 
   /// Type of LFG activity.
   @override
-  final LFGActivityType type;
+  final LFGType type;
 
   @override
   final int timezone;
@@ -153,7 +153,7 @@ base class LFGPostBuilder implements ILFGPostBuilder {
     bool? enabled,
     String? name,
     int? maxMembers,
-    LFGActivityType? type,
+    LFGType? type,
     int? timezone,
   }) {
     return LFGPostBuilder(
@@ -246,7 +246,8 @@ base class LFGPost implements ILFGPost {
   final Snowflake messageID;
 
   @override
-  final LFGActivityType type;
+  final LFGType type;
+}
 
   @override
   final int timezone;

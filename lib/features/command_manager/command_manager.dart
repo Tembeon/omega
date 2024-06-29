@@ -11,13 +11,13 @@ import '../../core/utils/loaders/bot_settings.dart';
 /// * [builder] is a function that returns an [ApplicationCommandBuilder] object. Use this object to create a new command.
 /// * [handlers] is a map of handlers for the command. The key is a string that represents the name of the command. \
 ///
-/// To example, we have a /create command with three subcommands: raid, dungeon, custom. \
+/// To example, we have a /create command with three subcommands: raid, dungeon, activity. \
 /// So, we can create a map of handlers for this command:
 /// ```dart
 /// {
-///  'raid': (interaction) => _createActivityHandler(interaction, LFGActivityType.raid),
-///  'dungeon': (interaction) => _createActivityHandler(interaction, LFGActivityType.dungeon),
-///  'custom': (interaction) => _createActivityHandler(interaction, LFGActivityType.custom),
+///  'raid': (interaction) => _createActivityHandler(interaction, LFGType.raid),
+///  'dungeon': (interaction) => _createActivityHandler(interaction, LFGType.dungeon),
+///  'activity': (interaction) => _createActivityHandler(interaction, LFGType.activity),
 ///  }
 ///  ```
 ///  This map will be used to match the name of the command with the handler.
