@@ -247,7 +247,6 @@ base class LFGPost implements ILFGPost {
 
   @override
   final LFGType type;
-}
 
   @override
   final int timezone;
