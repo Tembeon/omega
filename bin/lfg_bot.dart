@@ -78,6 +78,19 @@ String get _sqliteLibraryPath {
   final libraryNextToScript = File('${scriptDir.path}/data/dependencies');
   if (Platform.isWindows) return '${libraryNextToScript.path}/dll/sqlite3.dll';
   if (Platform.isLinux) return '${libraryNextToScript.path}/so/sqlite3';
+  if (Platform.isMacOS) return '${libraryNextToScript.path}/osx/sqlite3_arm64';
 
   throw FatalException('Unsupported platform: ${Platform.operatingSystem}');
+}
+
+Future<String> getCPUArchitecture() async {
+  if (Platform.isWindows) {
+    final cpu = Platform.environment['PROCESSOR_ARCHITECTURE'];
+    if (cpu == null) throw FatalException('Failed to get CPU architecture');
+    return cpu;
+  } else {
+    final info = await Process.run('uname', ['-m']);
+    final cpu = info.stdout.toString().replaceAll('\n', '');
+    return cpu;
+  }
 }
