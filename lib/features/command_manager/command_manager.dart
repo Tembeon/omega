@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:nyxx/nyxx.dart';
 
+import '../../core/const/command_exceptions.dart';
 import '../../core/utils/loaders/bot_settings.dart';
 
 /// Typedef for creating a new command with a handler.
@@ -22,11 +23,7 @@ import '../../core/utils/loaders/bot_settings.dart';
 ///  This map will be used to match the name of the command with the handler.
 typedef CommandCreator = ({
   ApplicationCommandBuilder Function() builder,
-  Map<
-      String,
-      FutureOr<void> Function(
-          InteractionCreateEvent<ApplicationCommandInteraction>
-              interaction)> handlers,
+  Map<String, Future<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction)> handlers,
 });
 
 /// Typedef for creating a new component with a handler.
@@ -36,8 +33,12 @@ typedef CommandCreator = ({
 /// * [handler] is a function that handles the component.
 typedef ComponentCreator = ({
   String customID,
-  FutureOr<void> Function(
-      InteractionCreateEvent<MessageComponentInteraction> interaction) handler,
+  Future<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction) handler,
+});
+
+typedef ModalCreator = ({
+  String customID,
+  Future<void> Function(InteractionCreateEvent<ModalSubmitInteraction> interaction) handler,
 });
 
 /// Class which manages bot interactions, such as commands, buttons, etc.
@@ -52,6 +53,7 @@ base class CommandManager {
   }) : _bot = bot {
     _listenInteractions();
     _listenButtons();
+    _listenModals();
   }
 
   // Bot instance which used to manage interactions.
@@ -59,24 +61,20 @@ base class CommandManager {
 
   // Partial application command manager for current guild, where bot is located and should work.
   // If bot will be invited to another guild, then bot will not work.
-  PartialApplicationCommand get _guildManager =>
-      _bot.commands[Snowflake(BotSettings.instance.botConfig.serverID)];
+  PartialApplicationCommand get _guildManager => _bot.commands[Snowflake(BotSettings.instance.botConfig.serverID)];
 
   // Map of registered commands.
   // Key is a full command name, value is a function which handles command.
-  final Map<
-      String,
-      FutureOr<void> Function(
-          InteractionCreateEvent<ApplicationCommandInteraction>
-              interaction)> _commands = {};
+  final Map<String, Future<void> Function(InteractionCreateEvent<ApplicationCommandInteraction> interaction)>
+      _commands = {};
 
   // Map of registered components.
   // Key is a custom ID of the component, value is a function which handles component.
-  final Map<
-          String,
-          FutureOr<void> Function(
-              InteractionCreateEvent<MessageComponentInteraction> interaction)>
+  final Map<String, Future<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction)>
       _components = {};
+
+  final Map<String, Future<void> Function(InteractionCreateEvent<ModalSubmitInteraction> interaction)> _modals = {};
+  final Map<String, Timer> _modalsSubsTimers = {};
 
   /// Starts listening for registered interactions.
   ///
@@ -84,26 +82,20 @@ base class CommandManager {
   /// If you create new command using the [registerCommand] method, you don't need to call this method again.
   void _listenInteractions() {
     _bot.onApplicationCommandInteraction.listen((event) {
-      print(
-          '[CommandManager] Received new interaction: "${event.interaction.data.name}"');
+      print('[CommandManager] Received new interaction: "${event.interaction.data.name}"');
 
       final option = _UnifiedOption(
         name: event.interaction.data.name,
         type: CommandOptionType.subCommand,
-        options: event.interaction.data.options
-            ?.map(_UnifiedOption.fromInteractionOption)
-            .toList(),
+        options: event.interaction.data.options?.map(_UnifiedOption.fromInteractionOption).toList(),
       );
 
       final matches = _getCommandNames([option]);
-      if (matches.length > 1) {
-        throw Exception('More than one command matched: $matches');
-      }
+      if (matches.length > 1) throw Exception('More than one command matched: $matches');
 
       final handler = _commands[matches.first];
       if (handler == null) {
-        print(
-            '[CommandManager] Handler for interaction "${event.interaction.data.name}" not found');
+        print('[CommandManager] Handler for interaction "${event.interaction.data.name}" not found');
         return;
       }
 
@@ -124,11 +116,27 @@ base class CommandManager {
 
       final handler = _components[event.interaction.data.customId];
       if (handler == null) {
-        print(
-            '[CommandManager] Handler for button "${event.interaction.data.customId}" not found');
+        print('[CommandManager] Handler for button "${event.interaction.data.customId}" not found');
         return;
       } else {
         handler(event);
+      }
+    });
+  }
+
+  void _listenModals() {
+    _bot.onModalSubmitInteraction.listen((event) {
+      print('[CommandManager] Received new modal interaction: "${event.interaction.data.customId}"');
+
+      final userId = event.interaction.user?.id.value ?? event.interaction.member?.user?.id.value;
+      if (userId == null) throw const CantRespondException('No user ID found in interaction');
+      final subscriberString = '${event.interaction.data.customId}_subscriber';
+      final subscriberHandler = _modals[subscriberString];
+      if (subscriberHandler != null) {
+        subscriberHandler(event);
+        _modals.remove(subscriberString);
+        _modalsSubsTimers[subscriberString]?.cancel();
+        _modalsSubsTimers.remove(subscriberString);
       }
     });
   }
@@ -142,24 +150,18 @@ base class CommandManager {
     final option = _UnifiedOption(
       name: commandCreator.builder().name,
       type: CommandOptionType.subCommand,
-      options: commandCreator
-          .builder()
-          .options
-          ?.map(_UnifiedOption.fromCommandOptionBuilder)
-          .toList(),
+      options: commandCreator.builder().options?.map(_UnifiedOption.fromCommandOptionBuilder).toList(),
     );
 
     final commandNames = _getCommandNames([option]);
     if (commandNames.length != commandCreator.handlers.length) {
-      throw Exception(
-          'Different amount of handlers (${commandCreator.handlers.length}) '
+      throw Exception('Different amount of handlers (${commandCreator.handlers.length}) '
           'and given value in command builder. Expected ${commandNames.length}');
     }
 
     for (final commandName in commandNames) {
       _commands[commandName] = commandCreator.handlers[commandName]!;
-      print(
-          '[CommandManager] Registered command: "${_commands.entries.last.key}"');
+      print('[CommandManager] Registered command: "${_commands.entries.last.key}"');
     }
   }
 
@@ -168,23 +170,47 @@ base class CommandManager {
   /// Component is a button, select menu, etc.
   Future<void> registerComponent(ComponentCreator componentCreator) async {
     _components[componentCreator.customID] = componentCreator.handler;
-    print(
-        '[CommandManager] Registered component: "${componentCreator.customID}"');
+    print('[CommandManager] Registered component: "${componentCreator.customID}"');
   }
 
-  Iterable<String> _getCommandNames(List<_UnifiedOption> interactionOptions,
-      [String prefix = '']) sync* {
+  Future<void> registerModal(ModalCreator modalCreator) async {
+    _modals[modalCreator.customID] = modalCreator.handler;
+    print('[CommandManager] Registered modal: "${modalCreator.customID}"');
+  }
+
+  /// Registers a callback that will be called when the bot receives a new modal interaction with the given [modalID].
+  ///
+  /// Subscribers are one-time handlers that are called only once when the bot receives a modal interaction with the given [modalID].
+  void subscribeToModal({
+    required final String modalID,
+    required final Future<void> Function(InteractionCreateEvent<ModalSubmitInteraction> interaction) handler,
+    final Duration timeout = const Duration(minutes: 5), // time after which the handler will be removed
+  }) {
+    final subId = '${modalID}_subscriber';
+    _modals[subId] = handler;
+    print('[CommandManager] Subscribed to modal: "$modalID"');
+    _modalsSubsTimers[subId] = Timer(timeout, () {
+      print('[CommandManager] Timeout for $subId reached');
+      unsubscribeFromModal(customID: modalID);
+    });
+  }
+
+  void unsubscribeFromModal({
+    required final String customID,
+  }) {
+    _modals.remove('${customID}_subscriber');
+    print('[CommandManager] Unsubscribed from modal: "$customID"');
+  }
+
+  Iterable<String> _getCommandNames(List<_UnifiedOption> interactionOptions, [String prefix = '']) sync* {
     for (final _UnifiedOption interactionOption in interactionOptions) {
-      final String currentPrefix = prefix.isNotEmpty
-          ? '$prefix ${interactionOption.name}'
-          : interactionOption.name;
+      final String currentPrefix = prefix.isNotEmpty ? '$prefix ${interactionOption.name}' : interactionOption.name;
       if (interactionOption.type == CommandOptionType.subCommandGroup ||
           interactionOption.type == CommandOptionType.subCommand) {
         if (prefix.isNotEmpty) {
           yield currentPrefix;
         }
-        if (interactionOption.options != null &&
-            interactionOption.options!.isNotEmpty) {
+        if (interactionOption.options != null && interactionOption.options!.isNotEmpty) {
           yield* _getCommandNames(interactionOption.options!, currentPrefix);
         } else if (interactionOption.type == CommandOptionType.subCommand) {
           yield currentPrefix;
@@ -205,8 +231,7 @@ class _UnifiedOption {
     return _UnifiedOption(
       name: option.name,
       type: option.type,
-      options:
-          option.options?.map(_UnifiedOption.fromInteractionOption).toList(),
+      options: option.options?.map(_UnifiedOption.fromInteractionOption).toList(),
     );
   }
 
@@ -214,8 +239,7 @@ class _UnifiedOption {
     return _UnifiedOption(
       name: option.name,
       type: option.type,
-      options:
-          option.options?.map(_UnifiedOption.fromCommandOptionBuilder).toList(),
+      options: option.options?.map(_UnifiedOption.fromCommandOptionBuilder).toList(),
     );
   }
 

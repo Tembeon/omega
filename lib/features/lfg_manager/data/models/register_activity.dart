@@ -17,6 +17,8 @@ abstract class ILFGPostBuilder implements Activity {
 
   /// User-given start date of the post.
   int get unixDate;
+
+  int get timezone;
 }
 
 /// Interface for model used for LFG post.
@@ -49,6 +51,7 @@ base class LFGPostBuilder implements ILFGPostBuilder {
     required this.maxMembers,
     this.enabled = true,
     this.type = LFGType.activity,
+    required this.timezone,
   });
 
   /// Creates new LFG post builder using data from [Activity].
@@ -57,11 +60,13 @@ base class LFGPostBuilder implements ILFGPostBuilder {
     required Snowflake authorID,
     required String description,
     required int unixDate,
+    required int timezone,
   }) {
     return LFGPostBuilder(
       authorID: authorID,
       description: description,
       unixDate: unixDate,
+      timezone: timezone,
       bannerUrl: activity.bannerUrl,
       name: activity.name,
       maxMembers: activity.maxMembers,
@@ -113,6 +118,9 @@ base class LFGPostBuilder implements ILFGPostBuilder {
   final LFGType type;
 
   @override
+  final int timezone;
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is LFGPostBuilder &&
@@ -146,8 +154,10 @@ base class LFGPostBuilder implements ILFGPostBuilder {
     String? name,
     int? maxMembers,
     LFGType? type,
+    int? timezone,
   }) {
     return LFGPostBuilder(
+      timezone: timezone ?? this.timezone,
       authorID: authorID ?? this.authorID,
       description: description ?? this.description,
       unixDate: unixDate ?? this.unixDate,
@@ -179,6 +189,7 @@ base class LFGPost implements ILFGPost {
     required this.members,
     required this.messageID,
     required this.type,
+    required this.timezone,
   });
 
   /// Creates new LFG post from [ILFGPostBuilder].
@@ -200,6 +211,7 @@ base class LFGPost implements ILFGPost {
       members: members,
       messageID: messageID,
       type: builder.type,
+      timezone: builder.timezone,
     );
   }
 
@@ -235,4 +247,7 @@ base class LFGPost implements ILFGPost {
 
   @override
   final LFGType type;
+
+  @override
+  final int timezone;
 }
