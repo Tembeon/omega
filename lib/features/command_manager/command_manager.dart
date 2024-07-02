@@ -90,7 +90,7 @@ base class CommandManager {
         options: event.interaction.data.options?.map(_UnifiedOption.fromInteractionOption).toList(),
       );
 
-      final matches = _getCommandNames([option]);
+      final matches = _parseCommandNames([option]);
       if (matches.length > 1) throw Exception('More than one command matched: $matches');
 
       final handler = _commands[matches.first];
@@ -153,7 +153,7 @@ base class CommandManager {
       options: commandCreator.builder().options?.map(_UnifiedOption.fromCommandOptionBuilder).toList(),
     );
 
-    final commandNames = _getCommandNames([option]);
+    final commandNames = _parseCommandNames([option]);
     if (commandNames.length != commandCreator.handlers.length) {
       throw Exception('Different amount of handlers (${commandCreator.handlers.length}) '
           'and given value in command builder. Expected ${commandNames.length}');
@@ -202,6 +202,38 @@ base class CommandManager {
     print('[CommandManager] Unsubscribed from modal: "$customID"');
   }
 
+  // fixes version of _getCommandNames method
+  // problem: _getCommandNames method returns more than expected names.
+  // for example: received Option like:
+  // [Option(type: subCommand, options: [Options(type: subCommand, options: [Options(type: string]]), Options(type: subCommand)])]
+  // expected: ['subCommand subCommand', 'subCommand'], but received: ['subCommand subCommand', 'subCommand subCommand', 'subCommand']
+  Iterable<String> _parseCommandNames(List<_UnifiedOption> options, [String? prefix]) sync* {
+    for (final option in options) {
+      final currentName = prefix != null ? '$prefix ${option.name}' : option.name;
+
+      if (option.type == CommandOptionType.subCommandGroup) {
+        if (option.options != null) {
+          yield* _parseCommandNames(option.options!, currentName);
+        }
+      } else if (option.type == CommandOptionType.subCommand) {
+        if (option.options != null && option.options!.isNotEmpty) {
+          bool hasSubCommand = option.options!.any((opt) =>
+          opt.type == CommandOptionType.subCommand ||
+              opt.type == CommandOptionType.subCommandGroup);
+
+          if (hasSubCommand) {
+            yield* _parseCommandNames(option.options!, currentName);
+          } else {
+            yield currentName;
+          }
+        } else {
+          yield currentName;
+        }
+      }
+    }
+  }
+
+  @Deprecated('use _parseCommandNames')
   Iterable<String> _getCommandNames(List<_UnifiedOption> interactionOptions, [String prefix = '']) sync* {
     for (final _UnifiedOption interactionOption in interactionOptions) {
       final String currentPrefix = prefix.isNotEmpty ? '$prefix ${interactionOption.name}' : interactionOption.name;
