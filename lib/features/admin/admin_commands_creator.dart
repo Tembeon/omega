@@ -1,23 +1,22 @@
-library admin_commands;
-
 import 'package:nyxx/nyxx.dart';
+
 import '../../core/bot/core.dart';
 import '../../core/utils/context/context.dart';
 import '../../core/utils/database/tables/posts.dart';
 import '../command_manager/command_manager.dart';
-import '../scheduler/scheduler.dart';
 import '../lfg_manager/lfg_manager.dart';
+import '../scheduler/scheduler.dart';
 
 part 'delete_handler.dart';
 part 'health_handler.dart';
 
 CommandCreator adminCategoryCommands() {
   return (
-  builder: _createAdminCommands,
-  handlers: {
-    'admin delete': _deleteLFGHandler,
-    'admin health': _healthBotHandler,
-  }
+    builder: _createAdminCommands,
+    handlers: {
+      'admin delete': _deleteLFGHandler,
+      'admin health': _healthBotHandler,
+    }
   );
 }
 

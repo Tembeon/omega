@@ -1,8 +1,8 @@
 part of 'admin_commands_creator.dart';
 
 Future<void> _healthBotHandler(
-    InteractionCreateEvent<ApplicationCommandInteraction> interaction,
-    ) async {
+  InteractionCreateEvent<ApplicationCommandInteraction> interaction,
+) async {
   final member = interaction.interaction.member;
 
   if (member == null) return; // refuse to work with bots
@@ -15,7 +15,8 @@ Future<void> _healthBotHandler(
   final database = Context.root.get<PostsDatabase>('db');
   final lfgManager = Context.root.get<LFGManager>('manager');
   final bot = Context.root.get<LFGBotCore>('core');
-  final scheduler = PostScheduler(database: database, core: bot, lfgManager: lfgManager);
+  final scheduler =
+      PostScheduler(database: database, core: bot, lfgManager: lfgManager);
 
   int? scheduledPostsCount;
   List<PostsTableData>? totalPosts;
