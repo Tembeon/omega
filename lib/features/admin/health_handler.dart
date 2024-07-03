@@ -11,7 +11,7 @@ Future<void> _healthBotHandler(
   }
 
   // To calculate the ping we will take the time when the command was executed [timestamp]
-  // and the time when it was sent [now] and subtract.
+  // and the time when it was sent [now] and subtract them.
   final now = DateTime.now().millisecondsSinceEpoch;
   final timestamp = interaction.interaction.id.timestamp.millisecondsSinceEpoch;
 
