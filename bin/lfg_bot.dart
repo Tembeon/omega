@@ -22,7 +22,8 @@ import 'package:lfg_bot/features/scheduler/scheduler.dart';
 void main(List<String> arguments) => runZonedGuarded(
       runner,
       zoneSpecification: ZoneSpecification(
-        print: (self, parent, zone, message) => l.i('[${DateTime.now()}] $message'),
+        print: (self, parent, zone, message) =>
+            l.i('[${DateTime.now()}] $message'),
       ),
       (error, stack) {
         l.e('Root level exception:\n$error\n\n$stack');
@@ -47,10 +48,14 @@ Future<void> runner() async {
   final core = await LFGBotCore.initialize();
 
   final isLocaleInitialized = await initializeMessages(settings.locale);
-  if (!isLocaleInitialized) throw FatalException('Failed to initialize locale: ${settings.locale}');
+  if (!isLocaleInitialized) {
+    throw FatalException('Failed to initialize locale: ${settings.locale}');
+  }
 
-  final lfgManager = LFGManager(database: database, messageHandler: const MessageHandler());
-  final scheduler = PostScheduler(database: database, core: core, lfgManager: lfgManager);
+  final lfgManager =
+      LFGManager(database: database, messageHandler: const MessageHandler());
+  final scheduler =
+      PostScheduler(database: database, core: core, lfgManager: lfgManager);
 
   Context.setRoot(
     Context.from({

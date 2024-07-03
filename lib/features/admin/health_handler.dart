@@ -18,9 +18,6 @@ Future<void> _healthBotHandler(
   final scheduler =
       PostScheduler(database: database, core: bot, lfgManager: lfgManager);
 
-  int? scheduledPostsCount;
-  List<PostsTableData>? totalPosts;
-  final serviceStatus = StringBuffer();
   final response = StringBuffer()
     ..writeln('Stats:')
     ..writeln('Ping: $ping ms')
@@ -28,25 +25,16 @@ Future<void> _healthBotHandler(
     ..writeln('LFGs:');
 
   try {
-    scheduledPostsCount = scheduler.getScheduledPosts();
-    response.writeln('Scheduled: $scheduledPostsCount');
+    response.writeln('Scheduled: ${scheduler.getScheduledPostsCount()}');
   } on Exception catch (e) {
-    response.writeln('Scheduled: Недоступно');
-    serviceStatus.writeln('Scheduler недоступен: $e');
+    response.writeln('Scheduled: $e');
   }
 
   try {
-    totalPosts = await database.getAllPosts();
-    response.writeln('Total: ${totalPosts.length}');
+    response.writeln('Total: ${await database.getAllPostsCount()}');
   } on Exception catch (e) {
-    response.writeln('Total: Недоступно');
-    serviceStatus.writeln('PostsDatabase недоступна: $e');
+    response.writeln('Total: $e');
   }
-
-  response
-    ..writeln()
-    ..writeln('Services:')
-    ..writeln(serviceStatus.isEmpty ? 'OK' : serviceStatus);
 
   await interaction.interaction.respond(
     MessageBuilder(content: response.toString()),

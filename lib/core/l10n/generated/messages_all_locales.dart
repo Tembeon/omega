@@ -16,6 +16,7 @@ import 'package:intl/src/intl_helpers.dart';
 import 'messages_ru.dart' as messages_ru;
 
 typedef Future<dynamic> LibraryLoader();
+
 Map<String, LibraryLoader> _deferredLibraries = {
   'ru': () => Future.value(null),
 };

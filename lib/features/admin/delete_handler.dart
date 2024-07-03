@@ -34,7 +34,7 @@ Future<void> _deleteLFGHandler(
   await interaction.interaction.respond(
     MessageBuilder(
       content:
-          'LFG сообщение пользователя "$userName", с активностью "${postData.title}" удалено.',
+          'LFG пользователя "$userName", с активностью "${postData.title}" удалено.',
     ),
     isEphemeral: true,
   );

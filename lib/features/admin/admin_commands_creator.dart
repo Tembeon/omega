@@ -29,7 +29,7 @@ ApplicationCommandBuilder _createAdminCommands() {
     options: [
       CommandOptionBuilder.subCommand(
         name: 'delete',
-        description: 'Удалить LFG-сообщение',
+        description: 'Удалить LFG',
         options: [
           CommandOptionBuilder.string(
             name: 'message_id',

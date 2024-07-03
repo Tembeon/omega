@@ -191,7 +191,7 @@ final class PostScheduler {
   }
 
   /// Return quantity of scheduled posts
-  int getScheduledPosts() {
+  int getScheduledPostsCount() {
     return _posts.length;
   }
 

@@ -125,6 +125,12 @@ class PostsDatabase extends _$PostsDatabase {
   Future<List<PostsTableData>> getAllPosts() =>
       (select(postsTable)..where((post) => post.isDeleted.equals(false))).get();
 
+  /// Returns a int of all LFGs.
+  Future<int> getAllPostsCount() async {
+    final totalPosts = await (select(postsTable)).get();
+    return totalPosts.length;
+  }
+
   /// Marks a LFG as deleted.
   Future<int> deletePost(int postID) {
     return (update(postsTable)

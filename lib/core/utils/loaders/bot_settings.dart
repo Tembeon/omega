@@ -28,6 +28,7 @@ abstract final class BotSettings {
     _instance = settingsData;
     return settingsData;
   }
+
   String get locale;
 
   ActivityData get activityData;
@@ -38,6 +39,7 @@ abstract final class BotSettings {
 
   static BotSettings get instance =>
       _instance ??= throw Exception('Bot settings are not loaded');
+
   static BotSettings get i => instance;
 }
 
