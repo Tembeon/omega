@@ -69,8 +69,12 @@ final class MessageHandler implements IMessageHandler {
           isInline: false,
         ),
       ]
-      ..author = EmbedAuthorBuilder(name: user.globalName ?? user.username, iconUrl: user.avatar.url)
-      ..color = DiscordColor.parseHexString(_colors[Random().nextInt(_colors.length)])
+      ..author = EmbedAuthorBuilder(
+        name: user.globalName ?? user.username,
+        iconUrl: user.avatar.url,
+      )
+      ..color =
+          DiscordColor.parseHexString(_colors[Random().nextInt(_colors.length)])
       ..image = EmbedImageBuilder(url: (Uri.parse(builder.bannerUrl)));
 
     final messageBuilder = MessageBuilder(embeds: [embedBuilder])
@@ -127,7 +131,11 @@ final class MessageHandler implements IMessageHandler {
     if (description != null) {
       final (name, _) = _getFieldData(message, 0);
 
-      activity = Context.root.get<BotSettings>('settings').activityData.activities.firstWhere(
+      activity = Context.root
+          .get<BotSettings>('settings')
+          .activityData
+          .activities
+          .firstWhere(
             (e) => e.name == name,
             orElse: () => throw Exception('Activity $name not found'),
           );
@@ -142,7 +150,11 @@ final class MessageHandler implements IMessageHandler {
     } else {
       final (name, value) = _getFieldData(message, 0);
 
-      activity = Context.root.get<BotSettings>('settings').activityData.activities.firstWhere(
+      activity = Context.root
+          .get<BotSettings>('settings')
+          .activityData
+          .activities
+          .firstWhere(
             (e) => e.name == name,
             orElse: () => throw Exception('Activity $name not found'),
           );
@@ -205,7 +217,9 @@ final class MessageHandler implements IMessageHandler {
         embeds: [
           EmbedBuilder(
             fields: embedFields,
-            color: DiscordColor.parseHexString(_colors[Random().nextInt(_colors.length)]),
+            color: DiscordColor.parseHexString(
+              _colors[Random().nextInt(_colors.length)],
+            ),
             image: EmbedImageBuilder(url: Uri.parse(activity.bannerUrl)),
           ),
         ],

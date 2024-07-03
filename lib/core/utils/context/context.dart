@@ -6,7 +6,8 @@ abstract final class Context {
   /// Creates new context from [map].
   factory Context.from(Map<String, Object> map) => _Context(map);
 
-  static UnmodifiableContext get root => UnmodifiableContext(_root ?? _rootIsNotSet());
+  static UnmodifiableContext get root =>
+      UnmodifiableContext(_root ?? _rootIsNotSet());
 
   static Context? _root;
 
@@ -59,7 +60,8 @@ final class _Context implements Context {
   @override
   Map<String, Object> toMap() => _map;
 
-  Never _throwKeyNotFound(String key) => throw Exception('Key $key not found in context');
+  Never _throwKeyNotFound(String key) =>
+      throw Exception('Key $key not found in context');
 }
 
 final class UnmodifiableContext implements Context {
@@ -75,10 +77,12 @@ final class UnmodifiableContext implements Context {
   T get<T>(String key) => this[key] as T;
 
   @override
-  void operator []=(String key, Object value) => throw Exception('Context is unmodifiable');
+  void operator []=(String key, Object value) =>
+      throw Exception('Context is unmodifiable');
 
   @override
-  void put(String key, Object value) => throw Exception('Context is unmodifiable');
+  void put(String key, Object value) =>
+      throw Exception('Context is unmodifiable');
 
   @override
   Map<String, Object> toMap() => _context.toMap();

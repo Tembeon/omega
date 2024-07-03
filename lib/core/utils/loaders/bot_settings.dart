@@ -12,7 +12,8 @@ abstract final class BotSettings {
       throw ConfigFileMissing('bot settings', configPath: botSettingsFile.path);
     }
 
-    final botSettings = jsonDecode(botSettingsFile.readAsStringSync()) as Map<String, Object?>;
+    final botSettings =
+        jsonDecode(botSettingsFile.readAsStringSync()) as Map<String, Object?>;
 
     final settingsData = _BotSettingsLoader(
       activityData: ActivityData.fromFiles(
@@ -35,7 +36,8 @@ abstract final class BotSettings {
 
   static BotSettings? _instance;
 
-  static BotSettings get instance => _instance ??= throw Exception('Bot settings are not loaded');
+  static BotSettings get instance =>
+      _instance ??= throw Exception('Bot settings are not loaded');
   static BotSettings get i => instance;
 }
 

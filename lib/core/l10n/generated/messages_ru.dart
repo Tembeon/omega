@@ -14,26 +14,35 @@ import 'package:intl/message_lookup_by_library.dart';
 
 final messages = MessageLookup();
 
-typedef String? MessageIfAbsent(
-    String? messageStr, List<Object>? args);
+typedef String? MessageIfAbsent(String? messageStr, List<Object>? args);
 
 class MessageLookup extends MessageLookupByLibrary {
   @override
   String get localeName => 'ru';
 
   @override
-  final Map<String, dynamic> messages = _notInlinedMessages(_notInlinedMessages);
+  final Map<String, dynamic> messages =
+      _notInlinedMessages(_notInlinedMessages);
 
   static Map<String, dynamic> _notInlinedMessages(_) => {
-      'commandOptionDateDescription': MessageLookupByLibrary.simpleMessage('Введите дату начала активности [15 01 2023]'),
-    'commandOptionDateKey': MessageLookupByLibrary.simpleMessage('дата'),
-    'commandOptionDescriptionDescription': MessageLookupByLibrary.simpleMessage('Введите описание активности'),
-    'commandOptionDescriptionKey': MessageLookupByLibrary.simpleMessage('описание'),
-    'commandOptionNameDescription': MessageLookupByLibrary.simpleMessage('Введите название активности'),
-    'commandOptionNameKey': MessageLookupByLibrary.simpleMessage('название'),
-    'commandOptionTimeDescription': MessageLookupByLibrary.simpleMessage('Введите время начала активности [15 01]'),
-    'commandOptionTimeKey': MessageLookupByLibrary.simpleMessage('время'),
-    'commandOptionTimezoneDescription': MessageLookupByLibrary.simpleMessage('Введите ваш текущий часовой пояс'),
-    'commandOptionTimezoneKey': MessageLookupByLibrary.simpleMessage('часовой_пояс')
-  };
+        'commandOptionDateDescription': MessageLookupByLibrary.simpleMessage(
+            'Введите дату начала активности [15 01 2023]'),
+        'commandOptionDateKey': MessageLookupByLibrary.simpleMessage('дата'),
+        'commandOptionDescriptionDescription':
+            MessageLookupByLibrary.simpleMessage('Введите описание активности'),
+        'commandOptionDescriptionKey':
+            MessageLookupByLibrary.simpleMessage('описание'),
+        'commandOptionNameDescription':
+            MessageLookupByLibrary.simpleMessage('Введите название активности'),
+        'commandOptionNameKey':
+            MessageLookupByLibrary.simpleMessage('название'),
+        'commandOptionTimeDescription': MessageLookupByLibrary.simpleMessage(
+            'Введите время начала активности [15 01]'),
+        'commandOptionTimeKey': MessageLookupByLibrary.simpleMessage('время'),
+        'commandOptionTimezoneDescription':
+            MessageLookupByLibrary.simpleMessage(
+                'Введите ваш текущий часовой пояс'),
+        'commandOptionTimezoneKey':
+            MessageLookupByLibrary.simpleMessage('часовой_пояс')
+      };
 }

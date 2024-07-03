@@ -10,17 +10,28 @@ ComponentCreator joinComponentHandler() => (
       handler: _handleJoinInteraction,
     );
 
-Future<void> _handleJoinInteraction(InteractionCreateEvent<MessageComponentInteraction> event) async {
+Future<void> _handleJoinInteraction(
+  InteractionCreateEvent<MessageComponentInteraction> event,
+) async {
   final messageID = event.interaction.message?.id;
   if (messageID == null) return;
 
   final lfgManager = Context.root.get<ILFGManager>('manager');
 
   try {
-    await lfgManager.addMemberTo(event.interaction.message!, event.interaction.member!.user!);
-    await event.interaction.respond(MessageBuilder(content: 'Вы добавлены в LFG'), isEphemeral: true);
+    await lfgManager.addMemberTo(
+      event.interaction.message!,
+      event.interaction.member!.user!,
+    );
+    await event.interaction.respond(
+      MessageBuilder(content: 'Вы добавлены в LFG'),
+      isEphemeral: true,
+    );
   } on CommandException catch (e) {
-    await event.interaction.respond(MessageBuilder(content: e.toHumanMessage()), isEphemeral: true);
+    await event.interaction.respond(
+      MessageBuilder(content: e.toHumanMessage()),
+      isEphemeral: true,
+    );
   } on Object catch (e, st) {
     await event.interaction.respond(
       MessageBuilder(

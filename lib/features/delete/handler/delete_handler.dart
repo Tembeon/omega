@@ -21,7 +21,9 @@ ApplicationCommandBuilder _createDeleteCommand() {
   );
 }
 
-Future<void> _deleteHandler(InteractionCreateEvent<ApplicationCommandInteraction> interaction) async {
+Future<void> _deleteHandler(
+  InteractionCreateEvent<ApplicationCommandInteraction> interaction,
+) async {
   final message = interaction.interaction.data.targetId;
   final channel = interaction.interaction.channel;
 
@@ -48,7 +50,9 @@ Future<void> _deleteHandler(InteractionCreateEvent<ApplicationCommandInteraction
 
   // if author of the post is not the same as author of the command, then it's not LFG of the author
   if (postData.author != interaction.interaction.member?.user?.id.value) {
-    print('User "${interaction.interaction.member?.user}" tried to delete LFG of user "${postData.author}"');
+    print(
+      'User "${interaction.interaction.member?.user}" tried to delete LFG of user "${postData.author}"',
+    );
 
     await interaction.interaction.respond(
       MessageBuilder(

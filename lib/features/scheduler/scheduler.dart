@@ -58,14 +58,18 @@ final class PostScheduler {
     for (final post in posts) {
       // skip post if difference between now and post time is more than 2 hours
       if (now.difference(post.date).inHours > 2) {
-        print('[Scheduler] Schedule post with id ${post.postMessageId} to be deleted because it is too old');
-        await _deleteLFGPostAfter(postID: post.postMessageId, duration: Duration.zero);
+        print(
+          '[Scheduler] Schedule post with id ${post.postMessageId} to be deleted because it is too old',
+        );
+        await _deleteLFGPostAfter(
+          postID: post.postMessageId,
+          duration: Duration.zero,
+        );
       }
 
       _posts[post.date] = post.postMessageId;
     }
   }
-
 
   /// Starts checking posts every 30 seconds.
   void _startScheduler() {
@@ -121,11 +125,14 @@ final class PostScheduler {
 
     for (final member in members) {
       final dm = await _core.bot.users.createDm(Snowflake(member));
-      print('[Scheduler] Notifying ${dm.recipient.username} about ${post.title}');
+      print(
+        '[Scheduler] Notifying ${dm.recipient.username} about ${post.title}',
+      );
 
       await dm.sendMessage(
         MessageBuilder(
-          content: 'Время сбора для ${post.title} от ${author.globalName ?? author.username} наступило!',
+          content:
+              'Время сбора для ${post.title} от ${author.globalName ?? author.username} наступило!',
         ),
       );
 
@@ -133,7 +140,9 @@ final class PostScheduler {
       await Future<void>.delayed(const Duration(seconds: 1));
     }
 
-    print('[Scheduler] All members notified, scheduling deleting post with id $postID');
+    print(
+      '[Scheduler] All members notified, scheduling deleting post with id $postID',
+    );
     await _deleteLFGPostAfter(postID: postID);
   }
 
@@ -180,10 +189,10 @@ final class PostScheduler {
     _posts[newTime] = postID;
     _checkPosts();
   }
+
   /// Return quantity of scheduled posts
   int getScheduledPosts() {
-    return  _posts.length;
-
+    return _posts.length;
   }
 
   /// Disposes post scheduler and cancels all scheduled posts.
