@@ -22,7 +22,8 @@ Future<void> _healthBotHandler(
       PostScheduler(database: database, core: bot, lfgManager: lfgManager);
 
   final response = StringBuffer()
-    ..writeln('Stats:')..writeln('Ping: ${timestamp - now}ms')
+    ..writeln('Stats:')
+    ..writeln('Ping: ${timestamp - now}ms')
     ..writeln()
     ..writeln('LFGs:');
 
