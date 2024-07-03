@@ -6,11 +6,14 @@ Future<void> _healthBotHandler(
   final member = interaction.interaction.member;
 
   if (member == null) return; // refuse to work with bots
-  if (!(member.permissions?.has(Permissions.administrator) ?? false)) return;
+  if (!(member.permissions?.has(Permissions.administrator) ?? false)) {
+    return; // Check if user is administrator
+  }
 
+  // To calculate the ping we will take the time when the command was executed [timestamp]
+  // and the time when it was sent [now] and subtract.
   final now = DateTime.now().millisecondsSinceEpoch;
   final timestamp = interaction.interaction.id.timestamp.millisecondsSinceEpoch;
-  final ping = timestamp - now;
 
   final database = Context.root.get<PostsDatabase>('db');
   final lfgManager = Context.root.get<LFGManager>('manager');
@@ -19,21 +22,21 @@ Future<void> _healthBotHandler(
       PostScheduler(database: database, core: bot, lfgManager: lfgManager);
 
   final response = StringBuffer()
-    ..writeln('Stats:')
-    ..writeln('Ping: $ping ms')
+    ..writeln('Stats:')..writeln('Ping: ${timestamp - now}ms')
     ..writeln()
     ..writeln('LFGs:');
 
+  // If any exception was caught, then show it to user.
   try {
     response.writeln('Scheduled: ${scheduler.getScheduledPostsCount()}');
   } on Exception catch (e) {
-    response.writeln('Scheduled: $e');
+    response.writeln('Scheduler unavailable: $e');
   }
 
   try {
     response.writeln('Total: ${await database.getAllPostsCount()}');
   } on Exception catch (e) {
-    response.writeln('Total: $e');
+    response.writeln('Database unavailable: $e');
   }
 
   await interaction.interaction.respond(

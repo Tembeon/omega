@@ -10,6 +10,14 @@ import '../scheduler/scheduler.dart';
 part 'delete_handler.dart';
 part 'health_handler.dart';
 
+/// Builds `/admin` command.
+///
+/// This command is used by administrators to provide additional control over LFG.
+///
+/// This command has 2 subcommands: health, delete.
+/// * health - shows some useful meta info about bot such as: ping, scheduled LFGs, total of all LFGs.
+/// * delete - deletes LFG post regardless of its author.
+
 CommandCreator adminCategoryCommands() {
   return (
     builder: _createAdminCommands,
