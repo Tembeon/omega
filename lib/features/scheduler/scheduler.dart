@@ -13,6 +13,7 @@ import '../lfg_manager/lfg_manager.dart';
 /// - [schedulePost] - schedules post to be posted at [startTime].
 /// - [cancelPost] - cancels post with [postID].
 /// - [editTime] - edits time of post with [postID] to [newTime].
+/// - [getScheduledPosts] - returns length of [_posts]
 final class PostScheduler {
   /// Creates new post scheduler that will restore posts from [database] and use [core] to post them.
   PostScheduler({
@@ -64,6 +65,7 @@ final class PostScheduler {
       _posts[post.date] = post.postMessageId;
     }
   }
+
 
   /// Starts checking posts every 30 seconds.
   void _startScheduler() {
@@ -177,6 +179,11 @@ final class PostScheduler {
     _posts.remove(post.key);
     _posts[newTime] = postID;
     _checkPosts();
+  }
+  /// Return quantity of scheduled posts
+  int getScheduledPosts() {
+    return  _posts.length;
+
   }
 
   /// Disposes post scheduler and cancels all scheduled posts.
