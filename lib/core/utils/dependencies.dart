@@ -93,5 +93,5 @@ final class Dependencies {
 
   final PostsDatabase postsDatabase;
 
-  final LFGManager lfgManager;
+  final ILFGManager lfgManager;
 }

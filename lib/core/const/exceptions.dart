@@ -44,9 +44,7 @@ base class EnvironmentVariableMissing implements FatalException {
   String toString() => 'Environment variable "$variableName" is missing, please set it.';
 }
 
-@Deprecated('No more config files used')
 base class ConfigFileMissing implements FatalException {
-  @Deprecated('No more config files used')
   const ConfigFileMissing(
     this.configFileName, {
     this.configPath,

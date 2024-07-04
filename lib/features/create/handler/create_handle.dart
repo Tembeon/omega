@@ -2,11 +2,11 @@ import 'package:nyxx/nyxx.dart' hide Activity;
 
 import '../../../core/data/enums/activity_type.dart';
 import '../../../core/utils/context/context.dart';
+import '../../../core/utils/dependencies.dart';
 import '../../../core/utils/loaders/bot_settings.dart';
 import '../../../core/utils/time_convert.dart';
 import '../../command_manager/command_manager.dart';
 import '../../lfg_manager/data/models/register_activity.dart';
-import '../../lfg_manager/lfg_manager.dart';
 
 /// Builds `/create` command.
 ///
@@ -34,7 +34,8 @@ Future<void> _createActivityHandler(InteractionCreateEvent<ApplicationCommandInt
   final userName = member.nick ?? member.user?.username;
   print('User "$userName" is trying to create new raid LFG post');
 
-  final manager = Context.root.get<LFGManager>('manager');
+
+  final manager = Dependencies.i.lfgManager;
   final settings = Context.root.get<BotSettings>('settings');
 
   // create command always has 1 subcommand: raid, dungeon, activity.

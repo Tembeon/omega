@@ -1,12 +1,9 @@
 import 'package:intl/intl.dart';
 import 'package:nyxx/nyxx.dart' hide Activity;
 
-import '../../../core/bot/core.dart';
-import '../../../core/utils/context/context.dart';
-import '../../../core/utils/database/tables/posts.dart';
+import '../../../core/utils/dependencies.dart';
 import '../../../core/utils/time_convert.dart';
 import '../../command_manager/command_manager.dart';
-import '../../lfg_manager/lfg_manager.dart';
 
 CommandCreator editComponentHandler() => (
       builder: _createEditCommand,
@@ -33,7 +30,7 @@ Future<void> _handleEditInteraction(InteractionCreateEvent<ApplicationCommandInt
     return;
   }
 
-  final database = Context.root.get<PostsDatabase>('db');
+  final database = Dependencies.i.postsDatabase;
   final postData = await database.findPost(message.value);
 
   if (postData == null) {
@@ -57,12 +54,7 @@ Future<void> _handleEditInteraction(InteractionCreateEvent<ApplicationCommandInt
     return;
   }
 
-  Context.root.get<LFGBotCore>('core').commandManager.unsubscribeFromModal(
-        customID: 'edit_modal_${postData.postMessageId}',
-        // authorID: event.interaction.user?.id.value ?? event.interaction.member?.user?.id.value ?? postData.author,
-      );
-
-  print('[EditHandler] Detected timezone: ${postData.timezone}');
+  Dependencies.i.commandManager.unsubscribeFromModal(customID: 'edit_modal_${postData.postMessageId}');
 
   await event.interaction.respondModal(
     ModalBuilder(
@@ -107,11 +99,10 @@ Future<void> _handleEditInteraction(InteractionCreateEvent<ApplicationCommandInt
     ),
   );
 
-  Context.root.get<LFGBotCore>('core').commandManager.subscribeToModal(
-        // authorID: event.interaction.user?.id.value ?? event.interaction.member?.user?.id.value ?? 0,
+
+  Dependencies.i.commandManager.subscribeToModal(
         modalID: 'edit_modal_${postData.postMessageId}',
         handler: (interaction) async {
-
           await _editLFGMessage(
             postId: message.value,
             origin: event,
@@ -170,7 +161,7 @@ Future<void> _editLFGMessage({
 
   final message = await channel.messages.get(Snowflake(messageId.value));
 
-  final lfgManager = Context.root.get<LFGManager>('manager');
+  final lfgManager = Dependencies.i.lfgManager;
   await lfgManager.update(message, description: newDescription, unixTime: newUnixTime);
 
   await modalEvent.interaction.respond(
