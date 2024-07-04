@@ -5,7 +5,9 @@ import '../../const/exceptions.dart';
 import 'activity_data.dart';
 import 'config_data.dart';
 
+@Deprecated('Migrate to settings in SQL')
 abstract final class BotSettings {
+  @Deprecated('Migrate to settings in SQL')
   factory BotSettings.fromFile(String path) {
     final botSettingsFile = File(path);
     if (!botSettingsFile.existsSync()) {

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/const/command_exceptions.dart';
-import '../../core/utils/loaders/bot_settings.dart';
 
 /// Typedef for creating a new command with a handler.
 ///
@@ -50,18 +49,22 @@ base class CommandManager {
   /// Creates a new [CommandManager] instance for a [bot].
   CommandManager({
     required NyxxGateway bot,
-  }) : _bot = bot {
+    required Snowflake server,
+  })  : _bot = bot,
+        _server = server {
     _listenInteractions();
     _listenButtons();
     _listenModals();
   }
+
+  final Snowflake _server;
 
   // Bot instance which used to manage interactions.
   final NyxxGateway _bot;
 
   // Partial application command manager for current guild, where bot is located and should work.
   // If bot will be invited to another guild, then bot will not work.
-  PartialApplicationCommand get _guildManager => _bot.commands[Snowflake(BotSettings.instance.botConfig.serverID)];
+  PartialApplicationCommand get _guildManager => _bot.commands[_server];
 
   // Map of registered commands.
   // Key is a full command name, value is a function which handles command.
