@@ -11,8 +11,7 @@ abstract final class BotConfig {
       throw ConfigFileMissing('bot config', configPath: botConfig.path);
     }
 
-    final config =
-        jsonDecode(botConfig.readAsStringSync()) as Map<String, Object?>;
+    final config = jsonDecode(botConfig.readAsStringSync()) as Map<String, Object?>;
 
     if (config.isEmpty) {
       throw ConfigFileMissing(
@@ -65,12 +64,11 @@ final class _BotConfigLoader implements BotConfig {
       lfgChannel: int.parse(json['lfg_channel']! as String),
       serverID: int.parse(json['server_id']! as String),
       promoChannel: int.tryParse(json['promo_channel']! as String),
-      deleteDeletedMessagesFromChannels:
-          (json['delete_deleted_messages_from_channels'] as List<Object>?)
-              ?.map(
-                (e) => e as String,
-              )
-              .toList(),
+      deleteDeletedMessagesFromChannels: (json['delete_deleted_messages_from_channels'] as List<Object>?)
+          ?.map(
+            (e) => e as String,
+          )
+          .toList(),
       timezones: (json['timezones']! as Map<String, Object?>).map(
         (key, value) => MapEntry(
           key,

@@ -69,8 +69,7 @@ base class CommandManager {
 
   // Partial application command manager for current guild, where bot is located and should work.
   // If bot will be invited to another guild, then bot will not work.
-  PartialApplicationCommand get _guildManager =>
-      _bot.commands[Snowflake(BotSettings.instance.botConfig.serverID)];
+  PartialApplicationCommand get _guildManager => _bot.commands[Snowflake(BotSettings.instance.botConfig.serverID)];
 
   // Map of registered commands.
   // Key is a full command name, value is a function which handles command.
@@ -108,9 +107,7 @@ base class CommandManager {
       final option = _UnifiedOption(
         name: event.interaction.data.name,
         type: CommandOptionType.subCommand,
-        options: event.interaction.data.options
-            ?.map(_UnifiedOption.fromInteractionOption)
-            .toList(),
+        options: event.interaction.data.options?.map(_UnifiedOption.fromInteractionOption).toList(),
       );
 
       final matches = _parseCommandNames([option]);
@@ -159,8 +156,7 @@ base class CommandManager {
         '[CommandManager] Received new modal interaction: "${event.interaction.data.customId}"',
       );
 
-      final userId = event.interaction.user?.id.value ??
-          event.interaction.member?.user?.id.value;
+      final userId = event.interaction.user?.id.value ?? event.interaction.member?.user?.id.value;
       if (userId == null) {
         throw const CantRespondException('No user ID found in interaction');
       }
@@ -184,17 +180,12 @@ base class CommandManager {
     final option = _UnifiedOption(
       name: commandCreator.builder().name,
       type: CommandOptionType.subCommand,
-      options: commandCreator
-          .builder()
-          .options
-          ?.map(_UnifiedOption.fromCommandOptionBuilder)
-          .toList(),
+      options: commandCreator.builder().options?.map(_UnifiedOption.fromCommandOptionBuilder).toList(),
     );
 
     final commandNames = _parseCommandNames([option]);
     if (commandNames.length != commandCreator.handlers.length) {
-      throw Exception(
-          'Different amount of handlers (${commandCreator.handlers.length}) => (${commandCreator.handlers} '
+      throw Exception('Different amount of handlers (${commandCreator.handlers.length}) => (${commandCreator.handlers} '
           'and given value in command builder. Expected ${commandNames.length} => $commandNames');
     }
 
@@ -259,8 +250,7 @@ base class CommandManager {
     String? prefix,
   ]) sync* {
     for (final option in options) {
-      final currentName =
-          prefix != null ? '$prefix ${option.name}' : option.name;
+      final currentName = prefix != null ? '$prefix ${option.name}' : option.name;
 
       if (option.type == CommandOptionType.subCommandGroup) {
         if (option.options != null) {
@@ -269,9 +259,7 @@ base class CommandManager {
       } else if (option.type == CommandOptionType.subCommand) {
         if (option.options != null && option.options!.isNotEmpty) {
           final bool hasSubCommand = option.options!.any(
-            (opt) =>
-                opt.type == CommandOptionType.subCommand ||
-                opt.type == CommandOptionType.subCommandGroup,
+            (opt) => opt.type == CommandOptionType.subCommand || opt.type == CommandOptionType.subCommandGroup,
           );
 
           if (hasSubCommand) {
@@ -292,16 +280,13 @@ base class CommandManager {
     String prefix = '',
   ]) sync* {
     for (final _UnifiedOption interactionOption in interactionOptions) {
-      final String currentPrefix = prefix.isNotEmpty
-          ? '$prefix ${interactionOption.name}'
-          : interactionOption.name;
+      final String currentPrefix = prefix.isNotEmpty ? '$prefix ${interactionOption.name}' : interactionOption.name;
       if (interactionOption.type == CommandOptionType.subCommandGroup ||
           interactionOption.type == CommandOptionType.subCommand) {
         if (prefix.isNotEmpty) {
           yield currentPrefix;
         }
-        if (interactionOption.options != null &&
-            interactionOption.options!.isNotEmpty) {
+        if (interactionOption.options != null && interactionOption.options!.isNotEmpty) {
           yield* _getCommandNames(interactionOption.options!, currentPrefix);
         } else if (interactionOption.type == CommandOptionType.subCommand) {
           yield currentPrefix;
@@ -322,8 +307,7 @@ class _UnifiedOption {
     return _UnifiedOption(
       name: option.name,
       type: option.type,
-      options:
-          option.options?.map(_UnifiedOption.fromInteractionOption).toList(),
+      options: option.options?.map(_UnifiedOption.fromInteractionOption).toList(),
     );
   }
 
@@ -331,8 +315,7 @@ class _UnifiedOption {
     return _UnifiedOption(
       name: option.name,
       type: option.type,
-      options:
-          option.options?.map(_UnifiedOption.fromCommandOptionBuilder).toList(),
+      options: option.options?.map(_UnifiedOption.fromCommandOptionBuilder).toList(),
     );
   }
 

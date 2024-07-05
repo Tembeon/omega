@@ -3,90 +3,58 @@
 part of 'posts.dart';
 
 // ignore_for_file: type=lint
-class $PostsTableTable extends PostsTable
-    with TableInfo<$PostsTableTable, PostsTableData> {
+class $PostsTableTable extends PostsTable with TableInfo<$PostsTableTable, PostsTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
 
   $PostsTableTable(this.attachedDatabase, [this._alias]);
 
-  static const VerificationMeta _postMessageIdMeta =
-      const VerificationMeta('postMessageId');
+  static const VerificationMeta _postMessageIdMeta = const VerificationMeta('postMessageId');
   @override
-  late final GeneratedColumn<int> postMessageId = GeneratedColumn<int>(
-      'post_message_id', aliasedName, false,
+  late final GeneratedColumn<int> postMessageId = GeneratedColumn<int>('post_message_id', aliasedName, false,
       type: DriftSqlType.int,
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-      'title', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _descriptionMeta =
-      const VerificationMeta('description');
+  late final GeneratedColumn<String> title =
+      GeneratedColumn<String>('title', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _descriptionMeta = const VerificationMeta('description');
   @override
-  late final GeneratedColumn<String> description = GeneratedColumn<String>(
-      'description', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumn<String> description =
+      GeneratedColumn<String>('description', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _authorMeta = const VerificationMeta('author');
   @override
-  late final GeneratedColumn<int> author = GeneratedColumn<int>(
-      'author', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _maxMembersMeta =
-      const VerificationMeta('maxMembers');
+  late final GeneratedColumn<int> author =
+      GeneratedColumn<int>('author', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _maxMembersMeta = const VerificationMeta('maxMembers');
   @override
-  late final GeneratedColumn<int> maxMembers = GeneratedColumn<int>(
-      'max_members', aliasedName, false,
-      check: () => maxMembers.isBiggerThan(const Constant(0)),
-      type: DriftSqlType.int,
-      requiredDuringInsert: true);
+  late final GeneratedColumn<int> maxMembers = GeneratedColumn<int>('max_members', aliasedName, false,
+      check: () => maxMembers.isBiggerThan(const Constant(0)), type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
-  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
-      'date', aliasedName, false,
-      check: () => date.isBiggerThan(currentDateAndTime),
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: true);
-  static const VerificationMeta _timezoneMeta =
-      const VerificationMeta('timezone');
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>('date', aliasedName, false,
+      check: () => date.isBiggerThan(currentDateAndTime), type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _timezoneMeta = const VerificationMeta('timezone');
   @override
-  late final GeneratedColumn<int> timezone = GeneratedColumn<int>(
-      'timezone', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _createdAtMeta =
-      const VerificationMeta('createdAt');
+  late final GeneratedColumn<int> timezone =
+      GeneratedColumn<int>('timezone', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
   @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-      'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: currentDateAndTime);
-  static const VerificationMeta _isDeletedMeta =
-      const VerificationMeta('isDeleted');
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>('created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false, defaultValue: currentDateAndTime);
+  static const VerificationMeta _isDeletedMeta = const VerificationMeta('isDeleted');
   @override
-  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
-      'is_deleted', aliasedName, false,
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>('is_deleted', aliasedName, false,
       type: DriftSqlType.bool,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'),
+      defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'),
       defaultValue: const Constant(false));
 
   @override
-  List<GeneratedColumn> get $columns => [
-        postMessageId,
-        title,
-        description,
-        author,
-        maxMembers,
-        date,
-        timezone,
-        createdAt,
-        isDeleted
-      ];
+  List<GeneratedColumn> get $columns =>
+      [postMessageId, title, description, author, maxMembers, date, timezone, createdAt, isDeleted];
 
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -96,65 +64,50 @@ class $PostsTableTable extends PostsTable
   static const String $name = 'posts_table';
 
   @override
-  VerificationContext validateIntegrity(Insertable<PostsTableData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<PostsTableData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('post_message_id')) {
       context.handle(
-          _postMessageIdMeta,
-          postMessageId.isAcceptableOrUnknown(
-              data['post_message_id']!, _postMessageIdMeta));
+          _postMessageIdMeta, postMessageId.isAcceptableOrUnknown(data['post_message_id']!, _postMessageIdMeta));
     } else if (isInserting) {
       context.missing(_postMessageIdMeta);
     }
     if (data.containsKey('title')) {
-      context.handle(
-          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+      context.handle(_titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
     } else if (isInserting) {
       context.missing(_titleMeta);
     }
     if (data.containsKey('description')) {
-      context.handle(
-          _descriptionMeta,
-          description.isAcceptableOrUnknown(
-              data['description']!, _descriptionMeta));
+      context.handle(_descriptionMeta, description.isAcceptableOrUnknown(data['description']!, _descriptionMeta));
     } else if (isInserting) {
       context.missing(_descriptionMeta);
     }
     if (data.containsKey('author')) {
-      context.handle(_authorMeta,
-          author.isAcceptableOrUnknown(data['author']!, _authorMeta));
+      context.handle(_authorMeta, author.isAcceptableOrUnknown(data['author']!, _authorMeta));
     } else if (isInserting) {
       context.missing(_authorMeta);
     }
     if (data.containsKey('max_members')) {
-      context.handle(
-          _maxMembersMeta,
-          maxMembers.isAcceptableOrUnknown(
-              data['max_members']!, _maxMembersMeta));
+      context.handle(_maxMembersMeta, maxMembers.isAcceptableOrUnknown(data['max_members']!, _maxMembersMeta));
     } else if (isInserting) {
       context.missing(_maxMembersMeta);
     }
     if (data.containsKey('date')) {
-      context.handle(
-          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
+      context.handle(_dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
     } else if (isInserting) {
       context.missing(_dateMeta);
     }
     if (data.containsKey('timezone')) {
-      context.handle(_timezoneMeta,
-          timezone.isAcceptableOrUnknown(data['timezone']!, _timezoneMeta));
+      context.handle(_timezoneMeta, timezone.isAcceptableOrUnknown(data['timezone']!, _timezoneMeta));
     } else if (isInserting) {
       context.missing(_timezoneMeta);
     }
     if (data.containsKey('created_at')) {
-      context.handle(_createdAtMeta,
-          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+      context.handle(_createdAtMeta, createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
     }
     if (data.containsKey('is_deleted')) {
-      context.handle(_isDeletedMeta,
-          isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta));
+      context.handle(_isDeletedMeta, isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta));
     }
     return context;
   }
@@ -166,24 +119,15 @@ class $PostsTableTable extends PostsTable
   PostsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PostsTableData(
-      postMessageId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}post_message_id'])!,
-      title: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      description: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
-      author: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}author'])!,
-      maxMembers: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}max_members'])!,
-      date: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
-      timezone: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}timezone'])!,
-      createdAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
-      isDeleted: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_deleted'])!,
+      postMessageId: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}post_message_id'])!,
+      title: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      description: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}description'])!,
+      author: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}author'])!,
+      maxMembers: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}max_members'])!,
+      date: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
+      timezone: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}timezone'])!,
+      createdAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      isDeleted: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}is_deleted'])!,
     );
   }
 
@@ -261,8 +205,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
     );
   }
 
-  factory PostsTableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory PostsTableData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PostsTableData(
       postMessageId: serializer.fromJson<int>(json['postMessageId']),
@@ -332,8 +275,8 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
   }
 
   @override
-  int get hashCode => Object.hash(postMessageId, title, description, author,
-      maxMembers, date, timezone, createdAt, isDeleted);
+  int get hashCode =>
+      Object.hash(postMessageId, title, description, author, maxMembers, date, timezone, createdAt, isDeleted);
 
   @override
   bool operator ==(Object other) =>
@@ -499,8 +442,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
   }
 }
 
-class $MembersTableTable extends MembersTable
-    with TableInfo<$MembersTableTable, MembersTableData> {
+class $MembersTableTable extends MembersTable with TableInfo<$MembersTableTable, MembersTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -509,17 +451,15 @@ class $MembersTableTable extends MembersTable
 
   static const VerificationMeta _memberMeta = const VerificationMeta('member');
   @override
-  late final GeneratedColumn<int> member = GeneratedColumn<int>(
-      'member', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+  late final GeneratedColumn<int> member =
+      GeneratedColumn<int>('member', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _postMeta = const VerificationMeta('post');
   @override
-  late final GeneratedColumn<int> post = GeneratedColumn<int>(
-      'post', aliasedName, false,
+  late final GeneratedColumn<int> post = GeneratedColumn<int>('post', aliasedName, false,
       type: DriftSqlType.int,
       requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES posts_table (post_message_id) ON DELETE CASCADE'));
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES posts_table (post_message_id) ON DELETE CASCADE'));
 
   @override
   List<GeneratedColumn> get $columns => [member, post];
@@ -532,19 +472,16 @@ class $MembersTableTable extends MembersTable
   static const String $name = 'members_table';
 
   @override
-  VerificationContext validateIntegrity(Insertable<MembersTableData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<MembersTableData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('member')) {
-      context.handle(_memberMeta,
-          member.isAcceptableOrUnknown(data['member']!, _memberMeta));
+      context.handle(_memberMeta, member.isAcceptableOrUnknown(data['member']!, _memberMeta));
     } else if (isInserting) {
       context.missing(_memberMeta);
     }
     if (data.containsKey('post')) {
-      context.handle(
-          _postMeta, post.isAcceptableOrUnknown(data['post']!, _postMeta));
+      context.handle(_postMeta, post.isAcceptableOrUnknown(data['post']!, _postMeta));
     } else if (isInserting) {
       context.missing(_postMeta);
     }
@@ -558,10 +495,8 @@ class $MembersTableTable extends MembersTable
   MembersTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return MembersTableData(
-      member: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}member'])!,
-      post: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}post'])!,
+      member: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}member'])!,
+      post: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}post'])!,
     );
   }
 
@@ -571,8 +506,7 @@ class $MembersTableTable extends MembersTable
   }
 }
 
-class MembersTableData extends DataClass
-    implements Insertable<MembersTableData> {
+class MembersTableData extends DataClass implements Insertable<MembersTableData> {
   /// A text column named `member`. This stores the userID of the member.
   final int member;
 
@@ -596,8 +530,7 @@ class MembersTableData extends DataClass
     );
   }
 
-  factory MembersTableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory MembersTableData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return MembersTableData(
       member: serializer.fromJson<int>(json['member']),
@@ -633,10 +566,7 @@ class MembersTableData extends DataClass
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is MembersTableData &&
-          other.member == this.member &&
-          other.post == this.post);
+      identical(this, other) || (other is MembersTableData && other.member == this.member && other.post == this.post);
 }
 
 class MembersTableCompanion extends UpdateCompanion<MembersTableData> {
@@ -669,8 +599,7 @@ class MembersTableCompanion extends UpdateCompanion<MembersTableData> {
     });
   }
 
-  MembersTableCompanion copyWith(
-      {Value<int>? member, Value<int>? post, Value<int>? rowid}) {
+  MembersTableCompanion copyWith({Value<int>? member, Value<int>? post, Value<int>? rowid}) {
     return MembersTableCompanion(
       member: member ?? this.member,
       post: post ?? this.post,
@@ -712,19 +641,16 @@ abstract class _$PostsDatabase extends GeneratedDatabase {
   late final $MembersTableTable membersTable = $MembersTableTable(this);
 
   @override
-  Iterable<TableInfo<Table, Object?>> get allTables =>
-      allSchemaEntities.whereType<TableInfo<Table, Object?>>();
+  Iterable<TableInfo<Table, Object?>> get allTables => allSchemaEntities.whereType<TableInfo<Table, Object?>>();
 
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [postsTable, membersTable];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [postsTable, membersTable];
 
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
         [
           WritePropagation(
-            on: TableUpdateQuery.onTableName('posts_table',
-                limitUpdateKind: UpdateKind.delete),
+            on: TableUpdateQuery.onTableName('posts_table', limitUpdateKind: UpdateKind.delete),
             result: [
               TableUpdate('members_table', kind: UpdateKind.delete),
             ],
@@ -771,12 +697,9 @@ class $$PostsTableTableTableManager extends RootTableManager<
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$PostsTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$PostsTableTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$PostsTableTableProcessedTableManager(p),
+          filteringComposer: $$PostsTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$PostsTableTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$PostsTableTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> postMessageId = const Value.absent(),
             Value<String> title = const Value.absent(),
@@ -840,127 +763,101 @@ class $$PostsTableTableProcessedTableManager extends ProcessedTableManager<
   $$PostsTableTableProcessedTableManager(super.$state);
 }
 
-class $$PostsTableTableFilterComposer
-    extends FilterComposer<_$PostsDatabase, $PostsTableTable> {
+class $$PostsTableTableFilterComposer extends FilterComposer<_$PostsDatabase, $PostsTableTable> {
   $$PostsTableTableFilterComposer(super.$state);
 
   ColumnFilters<int> get postMessageId => $state.composableBuilder(
       column: $state.table.postMessageId,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<String> get title => $state.composableBuilder(
-      column: $state.table.title,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      column: $state.table.title, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<String> get description => $state.composableBuilder(
       column: $state.table.description,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<int> get author => $state.composableBuilder(
       column: $state.table.author,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<int> get maxMembers => $state.composableBuilder(
       column: $state.table.maxMembers,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<DateTime> get date => $state.composableBuilder(
-      column: $state.table.date,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      column: $state.table.date, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<int> get timezone => $state.composableBuilder(
       column: $state.table.timezone,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
       column: $state.table.createdAt,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<bool> get isDeleted => $state.composableBuilder(
       column: $state.table.isDeleted,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ComposableFilter membersTableRefs(
-      ComposableFilter Function($$MembersTableTableFilterComposer f) f) {
+  ComposableFilter membersTableRefs(ComposableFilter Function($$MembersTableTableFilterComposer f) f) {
     final $$MembersTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.postMessageId,
         referencedTable: $state.db.membersTable,
         getReferencedColumn: (t) => t.post,
-        builder: (joinBuilder, parentComposers) =>
-            $$MembersTableTableFilterComposer(ComposerState($state.db,
-                $state.db.membersTable, joinBuilder, parentComposers)));
+        builder: (joinBuilder, parentComposers) => $$MembersTableTableFilterComposer(
+            ComposerState($state.db, $state.db.membersTable, joinBuilder, parentComposers)));
     return f(composer);
   }
 }
 
-class $$PostsTableTableOrderingComposer
-    extends OrderingComposer<_$PostsDatabase, $PostsTableTable> {
+class $$PostsTableTableOrderingComposer extends OrderingComposer<_$PostsDatabase, $PostsTableTable> {
   $$PostsTableTableOrderingComposer(super.$state);
 
   ColumnOrderings<int> get postMessageId => $state.composableBuilder(
       column: $state.table.postMessageId,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<String> get title => $state.composableBuilder(
       column: $state.table.title,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<String> get description => $state.composableBuilder(
       column: $state.table.description,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<int> get author => $state.composableBuilder(
       column: $state.table.author,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<int> get maxMembers => $state.composableBuilder(
       column: $state.table.maxMembers,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<DateTime> get date => $state.composableBuilder(
       column: $state.table.date,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<int> get timezone => $state.composableBuilder(
       column: $state.table.timezone,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
       column: $state.table.createdAt,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<bool> get isDeleted => $state.composableBuilder(
       column: $state.table.isDeleted,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$MembersTableTableInsertCompanionBuilder = MembersTableCompanion
-    Function({
+typedef $$MembersTableTableInsertCompanionBuilder = MembersTableCompanion Function({
   required int member,
   required int post,
   Value<int> rowid,
 });
-typedef $$MembersTableTableUpdateCompanionBuilder = MembersTableCompanion
-    Function({
+typedef $$MembersTableTableUpdateCompanionBuilder = MembersTableCompanion Function({
   Value<int> member,
   Value<int> post,
   Value<int> rowid,
@@ -979,12 +876,9 @@ class $$MembersTableTableTableManager extends RootTableManager<
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$MembersTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$MembersTableTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$MembersTableTableProcessedTableManager(p),
+          filteringComposer: $$MembersTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$MembersTableTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$MembersTableTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> member = const Value.absent(),
             Value<int> post = const Value.absent(),
@@ -1020,14 +914,12 @@ class $$MembersTableTableProcessedTableManager extends ProcessedTableManager<
   $$MembersTableTableProcessedTableManager(super.$state);
 }
 
-class $$MembersTableTableFilterComposer
-    extends FilterComposer<_$PostsDatabase, $MembersTableTable> {
+class $$MembersTableTableFilterComposer extends FilterComposer<_$PostsDatabase, $MembersTableTable> {
   $$MembersTableTableFilterComposer(super.$state);
 
   ColumnFilters<int> get member => $state.composableBuilder(
       column: $state.table.member,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   $$PostsTableTableFilterComposer get post {
     final $$PostsTableTableFilterComposer composer = $state.composerBuilder(
@@ -1035,21 +927,18 @@ class $$MembersTableTableFilterComposer
         getCurrentColumn: (t) => t.post,
         referencedTable: $state.db.postsTable,
         getReferencedColumn: (t) => t.postMessageId,
-        builder: (joinBuilder, parentComposers) =>
-            $$PostsTableTableFilterComposer(ComposerState($state.db,
-                $state.db.postsTable, joinBuilder, parentComposers)));
+        builder: (joinBuilder, parentComposers) => $$PostsTableTableFilterComposer(
+            ComposerState($state.db, $state.db.postsTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
 
-class $$MembersTableTableOrderingComposer
-    extends OrderingComposer<_$PostsDatabase, $MembersTableTable> {
+class $$MembersTableTableOrderingComposer extends OrderingComposer<_$PostsDatabase, $MembersTableTable> {
   $$MembersTableTableOrderingComposer(super.$state);
 
   ColumnOrderings<int> get member => $state.composableBuilder(
       column: $state.table.member,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   $$PostsTableTableOrderingComposer get post {
     final $$PostsTableTableOrderingComposer composer = $state.composerBuilder(
@@ -1057,9 +946,8 @@ class $$MembersTableTableOrderingComposer
         getCurrentColumn: (t) => t.post,
         referencedTable: $state.db.postsTable,
         getReferencedColumn: (t) => t.postMessageId,
-        builder: (joinBuilder, parentComposers) =>
-            $$PostsTableTableOrderingComposer(ComposerState($state.db,
-                $state.db.postsTable, joinBuilder, parentComposers)));
+        builder: (joinBuilder, parentComposers) => $$PostsTableTableOrderingComposer(
+            ComposerState($state.db, $state.db.postsTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
@@ -1069,9 +957,7 @@ class _$PostsDatabaseManager {
 
   _$PostsDatabaseManager(this._db);
 
-  $$PostsTableTableTableManager get postsTable =>
-      $$PostsTableTableTableManager(_db, _db.postsTable);
+  $$PostsTableTableTableManager get postsTable => $$PostsTableTableTableManager(_db, _db.postsTable);
 
-  $$MembersTableTableTableManager get membersTable =>
-      $$MembersTableTableTableManager(_db, _db.membersTable);
+  $$MembersTableTableTableManager get membersTable => $$MembersTableTableTableManager(_db, _db.membersTable);
 }

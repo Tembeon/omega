@@ -12,11 +12,9 @@ abstract final class ActivityData {
     required String customsPath,
   }) {
     return _ActivityDataLoader(
-      dungeons:
-          _loadDataFromFile(File(dungeonsPath)).map(Activity.dungeon).toList(),
+      dungeons: _loadDataFromFile(File(dungeonsPath)).map(Activity.dungeon).toList(),
       raids: _loadDataFromFile(File(raidsPath)).map(Activity.raid).toList(),
-      customs:
-          _loadDataFromFile(File(customsPath)).map(Activity.custom).toList(),
+      customs: _loadDataFromFile(File(customsPath)).map(Activity.custom).toList(),
     );
   }
 

@@ -169,8 +169,7 @@ Future<void> _editLFGMessage({
   );
 
   final messageId = origin.interaction.data.targetId;
-  final channel =
-      (await origin.interaction.channel?.get()) as GuildTextChannel?;
+  final channel = (await origin.interaction.channel?.get()) as GuildTextChannel?;
 
   if (messageId == null || channel == null) {
     await modalEvent.interaction.respond(

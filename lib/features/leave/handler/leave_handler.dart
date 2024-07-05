@@ -23,8 +23,7 @@ Future<void> _handleLeaveInteraction(
       event.interaction.message!,
       event.interaction.member!.user!,
     );
-    await event.interaction
-        .respond(MessageBuilder(content: 'Вы покинули LFG'), isEphemeral: true);
+    await event.interaction.respond(MessageBuilder(content: 'Вы покинули LFG'), isEphemeral: true);
   } on CommandException catch (e) {
     await event.interaction.respond(
       MessageBuilder(content: e.toHumanMessage()),

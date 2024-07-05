@@ -49,8 +49,7 @@ base class ConfigFileMissing implements FatalException {
 
   @override
   String toString() {
-    final sb = StringBuffer()
-      ..writeln('Config file "$configFileName" is missing, please create one.');
+    final sb = StringBuffer()..writeln('Config file "$configFileName" is missing, please create one.');
     if (configPath != null) {
       sb.writeln('Path: $configPath');
     }

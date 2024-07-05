@@ -131,8 +131,7 @@ final class PostScheduler {
 
       await dm.sendMessage(
         MessageBuilder(
-          content:
-              'Время сбора для ${post.title} от ${author.globalName ?? author.username} наступило!',
+          content: 'Время сбора для ${post.title} от ${author.globalName ?? author.username} наступило!',
         ),
       );
 

@@ -21,28 +21,19 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ru';
 
   @override
-  final Map<String, dynamic> messages =
-      _notInlinedMessages(_notInlinedMessages);
+  final Map<String, dynamic> messages = _notInlinedMessages(_notInlinedMessages);
 
   static Map<String, dynamic> _notInlinedMessages(_) => {
-        'commandOptionDateDescription': MessageLookupByLibrary.simpleMessage(
-            'Введите дату начала активности [15 01 2023]'),
+        'commandOptionDateDescription':
+            MessageLookupByLibrary.simpleMessage('Введите дату начала активности [15 01 2023]'),
         'commandOptionDateKey': MessageLookupByLibrary.simpleMessage('дата'),
-        'commandOptionDescriptionDescription':
-            MessageLookupByLibrary.simpleMessage('Введите описание активности'),
-        'commandOptionDescriptionKey':
-            MessageLookupByLibrary.simpleMessage('описание'),
-        'commandOptionNameDescription':
-            MessageLookupByLibrary.simpleMessage('Введите название активности'),
-        'commandOptionNameKey':
-            MessageLookupByLibrary.simpleMessage('название'),
-        'commandOptionTimeDescription': MessageLookupByLibrary.simpleMessage(
-            'Введите время начала активности [15 01]'),
+        'commandOptionDescriptionDescription': MessageLookupByLibrary.simpleMessage('Введите описание активности'),
+        'commandOptionDescriptionKey': MessageLookupByLibrary.simpleMessage('описание'),
+        'commandOptionNameDescription': MessageLookupByLibrary.simpleMessage('Введите название активности'),
+        'commandOptionNameKey': MessageLookupByLibrary.simpleMessage('название'),
+        'commandOptionTimeDescription': MessageLookupByLibrary.simpleMessage('Введите время начала активности [15 01]'),
         'commandOptionTimeKey': MessageLookupByLibrary.simpleMessage('время'),
-        'commandOptionTimezoneDescription':
-            MessageLookupByLibrary.simpleMessage(
-                'Введите ваш текущий часовой пояс'),
-        'commandOptionTimezoneKey':
-            MessageLookupByLibrary.simpleMessage('часовой_пояс')
+        'commandOptionTimezoneDescription': MessageLookupByLibrary.simpleMessage('Введите ваш текущий часовой пояс'),
+        'commandOptionTimezoneKey': MessageLookupByLibrary.simpleMessage('часовой_пояс')
       };
 }

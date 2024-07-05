@@ -115,8 +115,7 @@ final class LFGManager implements ILFGManager {
     final bot = Context.root.get<LFGBotCore>('core').bot;
     final settings = Context.root.get<BotSettings>('settings');
 
-    final channel =
-        await bot.channels.fetch(Snowflake(settings.botConfig.lfgChannel));
+    final channel = await bot.channels.fetch(Snowflake(settings.botConfig.lfgChannel));
     if (channel.type != ChannelType.guildText) {
       throw CantRespondException(
         'Канал LFG не найден или настроен неправильно\n'
@@ -128,10 +127,7 @@ final class LFGManager implements ILFGManager {
     await _database.deletePost(id);
 
     print('[LFGManager] Deleting post with id $id');
-    await (channel as GuildTextChannel)
-        .messages
-        .fetch(Snowflake(post.postMessageId))
-        .then((value) => value.delete());
+    await (channel as GuildTextChannel).messages.fetch(Snowflake(post.postMessageId)).then((value) => value.delete());
 
     print('[LFGManager] Unsheduling post with id $id');
     Context.root.get<PostScheduler>('scheduler').cancelPost(postID: id);
@@ -157,9 +153,7 @@ final class LFGManager implements ILFGManager {
       post.postMessageId,
       PostsTableCompanion(
         date: Value(
-          unixTime != null
-              ? DateTime.fromMillisecondsSinceEpoch(unixTime)
-              : post.date,
+          unixTime != null ? DateTime.fromMillisecondsSinceEpoch(unixTime) : post.date,
         ),
         description: Value(description ?? post.description),
       ),
@@ -204,8 +198,7 @@ final class LFGManager implements ILFGManager {
       throw const AlreadyJoinedException();
     }
 
-    final members =
-        List<String>.generate(membersIDS.length + 1, (index) => '$index gen');
+    final members = List<String>.generate(membersIDS.length + 1, (index) => '$index gen');
 
     if (membersIDS.length >= post.maxMembers) {
       throw const TooManyPlayersException();
@@ -241,13 +234,11 @@ final class LFGManager implements ILFGManager {
     // check if user is LFG creator. Creator cannot leave their own LFG
     if (post.author == user.id.value) throw const CreatorCannotLeaveException();
 
-    final removedUsers =
-        await _database.removeMember(message.id.value, user.id.value);
+    final removedUsers = await _database.removeMember(message.id.value, user.id.value);
     if (removedUsers == 0) throw const NotJoinedException();
 
     final membersIDS = await _database.getMembersForPost(message.id.value);
-    final members =
-        List<String>.generate(membersIDS.length, (index) => '$index gen');
+    final members = List<String>.generate(membersIDS.length, (index) => '$index gen');
 
     final botCore = Context.root.get<LFGBotCore>('core');
     for (int index = 0; index < membersIDS.length; index++) {

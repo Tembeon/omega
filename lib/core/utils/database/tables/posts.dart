@@ -26,12 +26,10 @@ class PostsTable extends Table {
   IntColumn get author => integer()();
 
   /// A integer column named `maxMembers`. This stores the max members of the post.
-  IntColumn get maxMembers =>
-      integer().check(maxMembers.isBiggerThan(const Constant(0)))();
+  IntColumn get maxMembers => integer().check(maxMembers.isBiggerThan(const Constant(0)))();
 
   /// A DateTime column named `date`. This stores the start date of the post.
-  DateTimeColumn get date =>
-      dateTime().check(date.isBiggerThan(currentDateAndTime))();
+  DateTimeColumn get date => dateTime().check(date.isBiggerThan(currentDateAndTime))();
 
   /// A integer column named `timezone`. This stores the timezone of the post.
   IntColumn get timezone => integer()();
@@ -78,15 +76,13 @@ class PostsDatabase extends _$PostsDatabase {
   /// Inserts a new LFG info into the database.
   ///
   /// Returns the id of the inserted row.
-  Future<int> insertPost(PostsTableCompanion post) =>
-      into(postsTable).insert(post);
+  Future<int> insertPost(PostsTableCompanion post) => into(postsTable).insert(post);
 
   /// Finds a LFG info by its [id].
   ///
   /// Returns null, if no LFG info was found.
   Future<PostsTableData?> findPost(int id) =>
-      (select(postsTable)..where((post) => post.postMessageId.equals(id)))
-          .getSingleOrNull();
+      (select(postsTable)..where((post) => post.postMessageId.equals(id))).getSingleOrNull();
 
   /// Adds a new member to a LFG.
   ///
@@ -100,8 +96,7 @@ class PostsDatabase extends _$PostsDatabase {
       throw const TooManyPlayersException();
     }
 
-    return into(membersTable)
-        .insert(MembersTableCompanion.insert(post: postID, member: memberID));
+    return into(membersTable).insert(MembersTableCompanion.insert(post: postID, member: memberID));
   }
 
   /// Removes a member from a LFG.
@@ -110,17 +105,14 @@ class PostsDatabase extends _$PostsDatabase {
   Future<int> removeMember(int postID, int memberID) {
     return (delete(membersTable)
           ..where(
-            (member) =>
-                member.post.equals(postID) & member.member.equals(memberID),
+            (member) => member.post.equals(postID) & member.member.equals(memberID),
           ))
         .go();
   }
 
   /// Returns a list of members of a LFG.
   Future<List<int>> getMembersForPost(int postID) async {
-    final members = await (select(membersTable)
-          ..where((member) => member.post.equals(postID)))
-        .get();
+    final members = await (select(membersTable)..where((member) => member.post.equals(postID))).get();
     return members.map((e) => e.member).toList();
   }
 
@@ -136,15 +128,12 @@ class PostsDatabase extends _$PostsDatabase {
 
   /// Marks a LFG as deleted.
   Future<int> deletePost(int postID) {
-    return (update(postsTable)
-          ..where((post) => post.postMessageId.equals(postID)))
+    return (update(postsTable)..where((post) => post.postMessageId.equals(postID)))
         .write(const PostsTableCompanion(isDeleted: Value(true)));
   }
 
   Future<int> updatePost(int postID, PostsTableCompanion post) {
-    return (update(postsTable)
-          ..where((post) => post.postMessageId.equals(postID)))
-        .write(post);
+    return (update(postsTable)..where((post) => post.postMessageId.equals(postID))).write(post);
   }
 }
 

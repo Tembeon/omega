@@ -18,8 +18,7 @@ Future<void> _healthBotHandler(
   final database = Context.root.get<PostsDatabase>('db');
   final lfgManager = Context.root.get<LFGManager>('manager');
   final bot = Context.root.get<LFGBotCore>('core');
-  final scheduler =
-      PostScheduler(database: database, core: bot, lfgManager: lfgManager);
+  final scheduler = PostScheduler(database: database, core: bot, lfgManager: lfgManager);
 
   final response = StringBuffer()
     ..writeln('Stats:')

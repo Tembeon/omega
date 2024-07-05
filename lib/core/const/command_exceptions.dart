@@ -12,8 +12,7 @@ class TooManyPlayersException implements CommandException {
   const TooManyPlayersException();
 
   @override
-  String toHumanMessage() =>
-      'Невозможно присоединиться к сбору, так как он уже заполнен.';
+  String toHumanMessage() => 'Невозможно присоединиться к сбору, так как он уже заполнен.';
 }
 
 /// Exception thrown when a creator tries to leave their own activity.
@@ -21,8 +20,7 @@ class CreatorCannotLeaveException implements CommandException {
   const CreatorCannotLeaveException();
 
   @override
-  String toHumanMessage() =>
-      'Невозможно покинуть сбор, так как вы являетесь его создателем. '
+  String toHumanMessage() => 'Невозможно покинуть сбор, так как вы являетесь его создателем. '
       'Если вы хотите удалить сбор, нажмите ПКМ по сообщению, выберите "Приложения", затем "Удалить LFG".';
 }
 
@@ -39,8 +37,7 @@ class NotJoinedException implements CommandException {
   const NotJoinedException();
 
   @override
-  String toHumanMessage() =>
-      'Невозможно покинуть сбор, в котором вы не участвуете.';
+  String toHumanMessage() => 'Невозможно покинуть сбор, в котором вы не участвуете.';
 }
 
 /// Exception thrown when a command is executed by a player who is not the creator.
@@ -48,8 +45,7 @@ class NotCreatorException implements CommandException {
   const NotCreatorException();
 
   @override
-  String toHumanMessage() =>
-      'Невозможно выполнить команду, так как вы не являетесь создателем сбора.';
+  String toHumanMessage() => 'Невозможно выполнить команду, так как вы не являетесь создателем сбора.';
 }
 
 /// Exception thrown when a command triggered, but bot refused to respond.
