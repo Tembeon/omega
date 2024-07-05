@@ -50,8 +50,11 @@ class MembersTable extends Table {
   IntColumn get member => integer()();
 
   /// A text column named `post`. This stores the post related to the member.
-  IntColumn get post => integer()
-      .references(PostsTable, #postMessageId, onDelete: KeyAction.cascade)();
+  IntColumn get post => integer().references(
+        PostsTable,
+        #postMessageId,
+        onDelete: KeyAction.cascade,
+      )();
 }
 
 @DriftDatabase(tables: [PostsTable, MembersTable])
