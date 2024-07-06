@@ -2,11 +2,40 @@ import 'package:nyxx/nyxx.dart' hide Activity;
 
 import '../../../core/data/enums/activity_type.dart';
 import '../../../core/utils/context/context.dart';
-import '../../../core/utils/dependencies.dart';
 import '../../../core/utils/loaders/bot_settings.dart';
+import '../../../core/utils/services.dart';
 import '../../../core/utils/time_convert.dart';
 import '../../command_manager/command_manager.dart';
+import '../../interactor/interactor_component.dart';
 import '../../lfg_manager/data/models/register_activity.dart';
+
+class CreateCommandComponent extends InteractorCommandComponent {
+  @override
+  Future<ApplicationCommandBuilder> build(Services dependencies) async {
+    return _createAll();
+  }
+
+  @override
+  Future<void> handle(
+    String commandName,
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services dependencies,
+  ) async {
+    return switch (commandName) {
+      'create raid' => () {}(),
+      'create dungeon' => () {}(),
+      'create activity' => () {}(),
+      _ => throw Exception('Unknown command: $commandName'),
+    };
+  }
+
+  @override
+  Set<UpdateEvent> get updateWhen => {
+        UpdateEvent.activityAdded,
+        UpdateEvent.activityRemoved,
+        UpdateEvent.activityUpdated,
+      };
+}
 
 /// Builds `/create` command.
 ///
@@ -34,8 +63,7 @@ Future<void> _createActivityHandler(InteractionCreateEvent<ApplicationCommandInt
   final userName = member.nick ?? member.user?.username;
   print('User "$userName" is trying to create new raid LFG post');
 
-
-  final manager = Dependencies.i.lfgManager;
+  final manager = Services.i.lfgManager;
   final settings = Context.root.get<BotSettings>('settings');
 
   // create command always has 1 subcommand: raid, dungeon, activity.
@@ -86,39 +114,41 @@ ApplicationCommandBuilder _createAll() {
     description: 'Создать активность',
     type: ApplicationCommandType.chatInput,
     options: LFGType.values
-        .map((type) => CommandOptionBuilder.subCommand(
-              name: type.name,
-              description: 'Создать сбор на активность',
-              options: [
-                CommandOptionBuilder.string(
-                  name: 'название',
-                  description: 'Введите название активности',
-                  choices: _getActivityChoices(type),
-                  isRequired: true,
-                ),
-                CommandOptionBuilder.string(
-                  name: 'описание',
-                  description: 'Введите описание активности',
-                  isRequired: true,
-                ),
-                CommandOptionBuilder.string(
-                  name: 'дата',
-                  description: 'Введите дату начала активности [15 01 2023]',
-                  isRequired: true,
-                ),
-                CommandOptionBuilder.string(
-                  name: 'время',
-                  description: 'Введите время начала активности [15 01]',
-                  isRequired: true,
-                ),
-                CommandOptionBuilder.integer(
-                  name: 'часовой_пояс',
-                  description: 'Введите ваш текущий часовой пояс',
-                  choices: _getTimezoneChoices(),
-                  isRequired: true,
-                ),
-              ],
-            ),)
+        .map(
+          (type) => CommandOptionBuilder.subCommand(
+            name: type.name,
+            description: 'Создать сбор на активность',
+            options: [
+              CommandOptionBuilder.string(
+                name: 'название',
+                description: 'Введите название активности',
+                choices: _getActivityChoices(type),
+                isRequired: true,
+              ),
+              CommandOptionBuilder.string(
+                name: 'описание',
+                description: 'Введите описание активности',
+                isRequired: true,
+              ),
+              CommandOptionBuilder.string(
+                name: 'дата',
+                description: 'Введите дату начала активности [15 01 2023]',
+                isRequired: true,
+              ),
+              CommandOptionBuilder.string(
+                name: 'время',
+                description: 'Введите время начала активности [15 01]',
+                isRequired: true,
+              ),
+              CommandOptionBuilder.integer(
+                name: 'часовой_пояс',
+                description: 'Введите ваш текущий часовой пояс',
+                choices: _getTimezoneChoices(),
+                isRequired: true,
+              ),
+            ],
+          ),
+        )
         .toList(),
   );
 }

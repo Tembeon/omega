@@ -1,6 +1,6 @@
 import 'package:nyxx/nyxx.dart';
 
-import '../../../core/utils/dependencies.dart';
+import '../../../core/utils/services.dart';
 import '../../command_manager/command_manager.dart';
 
 CommandCreator deleteCommand() {
@@ -33,7 +33,7 @@ Future<void> _deleteHandler(InteractionCreateEvent<ApplicationCommandInteraction
   }
 
 
-  final database = Dependencies.i.postsDatabase;
+  final database = Services.i.postsDatabase;
   final postData = await database.findPost(message.value);
 
   // if post can't be found in database, then it's not LFG
@@ -60,7 +60,7 @@ Future<void> _deleteHandler(InteractionCreateEvent<ApplicationCommandInteraction
   }
 
 
-  final lfgManager = Dependencies.i.lfgManager;
+  final lfgManager = Services.i.lfgManager;
   await lfgManager.delete(message.value);
 
   await interaction.interaction.respond(

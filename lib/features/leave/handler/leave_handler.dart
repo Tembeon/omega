@@ -1,7 +1,7 @@
 import 'package:nyxx/nyxx.dart';
 
 import '../../../core/const/command_exceptions.dart';
-import '../../../core/utils/dependencies.dart';
+import '../../../core/utils/services.dart';
 import '../../command_manager/command_manager.dart';
 
 ComponentCreator leaveComponentHandler() => (
@@ -13,7 +13,7 @@ Future<void> _handleLeaveInteraction(InteractionCreateEvent<MessageComponentInte
   final messageID = event.interaction.message?.id;
   if (messageID == null) return;
 
-  final lfgManager = Dependencies.i.lfgManager;
+  final lfgManager = Services.i.lfgManager;
 
   try {
     await lfgManager.removeMemberFrom(event.interaction.message!, event.interaction.member!.user!);

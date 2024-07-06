@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:nyxx/nyxx.dart' hide Activity;
 
-import '../../../core/utils/dependencies.dart';
+import '../../../core/utils/services.dart';
 import '../../../core/utils/time_convert.dart';
 import '../../command_manager/command_manager.dart';
 
@@ -30,7 +30,7 @@ Future<void> _handleEditInteraction(InteractionCreateEvent<ApplicationCommandInt
     return;
   }
 
-  final database = Dependencies.i.postsDatabase;
+  final database = Services.i.postsDatabase;
   final postData = await database.findPost(message.value);
 
   if (postData == null) {
@@ -54,7 +54,7 @@ Future<void> _handleEditInteraction(InteractionCreateEvent<ApplicationCommandInt
     return;
   }
 
-  Dependencies.i.commandManager.unsubscribeFromModal(customID: 'edit_modal_${postData.postMessageId}');
+  Services.i.commandManager.unsubscribeFromModal(customID: 'edit_modal_${postData.postMessageId}');
 
   await event.interaction.respondModal(
     ModalBuilder(
@@ -100,7 +100,7 @@ Future<void> _handleEditInteraction(InteractionCreateEvent<ApplicationCommandInt
   );
 
 
-  Dependencies.i.commandManager.subscribeToModal(
+  Services.i.commandManager.subscribeToModal(
         modalID: 'edit_modal_${postData.postMessageId}',
         handler: (interaction) async {
           await _editLFGMessage(
@@ -161,7 +161,7 @@ Future<void> _editLFGMessage({
 
   final message = await channel.messages.get(Snowflake(messageId.value));
 
-  final lfgManager = Dependencies.i.lfgManager;
+  final lfgManager = Services.i.lfgManager;
   await lfgManager.update(message, description: newDescription, unixTime: newUnixTime);
 
   await modalEvent.interaction.respond(

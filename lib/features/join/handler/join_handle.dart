@@ -1,7 +1,7 @@
 import 'package:nyxx/nyxx.dart';
 
 import '../../../core/const/command_exceptions.dart';
-import '../../../core/utils/dependencies.dart';
+import '../../../core/utils/services.dart';
 import '../../command_manager/command_manager.dart';
 
 ComponentCreator joinComponentHandler() => (
@@ -13,7 +13,7 @@ Future<void> _handleJoinInteraction(InteractionCreateEvent<MessageComponentInter
   final messageID = event.interaction.message?.id;
   if (messageID == null) return;
 
-  final lfgManager = Dependencies.i.lfgManager;
+  final lfgManager = Services.i.lfgManager;
 
   try {
     await lfgManager.addMemberTo(event.interaction.message!, event.interaction.member!.user!);

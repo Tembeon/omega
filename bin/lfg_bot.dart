@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:l/l.dart';
 import 'package:lfg_bot/core/const/exceptions.dart';
 import 'package:lfg_bot/core/utils/config.dart';
-import 'package:lfg_bot/core/utils/dependencies.dart';
+import 'package:lfg_bot/core/utils/context/context.dart';
+import 'package:lfg_bot/core/utils/services.dart';
+import 'package:lfg_bot/core/utils/loaders/bot_settings.dart';
 import 'package:lfg_bot/features/create/handler/create_handle.dart';
 import 'package:lfg_bot/features/delete/handler/delete_handler.dart';
 import 'package:lfg_bot/features/edit/handler/edit_handler.dart';
@@ -29,7 +31,8 @@ void main(List<String> arguments) => runZonedGuarded(
 
 void runBot() => Future(() async {
       final config = Config.fromEnvironment();
-      final dependencies = await Dependencies.initialize(config: config);
+      final dependencies = await Services.initialize(config: config);
+      _loadLegacyPart();
 
       await dependencies.commandManager.registerCommand(createCategoryCommands());
       await dependencies.commandManager.registerCommand(deleteCommand());
@@ -38,6 +41,15 @@ void runBot() => Future(() async {
       await dependencies.commandManager.registerComponent(joinComponentHandler());
       await dependencies.commandManager.registerComponent(leaveComponentHandler());
     });
+
+void _loadLegacyPart() {
+  final settings = BotSettings.fromFile('data/bot_settings.json');
+  Context.setRoot(
+    Context.from({
+      'settings': settings,
+    }),
+  );
+}
 
 @Deprecated('Use runBot instead')
 // Future<void> runner() async {
