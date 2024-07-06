@@ -1,6 +1,6 @@
 import 'package:nyxx/nyxx.dart';
 
-import '../../core/utils/dependencies.dart';
+import '../../core/utils/services.dart';
 
 /// Trigger reasons for interactor.
 enum UpdateEvent {
@@ -32,16 +32,22 @@ abstract class InteractorComponent<T extends Interaction<Object?>> {
   const InteractorComponent();
 
   /// This method should be used to build command for this component.
-  ApplicationCommandBuilder build(Dependencies dependencies);
+  Future<ApplicationCommandBuilder> build(Services services);
 
   /// Called when Interactor receives an event that this component should handle.
-  Future<void> handle(String commandName, InteractionCreateEvent<T> event, Dependencies dependencies);
+  Future<void> handle(String commandName, InteractionCreateEvent<T> event, Services services);
 
   /// Called when Interactor wants to update components.
   ///
   /// If this component should be updated when some of events happened,
   /// then Interactor updates this component in Discord.
   Set<UpdateEvent> get updateWhen => <UpdateEvent>{};
+
+  /// Called when Interactor wants to know if this component should be enabled.
+  ///
+  /// If this component should be enabled, then Interactor will register this component in Discord.
+  /// Otherwise, this component will be ignored or removed from Discord (if it was registered).
+  Future<bool> enabledWhen(Services services) => Future.value(true);
 }
 
 /// Base class for all interactor command components.
@@ -54,7 +60,7 @@ abstract class InteractorCommandComponent extends InteractorComponent<Applicatio
   Future<void> handle(
     String commandName,
     InteractionCreateEvent<ApplicationCommandInteraction> event,
-    Dependencies dependencies,
+    Services services,
   );
 }
 
@@ -68,7 +74,7 @@ abstract class InteractorComponentComponent extends InteractorComponent<MessageC
   Future<void> handle(
     String commandName,
     InteractionCreateEvent<MessageComponentInteraction> event,
-    Dependencies dependencies,
+    Services services,
   );
 }
 
@@ -82,6 +88,6 @@ abstract class InteractorModalComponent extends InteractorComponent<ModalSubmitI
   Future<void> handle(
     String commandName,
     InteractionCreateEvent<ModalSubmitInteraction> event,
-    Dependencies dependencies,
+    Services services,
   );
 }
