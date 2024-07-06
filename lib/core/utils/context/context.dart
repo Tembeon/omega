@@ -27,6 +27,7 @@ abstract final class Context {
   /// Returns value from context.
   Object operator [](String key);
 
+  @Deprecated('Use Dependencies instead')
   T get<T>(String key) => this[key] as T;
 
   Map<String, Object> toMap();
@@ -47,6 +48,7 @@ final class _Context implements Context {
   @override
   void operator []=(String key, Object value) => _map[key] = value;
 
+  @Deprecated('Use Dependencies instead')
   @override
   T get<T>(String key) {
     final value = _map[key];
@@ -71,6 +73,7 @@ final class UnmodifiableContext implements Context {
   @override
   Object operator [](String key) => _context[key];
 
+  @Deprecated('Use Dependencies instead')
   @override
   T get<T>(String key) => this[key] as T;
 

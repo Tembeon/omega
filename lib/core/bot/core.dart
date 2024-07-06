@@ -1,7 +1,7 @@
 import 'package:nyxx/nyxx.dart';
 
 import '../../features/command_manager/command_manager.dart';
-import '../utils/loaders/bot_settings.dart';
+import '../utils/config.dart';
 
 class LFGBotCore {
   const LFGBotCore({
@@ -20,10 +20,10 @@ class LFGBotCore {
   final CommandManager commandManager;
 
   /// Initializes connection to Discord using WebSocket and syncs interactions.
-  static Future<LFGBotCore> initialize() async {
+  static Future<LFGBotCore> initialize({required Config config}) async {
     // create bot with intents and register plugins
     final bot = await Nyxx.connectGateway(
-      BotSettings.instance.botConfig.botToken,
+      config.token,
       GatewayIntents.allUnprivileged | GatewayIntents.guildMessages,
       options: GatewayClientOptions(
         loggerName: 'LFG Bot',
@@ -37,7 +37,7 @@ class LFGBotCore {
 
     return LFGBotCore(
       bot: bot,
-      commandManager: CommandManager(bot: bot),
+      commandManager: CommandManager(bot: bot, server: config.server),
     );
   }
 }

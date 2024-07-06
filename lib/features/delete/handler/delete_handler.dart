@@ -1,9 +1,7 @@
 import 'package:nyxx/nyxx.dart';
 
-import '../../../core/utils/context/context.dart';
-import '../../../core/utils/database/tables/posts.dart';
+import '../../../core/utils/dependencies.dart';
 import '../../command_manager/command_manager.dart';
-import '../../lfg_manager/lfg_manager.dart';
 
 CommandCreator deleteCommand() {
   return (
@@ -36,7 +34,8 @@ Future<void> _deleteHandler(
     return;
   }
 
-  final database = Context.root.get<PostsDatabase>('db');
+
+  final database = Dependencies.i.postsDatabase;
   final postData = await database.findPost(message.value);
 
   // if post can't be found in database, then it's not LFG
@@ -64,7 +63,8 @@ Future<void> _deleteHandler(
     return;
   }
 
-  final lfgManager = Context.root.get<ILFGManager>('manager');
+
+  final lfgManager = Dependencies.i.lfgManager;
   await lfgManager.delete(message.value);
 
   await interaction.interaction.respond(

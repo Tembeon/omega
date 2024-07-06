@@ -4,7 +4,10 @@ import 'dart:io';
 import '../../const/exceptions.dart';
 import '../../data/models/activity.dart';
 
+@Deprecated('Migrate to settings in SQL')
 abstract final class ActivityData {
+
+  @Deprecated('Migrate to settings in SQL')
   /// Loads activities from file.
   factory ActivityData.fromFiles({
     required String raidsPath,

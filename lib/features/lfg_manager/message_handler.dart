@@ -3,9 +3,9 @@ import 'dart:math';
 
 import 'package:nyxx/nyxx.dart' hide Activity;
 
-import '../../core/bot/core.dart';
 import '../../core/data/models/activity.dart';
 import '../../core/utils/context/context.dart';
+import '../../core/utils/dependencies.dart';
 import '../../core/utils/loaders/bot_settings.dart';
 import 'data/models/register_activity.dart';
 
@@ -48,7 +48,7 @@ final class MessageHandler implements IMessageHandler {
   ];
 
   Future<MessageBuilder> _buildLFGPost(ILFGPostBuilder builder) async {
-    final bot = Context.root.get<LFGBotCore>('core').bot;
+    final bot = Dependencies.i.core.bot;
     final user = await bot.users.get(builder.authorID);
 
     final embedBuilder = EmbedBuilder()

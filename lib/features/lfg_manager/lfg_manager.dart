@@ -3,12 +3,11 @@ import 'dart:async';
 import 'package:drift/drift.dart';
 import 'package:nyxx/nyxx.dart';
 
-import '../../core/bot/core.dart';
 import '../../core/const/command_exceptions.dart';
 import '../../core/utils/context/context.dart';
 import '../../core/utils/database/tables/posts.dart';
+import '../../core/utils/dependencies.dart';
 import '../../core/utils/loaders/bot_settings.dart';
-import '../scheduler/scheduler.dart';
 import 'data/models/register_activity.dart';
 import 'message_handler.dart';
 
@@ -88,7 +87,7 @@ final class LFGManager implements ILFGManager {
         fromCreate: true,
       );
 
-      Context.root.get<PostScheduler>('scheduler').schedulePost(
+      Dependencies.i.postScheduler.schedulePost(
             startTime: dbPost.date.value,
             postID: dbPost.postMessageId.value,
           );
@@ -112,7 +111,7 @@ final class LFGManager implements ILFGManager {
     final post = await _database.findPost(id);
     if (post == null) throw CantRespondException('LFG $id не найден');
 
-    final bot = Context.root.get<LFGBotCore>('core').bot;
+    final bot = Dependencies.i.core.bot;
     final settings = Context.root.get<BotSettings>('settings');
 
     final channel = await bot.channels.fetch(Snowflake(settings.botConfig.lfgChannel));
@@ -130,7 +129,7 @@ final class LFGManager implements ILFGManager {
     await (channel as GuildTextChannel).messages.fetch(Snowflake(post.postMessageId)).then((value) => value.delete());
 
     print('[LFGManager] Unsheduling post with id $id');
-    Context.root.get<PostScheduler>('scheduler').cancelPost(postID: id);
+    Dependencies.i.postScheduler.cancelPost(postID: id);
   }
 
   @override
@@ -166,7 +165,7 @@ final class LFGManager implements ILFGManager {
     );
 
     if (unixTime != null) {
-      Context.root.get<PostScheduler>('scheduler').editTime(
+      Dependencies.i.postScheduler.editTime(
             postID: post.postMessageId,
             newTime: DateTime.fromMillisecondsSinceEpoch(unixTime),
           );
@@ -207,7 +206,7 @@ final class LFGManager implements ILFGManager {
     // all good, add user to database
     await _database.addMember(message.id.value, user.id.value);
 
-    final botCore = Context.root.get<LFGBotCore>('core');
+    final botCore = Dependencies.i.core;
     for (int index = 0; index < membersIDS.length; index++) {
       final user = await botCore.bot.users.fetch(Snowflake(membersIDS[index]));
       members[index] = user.globalName ?? user.username;
@@ -240,7 +239,7 @@ final class LFGManager implements ILFGManager {
     final membersIDS = await _database.getMembersForPost(message.id.value);
     final members = List<String>.generate(membersIDS.length, (index) => '$index gen');
 
-    final botCore = Context.root.get<LFGBotCore>('core');
+    final botCore = Dependencies.i.core;
     for (int index = 0; index < membersIDS.length; index++) {
       final user = await botCore.bot.users.fetch(Snowflake(membersIDS[index]));
       members[index] = user.globalName ?? user.username;

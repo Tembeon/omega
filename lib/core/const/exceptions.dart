@@ -32,6 +32,18 @@ class _FatalException implements FatalException {
   }
 }
 
+base class EnvironmentVariableMissing implements FatalException {
+  const EnvironmentVariableMissing(this.variableName);
+
+  final String variableName;
+
+  @override
+  int get exitCode => ExitCode.config.code;
+
+  @override
+  String toString() => 'Environment variable "$variableName" is missing, please set it.';
+}
+
 base class ConfigFileMissing implements FatalException {
   const ConfigFileMissing(
     this.configFileName, {
