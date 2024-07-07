@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/utils/services.dart';
@@ -35,9 +34,6 @@ enum UpdateEvent {
 abstract class InteractorComponent<T extends Interaction<Object?>> {
   const InteractorComponent();
 
-  /// This method should be used to build command for this component.
-  Future<ApplicationCommandBuilder> build(Services services);
-
   /// Called when Interactor receives an event that this component should handle.
   Future<void> handle(String commandName, InteractionCreateEvent<T> event, Services services);
 
@@ -64,6 +60,9 @@ abstract class InteractorComponent<T extends Interaction<Object?>> {
 abstract class InteractorCommandComponent extends InteractorComponent<ApplicationCommandInteraction> {
   const InteractorCommandComponent();
 
+  /// This method should be used to build command for this component.
+  Future<ApplicationCommandBuilder> build(Services services);
+
   @override
   Future<void> handle(
     String commandName,
@@ -81,12 +80,6 @@ abstract class InteractorMessageComponent extends InteractorComponent<MessageCom
   /// Generates unique ID for this component which used to identify this component in the system.
   Future<String> uniqueID(Services services);
 
-  @mustCallSuper
-  @override
-  Future<ApplicationCommandBuilder> build(Services services) {
-    throw UnsupportedError('Message components should not be registered as commands');
-  }
-
   @override
   Future<void> handle(
     String commandName,
@@ -100,6 +93,9 @@ abstract class InteractorMessageComponent extends InteractorComponent<MessageCom
 /// This component should be used to handle modal interactions.
 abstract class InteractorModalComponent extends InteractorComponent<ModalSubmitInteraction> {
   const InteractorModalComponent();
+
+  /// Generates unique ID for this component which used to identify this component in the system.
+  Future<String> uniqueID(Services services);
 
   @override
   Future<void> handle(
