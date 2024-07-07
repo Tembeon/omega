@@ -6,36 +6,7 @@ import '../../../core/utils/loaders/bot_settings.dart';
 import '../../../core/utils/services.dart';
 import '../../../core/utils/time_convert.dart';
 import '../../command_manager/command_manager.dart';
-import '../../interactor/interactor_component.dart';
 import '../../lfg_manager/data/models/register_activity.dart';
-
-class CreateCommandComponent extends InteractorCommandComponent {
-  @override
-  Future<ApplicationCommandBuilder> build(Services dependencies) async {
-    return _createAll();
-  }
-
-  @override
-  Future<void> handle(
-    String commandName,
-    InteractionCreateEvent<ApplicationCommandInteraction> event,
-    Services dependencies,
-  ) async {
-    return switch (commandName) {
-      'create raid' => () {}(),
-      'create dungeon' => () {}(),
-      'create activity' => () {}(),
-      _ => throw Exception('Unknown command: $commandName'),
-    };
-  }
-
-  @override
-  Set<UpdateEvent> get updateWhen => {
-        UpdateEvent.activityAdded,
-        UpdateEvent.activityRemoved,
-        UpdateEvent.activityUpdated,
-      };
-}
 
 /// Builds `/create` command.
 ///

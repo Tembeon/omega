@@ -5,8 +5,8 @@ import 'package:nyxx/nyxx.dart' hide Activity;
 
 import '../../core/data/models/activity.dart';
 import '../../core/utils/context/context.dart';
-import '../../core/utils/services.dart';
 import '../../core/utils/loaders/bot_settings.dart';
+import '../../core/utils/services.dart';
 import 'data/models/register_activity.dart';
 
 /// Interface for Discord message handler.
@@ -48,7 +48,7 @@ final class MessageHandler implements IMessageHandler {
   ];
 
   Future<MessageBuilder> _buildLFGPost(ILFGPostBuilder builder) async {
-    final bot = Services.i.core.bot;
+    final bot = Services.i.bot;
     final user = await bot.users.get(builder.authorID);
 
     final embedBuilder = EmbedBuilder()

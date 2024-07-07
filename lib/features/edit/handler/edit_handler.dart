@@ -54,7 +54,7 @@ Future<void> _handleEditInteraction(InteractionCreateEvent<ApplicationCommandInt
     return;
   }
 
-  Services.i.commandManager.unsubscribeFromModal(customID: 'edit_modal_${postData.postMessageId}');
+  Services.i.interactor.unsubscribeFromModal(customID: 'edit_modal_${postData.postMessageId}');
 
   await event.interaction.respondModal(
     ModalBuilder(
@@ -100,7 +100,7 @@ Future<void> _handleEditInteraction(InteractionCreateEvent<ApplicationCommandInt
   );
 
 
-  Services.i.commandManager.subscribeToModal(
+  Services.i.interactor.subscribeToModal(
         modalID: 'edit_modal_${postData.postMessageId}',
         handler: (interaction) async {
           await _editLFGMessage(

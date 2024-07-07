@@ -1,7 +1,10 @@
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:nyxx/nyxx.dart';
+
 import '../../features/command_manager/command_manager.dart';
+import '../../features/interactor/interactor.dart';
 import '../../features/lfg_manager/lfg_manager.dart';
 import '../../features/lfg_manager/message_handler.dart';
 import '../../features/scheduler/scheduler.dart';
@@ -34,11 +37,12 @@ final class Services {
   /// {@macro Dependencies}
   const Services._({
     required this.config,
-    required this.core,
-    required this.commandManager,
+    @Deprecated('Migrate to `bot` field') required this.core,
+    @Deprecated('Migrate to `Interactor`') required this.commandManager,
     required this.postScheduler,
     required this.postsDatabase,
     required this.lfgManager,
+    required this.interactor,
   });
 
   /// Stores instance of [Services].
@@ -77,6 +81,7 @@ final class Services {
       lfgManager: lfgManager,
       commandManager: core.commandManager,
       postScheduler: PostScheduler(database: postsDatabase, core: core, lfgManager: lfgManager),
+      interactor: Interactor(bot: core.bot, serverId: config.server),
     );
 
     return _instance = dep;
@@ -85,8 +90,10 @@ final class Services {
   /// {@macro Config}
   final Config config;
 
+  @Deprecated('Use `bot` instead')
   final LFGBotCore core;
 
+  @Deprecated('Use `Interactor` instead')
   final CommandManager commandManager;
 
   final PostScheduler postScheduler;
@@ -94,4 +101,10 @@ final class Services {
   final PostsDatabase postsDatabase;
 
   final ILFGManager lfgManager;
+
+  final Interactor interactor;
+
+  /// Current active bot (WebSocket).
+  // in future, after removing deprecated `core` field, this field will contain bot instance
+  NyxxGateway get bot => core.bot;
 }

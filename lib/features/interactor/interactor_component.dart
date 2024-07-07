@@ -1,6 +1,10 @@
+import 'package:meta/meta.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/utils/services.dart';
+
+export 'package:nyxx/nyxx.dart';
+export '../../core/utils/services.dart';
 
 /// Trigger reasons for interactor.
 enum UpdateEvent {
@@ -26,7 +30,7 @@ enum UpdateEvent {
 ///
 /// See also:
 /// * [InteractorCommandComponent] - component that handles slash command interactions.
-/// * [InteractorComponentComponent] - component that handles message component interactions.
+/// * [InteractorMessageComponent] - component that handles message component interactions.
 /// * [InteractorModalComponent] - component that handles modal interactions.
 abstract class InteractorComponent<T extends Interaction<Object?>> {
   const InteractorComponent();
@@ -47,6 +51,10 @@ abstract class InteractorComponent<T extends Interaction<Object?>> {
   ///
   /// If this component should be enabled, then Interactor will register this component in Discord.
   /// Otherwise, this component will be ignored or removed from Discord (if it was registered).
+  ///
+  /// Please note that returning `false` will remove root command of this component.
+  /// If you want to disable only some of subcommands, then you should return `true`
+  /// and do not include subcommands in [build] method.
   Future<bool> enabledWhen(Services services) => Future.value(true);
 }
 
@@ -67,8 +75,17 @@ abstract class InteractorCommandComponent extends InteractorComponent<Applicatio
 /// Base class for all interactor message component components.
 ///
 /// This component should be used to handle message component interactions.
-abstract class InteractorComponentComponent extends InteractorComponent<MessageComponentInteraction> {
-  const InteractorComponentComponent();
+abstract class InteractorMessageComponent extends InteractorComponent<MessageComponentInteraction> {
+  const InteractorMessageComponent();
+
+  /// Generates unique ID for this component which used to identify this component in the system.
+  Future<String> uniqueID(Services services);
+
+  @mustCallSuper
+  @override
+  Future<ApplicationCommandBuilder> build(Services services) {
+    throw UnsupportedError('Message components should not be registered as commands');
+  }
 
   @override
   Future<void> handle(
