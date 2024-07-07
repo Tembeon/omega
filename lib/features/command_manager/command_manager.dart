@@ -53,17 +53,15 @@ typedef ModalCreator = ({
 /// This class listens for interactions, parses them, and calls the appropriate handler.
 ///
 /// To register a new command, use the [registerCommand] method, which takes a [CommandCreator] as a parameter.
+@Deprecated('Use `Interactor` instead')
 base class CommandManager {
   /// Creates a new [CommandManager] instance for a [bot].
+  @Deprecated('Use `Interactor` instead')
   CommandManager({
     required NyxxGateway bot,
     required Snowflake server,
   })  : _bot = bot,
-        _server = server {
-    _listenInteractions();
-    _listenButtons();
-    _listenModals();
-  }
+        _server = server;
 
   final Snowflake _server;
 

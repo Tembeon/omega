@@ -5,43 +5,52 @@ import 'package:l/l.dart';
 import 'package:lfg_bot/core/const/exceptions.dart';
 import 'package:lfg_bot/core/utils/config.dart';
 import 'package:lfg_bot/core/utils/context/context.dart';
-import 'package:lfg_bot/core/utils/dependencies.dart';
 import 'package:lfg_bot/core/utils/loaders/bot_settings.dart';
-import 'package:lfg_bot/features/admin/admin_commands_creator.dart';
-import 'package:lfg_bot/features/create/handler/create_handler.dart';
-import 'package:lfg_bot/features/delete/handler/delete_handler.dart';
-import 'package:lfg_bot/features/edit/handler/edit_handler.dart';
-import 'package:lfg_bot/features/join/handler/join_handle.dart';
-import 'package:lfg_bot/features/leave/handler/leave_handler.dart';
+import 'package:lfg_bot/core/utils/services.dart';
+import 'package:lfg_bot/features/components/buttons/join/join_message_component.dart';
+import 'package:lfg_bot/features/components/buttons/leave/leave_message_component.dart';
+import 'package:lfg_bot/features/components/commands/create/create_command_component.dart';
+import 'package:lfg_bot/features/components/commands/delete/delete_command_component.dart';
+import 'package:lfg_bot/features/components/commands/edit/edit_command_handler.dart';
 
-void main(List<String> arguments) => runZonedGuarded(
-      runBot,
-      zoneSpecification: ZoneSpecification(
-        print: (self, parent, zone, message) => l.i('[${DateTime.now()}] $message'),
+void main(List<String> arguments) => l.capture<void>(
+      () => runZonedGuarded<void>(
+        runBot,
+        zoneSpecification: ZoneSpecification(
+          print: (self, parent, zone, message) => l.i('[${DateTime.now()}] $message'),
+        ),
+        (error, stack) {
+          l.e('Root level exception:\n$error\n\n$stack');
+
+          if (error case FatalException(:final exitCode)) {
+            exit(exitCode);
+          }
+
+          // exit(ExitCode.software.code);
+        },
       ),
-      (error, stack) {
-        l.e('Root level exception:\n$error\n\n$stack');
-
-        if (error case FatalException(:final exitCode)) {
-          exit(exitCode);
-        }
-
-        // exit(ExitCode.software.code);
-      },
+      LogOptions(
+        handlePrint: true,
+        printColors: true,
+        outputInRelease: true,
+        messageFormatting: (message, logLevel, dateTime) => '[${dateTime.toIso8601String()}] $message',
+      ),
     );
 
 void runBot() => Future(() async {
       final config = Config.fromEnvironment();
-      final dependencies = await Dependencies.initialize(config: config);
+      final dependencies = await Services.initialize(config: config);
       _loadLegacyPart();
 
-      await dependencies.commandManager.registerCommand(createCategoryCommands());
-      await dependencies.commandManager.registerCommand(deleteCommand());
-      await dependencies.commandManager.registerCommand(editComponentHandler());
-      await dependencies.commandManager.registerCommand(adminCategoryCommands());
+      await dependencies.interactor.addComponents({
+        const CreateCommandComponent(),
+        const DeleteCommandComponent(),
+        const EditCommandHandler(),
+        const JoinMessageComponent(),
+        const LeaveMessageComponent(),
+      });
 
-      await dependencies.commandManager.registerComponent(joinComponentHandler());
-      await dependencies.commandManager.registerComponent(leaveComponentHandler());
+      await dependencies.interactor.forgetUnknown();
     });
 
 void _loadLegacyPart() {

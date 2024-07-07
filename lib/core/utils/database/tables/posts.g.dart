@@ -7,9 +7,7 @@ class $PostsTableTable extends PostsTable with TableInfo<$PostsTableTable, Posts
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-
   $PostsTableTable(this.attachedDatabase, [this._alias]);
-
   static const VerificationMeta _postMessageIdMeta = const VerificationMeta('postMessageId');
   @override
   late final GeneratedColumn<int> postMessageId = GeneratedColumn<int>('post_message_id', aliasedName, false,
@@ -51,18 +49,14 @@ class $PostsTableTable extends PostsTable with TableInfo<$PostsTableTable, Posts
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'),
       defaultValue: const Constant(false));
-
   @override
   List<GeneratedColumn> get $columns =>
       [postMessageId, title, description, author, maxMembers, date, timezone, createdAt, isDeleted];
-
   @override
   String get aliasedName => _alias ?? actualTableName;
-
   @override
   String get actualTableName => $name;
   static const String $name = 'posts_table';
-
   @override
   VerificationContext validateIntegrity(Insertable<PostsTableData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
@@ -114,7 +108,6 @@ class $PostsTableTable extends PostsTable with TableInfo<$PostsTableTable, Posts
 
   @override
   Set<GeneratedColumn> get $primaryKey => const {};
-
   @override
   PostsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -164,7 +157,6 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
 
   /// A bool column named `isDeleted`. This stores the deletion status of the post.
   final bool isDeleted;
-
   const PostsTableData(
       {required this.postMessageId,
       required this.title,
@@ -175,7 +167,6 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
       required this.timezone,
       required this.createdAt,
       required this.isDeleted});
-
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -219,7 +210,6 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
     );
   }
-
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -257,7 +247,6 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
         createdAt: createdAt ?? this.createdAt,
         isDeleted: isDeleted ?? this.isDeleted,
       );
-
   @override
   String toString() {
     return (StringBuffer('PostsTableData(')
@@ -277,7 +266,6 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
   @override
   int get hashCode =>
       Object.hash(postMessageId, title, description, author, maxMembers, date, timezone, createdAt, isDeleted);
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -304,7 +292,6 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
   final Value<DateTime> createdAt;
   final Value<bool> isDeleted;
   final Value<int> rowid;
-
   const PostsTableCompanion({
     this.postMessageId = const Value.absent(),
     this.title = const Value.absent(),
@@ -317,7 +304,6 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     this.isDeleted = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-
   PostsTableCompanion.insert({
     required int postMessageId,
     required String title,
@@ -336,7 +322,6 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
         maxMembers = Value(maxMembers),
         date = Value(date),
         timezone = Value(timezone);
-
   static Insertable<PostsTableData> custom({
     Expression<int>? postMessageId,
     Expression<String>? title,
@@ -446,9 +431,7 @@ class $MembersTableTable extends MembersTable with TableInfo<$MembersTableTable,
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-
   $MembersTableTable(this.attachedDatabase, [this._alias]);
-
   static const VerificationMeta _memberMeta = const VerificationMeta('member');
   @override
   late final GeneratedColumn<int> member =
@@ -460,17 +443,13 @@ class $MembersTableTable extends MembersTable with TableInfo<$MembersTableTable,
       requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES posts_table (post_message_id) ON DELETE CASCADE'));
-
   @override
   List<GeneratedColumn> get $columns => [member, post];
-
   @override
   String get aliasedName => _alias ?? actualTableName;
-
   @override
   String get actualTableName => $name;
   static const String $name = 'members_table';
-
   @override
   VerificationContext validateIntegrity(Insertable<MembersTableData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
@@ -490,7 +469,6 @@ class $MembersTableTable extends MembersTable with TableInfo<$MembersTableTable,
 
   @override
   Set<GeneratedColumn> get $primaryKey => const {};
-
   @override
   MembersTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -512,9 +490,7 @@ class MembersTableData extends DataClass implements Insertable<MembersTableData>
 
   /// A text column named `post`. This stores the post related to the member.
   final int post;
-
   const MembersTableData({required this.member, required this.post});
-
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -537,7 +513,6 @@ class MembersTableData extends DataClass implements Insertable<MembersTableData>
       post: serializer.fromJson<int>(json['post']),
     );
   }
-
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -551,7 +526,6 @@ class MembersTableData extends DataClass implements Insertable<MembersTableData>
         member: member ?? this.member,
         post: post ?? this.post,
       );
-
   @override
   String toString() {
     return (StringBuffer('MembersTableData(')
@@ -563,7 +537,6 @@ class MembersTableData extends DataClass implements Insertable<MembersTableData>
 
   @override
   int get hashCode => Object.hash(member, post);
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) || (other is MembersTableData && other.member == this.member && other.post == this.post);
@@ -573,20 +546,17 @@ class MembersTableCompanion extends UpdateCompanion<MembersTableData> {
   final Value<int> member;
   final Value<int> post;
   final Value<int> rowid;
-
   const MembersTableCompanion({
     this.member = const Value.absent(),
     this.post = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-
   MembersTableCompanion.insert({
     required int member,
     required int post,
     this.rowid = const Value.absent(),
   })  : member = Value(member),
         post = Value(post);
-
   static Insertable<MembersTableData> custom({
     Expression<int>? member,
     Expression<int>? post,
@@ -635,17 +605,13 @@ class MembersTableCompanion extends UpdateCompanion<MembersTableData> {
 
 abstract class _$PostsDatabase extends GeneratedDatabase {
   _$PostsDatabase(QueryExecutor e) : super(e);
-
   _$PostsDatabaseManager get managers => _$PostsDatabaseManager(this);
   late final $PostsTableTable postsTable = $PostsTableTable(this);
   late final $MembersTableTable membersTable = $MembersTableTable(this);
-
   @override
   Iterable<TableInfo<Table, Object?>> get allTables => allSchemaEntities.whereType<TableInfo<Table, Object?>>();
-
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [postsTable, membersTable];
-
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
         [
@@ -765,7 +731,6 @@ class $$PostsTableTableProcessedTableManager extends ProcessedTableManager<
 
 class $$PostsTableTableFilterComposer extends FilterComposer<_$PostsDatabase, $PostsTableTable> {
   $$PostsTableTableFilterComposer(super.$state);
-
   ColumnFilters<int> get postMessageId => $state.composableBuilder(
       column: $state.table.postMessageId,
       builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
@@ -814,7 +779,6 @@ class $$PostsTableTableFilterComposer extends FilterComposer<_$PostsDatabase, $P
 
 class $$PostsTableTableOrderingComposer extends OrderingComposer<_$PostsDatabase, $PostsTableTable> {
   $$PostsTableTableOrderingComposer(super.$state);
-
   ColumnOrderings<int> get postMessageId => $state.composableBuilder(
       column: $state.table.postMessageId,
       builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
@@ -916,7 +880,6 @@ class $$MembersTableTableProcessedTableManager extends ProcessedTableManager<
 
 class $$MembersTableTableFilterComposer extends FilterComposer<_$PostsDatabase, $MembersTableTable> {
   $$MembersTableTableFilterComposer(super.$state);
-
   ColumnFilters<int> get member => $state.composableBuilder(
       column: $state.table.member,
       builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
@@ -935,7 +898,6 @@ class $$MembersTableTableFilterComposer extends FilterComposer<_$PostsDatabase, 
 
 class $$MembersTableTableOrderingComposer extends OrderingComposer<_$PostsDatabase, $MembersTableTable> {
   $$MembersTableTableOrderingComposer(super.$state);
-
   ColumnOrderings<int> get member => $state.composableBuilder(
       column: $state.table.member,
       builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
@@ -954,10 +916,7 @@ class $$MembersTableTableOrderingComposer extends OrderingComposer<_$PostsDataba
 
 class _$PostsDatabaseManager {
   final _$PostsDatabase _db;
-
   _$PostsDatabaseManager(this._db);
-
   $$PostsTableTableTableManager get postsTable => $$PostsTableTableTableManager(_db, _db.postsTable);
-
   $$MembersTableTableTableManager get membersTable => $$MembersTableTableTableManager(_db, _db.membersTable);
 }

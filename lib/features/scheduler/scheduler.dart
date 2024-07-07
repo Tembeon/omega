@@ -13,7 +13,6 @@ import '../lfg_manager/lfg_manager.dart';
 /// - [schedulePost] - schedules post to be posted at [startTime].
 /// - [cancelPost] - cancels post with [postID].
 /// - [editTime] - edits time of post with [postID] to [newTime].
-/// - [getScheduledPosts] - returns length of [_posts]
 final class PostScheduler {
   /// Creates new post scheduler that will restore posts from [database] and use [core] to post them.
   PostScheduler({
@@ -58,13 +57,8 @@ final class PostScheduler {
     for (final post in posts) {
       // skip post if difference between now and post time is more than 2 hours
       if (now.difference(post.date).inHours > 2) {
-        print(
-          '[Scheduler] Schedule post with id ${post.postMessageId} to be deleted because it is too old',
-        );
-        await _deleteLFGPostAfter(
-          postID: post.postMessageId,
-          duration: Duration.zero,
-        );
+        print('[Scheduler] Schedule post with id ${post.postMessageId} will be deleted because it is too old');
+        await _deleteLFGPostAfter(postID: post.postMessageId, duration: Duration.zero);
       }
 
       _posts[post.date] = post.postMessageId;
@@ -125,9 +119,7 @@ final class PostScheduler {
 
     for (final member in members) {
       final dm = await _core.bot.users.createDm(Snowflake(member));
-      print(
-        '[Scheduler] Notifying ${dm.recipient.username} about ${post.title}',
-      );
+      print('[Scheduler] Notifying ${dm.recipient.username} about ${post.title}');
 
       await dm.sendMessage(
         MessageBuilder(
@@ -139,9 +131,7 @@ final class PostScheduler {
       await Future<void>.delayed(const Duration(seconds: 1));
     }
 
-    print(
-      '[Scheduler] All members notified, scheduling deleting post with id $postID',
-    );
+    print('[Scheduler] All members notified, scheduling deleting post with id $postID');
     await _deleteLFGPostAfter(postID: postID);
   }
 
@@ -187,11 +177,6 @@ final class PostScheduler {
     _posts.remove(post.key);
     _posts[newTime] = postID;
     _checkPosts();
-  }
-
-  /// Return quantity of scheduled posts
-  int getScheduledPostsCount() {
-    return _posts.length;
   }
 
   /// Disposes post scheduler and cancels all scheduled posts.
