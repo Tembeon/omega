@@ -1,4 +1,4 @@
-import '../interactor/interactor_component.dart';
+import '../../../interactor/interactor_component.dart';
 
 class DeleteCommandComponent extends InteractorCommandComponent {
   const DeleteCommandComponent();

@@ -1,12 +1,12 @@
-import '../../core/const/command_exceptions.dart';
-import '../interactor/interactor_component.dart';
+import '../../../../core/const/command_exceptions.dart';
+import '../../../interactor/interactor_component.dart';
 
-class JoinMessageComponent extends InteractorMessageComponent {
-  const JoinMessageComponent();
+class LeaveMessageComponent extends InteractorMessageComponent {
+  const LeaveMessageComponent();
 
   @override
   Future<String> uniqueID(Services services) async {
-    return 'join';
+    return 'leave';
   }
 
   @override
@@ -21,16 +21,16 @@ class JoinMessageComponent extends InteractorMessageComponent {
     final lfgManager = services.lfgManager;
 
     try {
-      await lfgManager.addMemberTo(event.interaction.message!, event.interaction.member!.user!);
-      await event.interaction.respond(MessageBuilder(content: 'Вы добавлены в LFG'), isEphemeral: true);
+      await lfgManager.removeMemberFrom(event.interaction.message!, event.interaction.member!.user!);
+      await event.interaction.respond(MessageBuilder(content: 'Вы покинули LFG'), isEphemeral: true);
     } on CommandException catch (e) {
       await event.interaction.respond(MessageBuilder(content: e.toHumanMessage()), isEphemeral: true);
     } on Object catch (e, st) {
       await event.interaction.respond(
         MessageBuilder(
-          content: 'Произошла неизвестная ошибка при добавлении вас в LFG\n'
+          content: 'Произошла неизвестная ошибка при удалении вас из LFG\n'
               'Метаданные: $e\n'
-              'Стек вызовов: $st',
+              'Стек вызовов: ${st.toString().substring(0, 200)}',
         ),
         isEphemeral: true,
       );

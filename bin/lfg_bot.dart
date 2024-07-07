@@ -7,11 +7,11 @@ import 'package:lfg_bot/core/utils/config.dart';
 import 'package:lfg_bot/core/utils/context/context.dart';
 import 'package:lfg_bot/core/utils/loaders/bot_settings.dart';
 import 'package:lfg_bot/core/utils/services.dart';
-import 'package:lfg_bot/features/create/create_command_component.dart';
-import 'package:lfg_bot/features/delete/delete_command_component.dart';
-import 'package:lfg_bot/features/edit/edit_command_handler.dart';
-import 'package:lfg_bot/features/join/join_message_component.dart';
-import 'package:lfg_bot/features/leave/leave_message_component.dart';
+import 'package:lfg_bot/features/components/buttons/join/join_message_component.dart';
+import 'package:lfg_bot/features/components/buttons/leave/leave_message_component.dart';
+import 'package:lfg_bot/features/components/commands/create/create_command_component.dart';
+import 'package:lfg_bot/features/components/commands/delete/delete_command_component.dart';
+import 'package:lfg_bot/features/components/commands/edit/edit_command_handler.dart';
 
 void main(List<String> arguments) => l.capture<void>(
       () => runZonedGuarded<void>(
@@ -51,14 +51,6 @@ void runBot() => Future(() async {
       });
 
       await dependencies.interactor.forgetUnknown();
-
-      //
-      // await dependencies.commandManager.registerCommand(createCategoryCommands());
-      // await dependencies.commandManager.registerCommand(deleteCommand());
-      // await dependencies.commandManager.registerCommand(editComponentHandler());
-      //
-      // await dependencies.commandManager.registerComponent(joinComponentHandler());
-      // await dependencies.commandManager.registerComponent(leaveComponentHandler());
     });
 
 void _loadLegacyPart() {

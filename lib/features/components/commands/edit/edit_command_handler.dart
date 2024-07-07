@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
-import '../../core/utils/time_convert.dart';
-import '../interactor/interactor_component.dart';
+import '../../../../core/utils/time_convert.dart';
+import '../../../interactor/interactor_component.dart';
 
 class EditCommandHandler extends InteractorCommandComponent {
   const EditCommandHandler();

@@ -1,11 +1,11 @@
-import '../../core/data/enums/activity_type.dart';
-import '../../core/utils/context/context.dart';
-import '../../core/utils/loaders/bot_settings.dart';
-import '../../core/utils/time_convert.dart';
-import '../interactor/interactor_component.dart';
-import '../lfg_manager/data/models/register_activity.dart';
-
 // TODO: migrate to user settings
+import '../../../../core/data/enums/activity_type.dart';
+import '../../../../core/utils/context/context.dart';
+import '../../../../core/utils/loaders/bot_settings.dart';
+import '../../../../core/utils/time_convert.dart';
+import '../../../interactor/interactor_component.dart';
+import '../../../lfg_manager/data/models/register_activity.dart';
+
 List<CommandOptionChoiceBuilder<String>>? _getActivityChoices(LFGType type) {
   final settings = Context.root.get<BotSettings>('settings');
   final activities = settings.activityData.activities.where((e) => e.type == type);
