@@ -34,7 +34,6 @@ Future<void> _deleteHandler(
     return;
   }
 
-
   final database = Dependencies.i.postsDatabase;
   final postData = await database.findPost(message.value);
 
@@ -62,7 +61,6 @@ Future<void> _deleteHandler(
     );
     return;
   }
-
 
   final lfgManager = Dependencies.i.lfgManager;
   await lfgManager.delete(message.value);

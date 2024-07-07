@@ -14,7 +14,7 @@ Future<void> _deleteLFGHandler(
   final messageId = interaction.interaction.data.options!.first.options!.firstWhere(
     (e) => e.name == 'message_id',
   );
-  final database = Context.root.get<PostsDatabase>('db');
+  final database = Dependencies.i.postsDatabase;
 
   // All LFG IDs are unique, so we look for the first entry where the [message_id] is exactly what the user provided.
   final postData = await database.findPost(int.parse(messageId.value as String));
@@ -28,7 +28,7 @@ Future<void> _deleteLFGHandler(
     return;
   }
 
-  final lfgManager = Context.root.get<ILFGManager>('manager');
+  final lfgManager = Dependencies.i.lfgManager;
 
   await lfgManager.delete(int.parse(messageId.value as String));
 

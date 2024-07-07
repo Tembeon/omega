@@ -88,9 +88,9 @@ final class LFGManager implements ILFGManager {
       );
 
       Dependencies.i.postScheduler.schedulePost(
-            startTime: dbPost.date.value,
-            postID: dbPost.postMessageId.value,
-          );
+        startTime: dbPost.date.value,
+        postID: dbPost.postMessageId.value,
+      );
 
       // return LFGPost
       return LFGPost.fromBuilder(
@@ -166,9 +166,9 @@ final class LFGManager implements ILFGManager {
 
     if (unixTime != null) {
       Dependencies.i.postScheduler.editTime(
-            postID: post.postMessageId,
-            newTime: DateTime.fromMillisecondsSinceEpoch(unixTime),
-          );
+        postID: post.postMessageId,
+        newTime: DateTime.fromMillisecondsSinceEpoch(unixTime),
+      );
     }
   }
 

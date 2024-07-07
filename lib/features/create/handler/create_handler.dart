@@ -36,7 +36,6 @@ Future<void> _createActivityHandler(
   final userName = member.nick ?? member.user?.username;
   print('User "$userName" is trying to create new raid LFG post');
 
-
   final manager = Dependencies.i.lfgManager;
   final settings = Context.root.get<BotSettings>('settings');
 

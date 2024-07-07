@@ -380,10 +380,11 @@ packages:
   nyxx:
     dependency: "direct main"
     description:
-      name: nyxx
-      sha256: "81c34dfbcc1a7c336a19b24cb2f73455b56bf42aaabb38e6469ec4c5d3fb327f"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: "fix/interaction-metadata-user"
+      resolved-ref: d4512332b67f08c6ccfd31add4e8a3ceb026cb3e
+      url: "https://github.com/nyxx-discord/nyxx.git"
+    source: git
     version: "6.2.1"
   oauth2:
     dependency: transitive

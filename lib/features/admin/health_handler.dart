@@ -15,16 +15,12 @@ Future<void> _healthBotHandler(
   final now = DateTime.now().millisecondsSinceEpoch;
   final timestamp = interaction.interaction.id.timestamp.millisecondsSinceEpoch;
 
-  final database = Context.root.get<PostsDatabase>('db');
-  final lfgManager = Context.root.get<LFGManager>('manager');
-  final bot = Context.root.get<LFGBotCore>('core');
-  final scheduler = PostScheduler(database: database, core: bot, lfgManager: lfgManager);
+  final database = Dependencies.i.postsDatabase;
+  final scheduler = Dependencies.i.postScheduler;
 
   final response = StringBuffer()
-    ..writeln('Stats:')
-    ..writeln('Ping: ${timestamp - now}ms')
-    ..writeln()
-    ..writeln('LFGs:');
+    ..writeln('**Stats:**')
+    ..writeln('Ping: ${timestamp - now}ms')..writeln()..writeln('**LFGs:**');
 
   // If any exception was caught, then show it to user.
   try {

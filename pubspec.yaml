@@ -10,7 +10,10 @@ environment:
 dependencies:
 
   # bot core
-  nyxx: ^6.2.1
+  nyxx:
+    git:
+      url: https://github.com/nyxx-discord/nyxx.git
+      ref: fix/interaction-metadata-user
 
   # platform
   path: ^1.9.0

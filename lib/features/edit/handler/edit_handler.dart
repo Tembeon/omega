@@ -99,18 +99,17 @@ Future<void> _handleEditInteraction(InteractionCreateEvent<ApplicationCommandInt
     ),
   );
 
-
   Dependencies.i.commandManager.subscribeToModal(
-        modalID: 'edit_modal_${postData.postMessageId}',
-        handler: (interaction) async {
-          await _editLFGMessage(
-            postId: message.value,
-            origin: event,
-            modalEvent: interaction,
-            timezone: postData.timezone,
-          );
-        },
+    modalID: 'edit_modal_${postData.postMessageId}',
+    handler: (interaction) async {
+      await _editLFGMessage(
+        postId: message.value,
+        origin: event,
+        modalEvent: interaction,
+        timezone: postData.timezone,
       );
+    },
+  );
 }
 
 Future<void> _editLFGMessage({
