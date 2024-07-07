@@ -57,7 +57,7 @@ final class PostScheduler {
     for (final post in posts) {
       // skip post if difference between now and post time is more than 2 hours
       if (now.difference(post.date).inHours > 2) {
-        print('[Scheduler] Schedule post with id ${post.postMessageId} to be deleted because it is too old');
+        print('[Scheduler] Schedule post with id ${post.postMessageId} will be deleted because it is too old');
         await _deleteLFGPostAfter(postID: post.postMessageId, duration: Duration.zero);
       }
 

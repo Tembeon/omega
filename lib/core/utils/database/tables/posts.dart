@@ -13,7 +13,6 @@ part 'posts.g.dart';
 /// `PostsTable` is a class that extends the `Table` class provided by the `drift` package.
 /// It represents the structure of the `Posts` table in the database.
 class PostsTable extends Table {
-
   /// A integer column named `postMessageId`. This stores the messageID of the post.
   IntColumn get postMessageId => integer().unique()();
 

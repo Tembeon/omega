@@ -6,8 +6,8 @@ import 'package:nyxx/nyxx.dart';
 import '../../core/const/command_exceptions.dart';
 import '../../core/utils/context/context.dart';
 import '../../core/utils/database/tables/posts.dart';
-import '../../core/utils/dependencies.dart';
 import '../../core/utils/loaders/bot_settings.dart';
+import '../../core/utils/services.dart';
 import 'data/models/register_activity.dart';
 import 'message_handler.dart';
 
@@ -83,10 +83,10 @@ final class LFGManager implements ILFGManager {
       final dbID = await _database.insertPost(dbPost);
       await addMemberTo(discordLfgPost, interaction.interaction.member!.user!, fromCreate: true);
 
-      Dependencies.i.postScheduler.schedulePost(
-            startTime: dbPost.date.value,
-            postID: dbPost.postMessageId.value,
-          );
+      Services.i.postScheduler.schedulePost(
+        startTime: dbPost.date.value,
+        postID: dbPost.postMessageId.value,
+      );
 
       // return LFGPost
       return LFGPost.fromBuilder(
@@ -107,7 +107,7 @@ final class LFGManager implements ILFGManager {
     final post = await _database.findPost(id);
     if (post == null) throw CantRespondException('LFG $id не найден');
 
-    final bot = Dependencies.i.core.bot;
+    final bot = Services.i.bot;
     final settings = Context.root.get<BotSettings>('settings');
 
     final channel = await bot.channels.fetch(Snowflake(settings.botConfig.lfgChannel));
@@ -125,7 +125,7 @@ final class LFGManager implements ILFGManager {
     await (channel as GuildTextChannel).messages.fetch(Snowflake(post.postMessageId)).then((value) => value.delete());
 
     print('[LFGManager] Unsheduling post with id $id');
-    Dependencies.i.postScheduler.cancelPost(postID: id);
+    Services.i.postScheduler.cancelPost(postID: id);
   }
 
   @override
@@ -157,10 +157,10 @@ final class LFGManager implements ILFGManager {
     );
 
     if (unixTime != null) {
-      Dependencies.i.postScheduler.editTime(
-            postID: post.postMessageId,
-            newTime: DateTime.fromMillisecondsSinceEpoch(unixTime),
-          );
+      Services.i.postScheduler.editTime(
+        postID: post.postMessageId,
+        newTime: DateTime.fromMillisecondsSinceEpoch(unixTime),
+      );
     }
   }
 
@@ -190,9 +190,9 @@ final class LFGManager implements ILFGManager {
     // all good, add user to database
     await _database.addMember(message.id.value, user.id.value);
 
-    final botCore = Dependencies.i.core;
+    final botCore = Services.i.bot;
     for (int index = 0; index < membersIDS.length; index++) {
-      final user = await botCore.bot.users.fetch(Snowflake(membersIDS[index]));
+      final user = await botCore.users.fetch(Snowflake(membersIDS[index]));
       members[index] = user.globalName ?? user.username;
     }
 
@@ -221,9 +221,9 @@ final class LFGManager implements ILFGManager {
     final membersIDS = await _database.getMembersForPost(message.id.value);
     final members = List<String>.generate(membersIDS.length, (index) => '$index gen');
 
-    final botCore = Dependencies.i.core;
+    final botCore = Services.i.bot;
     for (int index = 0; index < membersIDS.length; index++) {
-      final user = await botCore.bot.users.fetch(Snowflake(membersIDS[index]));
+      final user = await botCore.users.fetch(Snowflake(membersIDS[index]));
       members[index] = user.globalName ?? user.username;
     }
 

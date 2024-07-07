@@ -6,7 +6,7 @@ import '../utils/config.dart';
 class LFGBotCore {
   const LFGBotCore({
     required this.bot,
-    required this.commandManager,
+    @Deprecated('Use `Interactor` instead') required this.commandManager,
   });
 
   /// Current active bot (WebSocket).
@@ -17,6 +17,8 @@ class LFGBotCore {
   /// Manages bot commands.
   ///
   /// You can register new commands using this variable.
+  ///
+  @Deprecated('use Interactor instead')
   final CommandManager commandManager;
 
   /// Initializes connection to Discord using WebSocket and syncs interactions.

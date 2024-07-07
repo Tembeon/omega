@@ -1,6 +1,5 @@
 /// Enum for activity types.
 enum LFGType {
-
   /// Custom activity, stored in `/activities/custom.json` file.
   ///
   /// It can be anything, like "farming", "pvp", etc. All parameters are set by user.
