@@ -19,7 +19,10 @@ Future<void> _healthBotHandler(
   final scheduler = Dependencies.i.postScheduler;
 
   final response = StringBuffer()
-    ..writeln('**Stats:**')..writeln('Ping: ${timestamp - now}ms')..writeln()..writeln('**LFGs:**');
+    ..writeln('**Stats:**')
+    ..writeln('Ping: ${timestamp - now}ms')
+    ..writeln()
+    ..writeln('**LFGs:**');
 
   // If any exception was caught, then show it to user.
   try {
