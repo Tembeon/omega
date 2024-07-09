@@ -2,10 +2,23 @@ import 'package:l/l.dart';
 
 import 'interactor_component.dart';
 
+/// Logger tag
 const String _tag = '[Interactor]';
 
-class ComponentFormatException implements Exception {
-  const ComponentFormatException(this.message);
+/// Type that represents registered component in Discord.
+///
+/// Contains ID of registered component and component itself.
+typedef _RegisteredComponent = ({
+  Snowflake id,
+  InteractorComponent component,
+});
+
+/// {@template ComponentFormatError}
+/// Error that is thrown when InteractorComponent has invalid configuration.
+/// {@endtemplate}
+class ComponentFormatError extends Error {
+  /// {@macro ComponentFormatError}
+  ComponentFormatError(this.message);
 
   final String message;
 
@@ -13,9 +26,17 @@ class ComponentFormatException implements Exception {
   String toString() => 'ComponentFormatException: $message';
 }
 
-void test() {}
-
+/// {@template Interactor}
+/// Interactor is a core component that handles interactions with Discord.
+///
+/// Interactor is responsible for:
+/// * Registering components in Discord
+/// * Handling interactions
+/// * Synchronizing components with Discord
+/// * Updating components when some of events happened
+/// {@endtemplate}
 final class Interactor extends _Registrar with _Syncer, _Listener {
+  /// {@macro Interactor}
   Interactor({
     required super.serverId,
     required super.bot,
@@ -49,6 +70,7 @@ base mixin _Syncer on _Registrar {
     _sync(toUpdate);
   }
 
+  /// Synchronizes components with Discord.
   Future<void> _sync(List<InteractorComponent> components) async {
     l.d('$_tag Syncing components: $components');
     for (final component in components) {
@@ -57,12 +79,7 @@ base mixin _Syncer on _Registrar {
   }
 }
 
-typedef _RegisteredComponent = ({
-  Snowflake id,
-  InteractorComponent component,
-});
-
-/// Core component on Interactor, that holds all InteractionComponents and registers them in Discord.
+/// Core component of Interactor, that holds all InteractionComponents and registers them in Discord.
 base class _Registrar {
   _Registrar({
     required NyxxGateway bot,
@@ -236,17 +253,17 @@ base class _Registrar {
     ]);
 
     if (commandNames.isEmpty) {
-      throw const ComponentFormatException('Component has no command names');
+      throw ComponentFormatError('Component has no command names');
     }
 
     if (commandNames.length != commandNames.toSet().length) {
-      throw ComponentFormatException('Component ${component.runtimeType} has non-unique command names: $commandNames\n'
+      throw ComponentFormatError('Component ${component.runtimeType} has non-unique command names: $commandNames\n'
           'Trying to register this component on Discord will cause an error');
     }
 
     final intersection = commandNames.toSet().intersection(_registered.keys.toSet());
     if (intersection.isNotEmpty) {
-      throw ComponentFormatException(
+      throw ComponentFormatError(
           'Component ${component.runtimeType} has command(s) that already exists: $intersection\n'
           'Please, change command name(s) to unique');
     }

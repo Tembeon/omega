@@ -11,8 +11,13 @@ import '../../core/utils/services.dart';
 import 'data/models/register_activity.dart';
 import 'message_handler.dart';
 
-/// LFG Manager interface.
+/// {@template ILFGManager}
+/// Manager for LFG posts.
+///
+/// Used for creating, updating, deleting and reading LFG posts both in database and discord.
+/// {@endtemplate}
 abstract interface class ILFGManager {
+  /// {@macro ILFGManager}
   const ILFGManager();
 
   /// Creates new LFG.
@@ -45,7 +50,9 @@ abstract interface class ILFGManager {
   Future<void> removeMemberFrom(Message message, User user);
 }
 
+/// {@macro ILFGManager}
 final class LFGManager implements ILFGManager {
+  /// {@macro ILFGManager}
   LFGManager({
     required PostsDatabase database,
     required IMessageHandler messageHandler,

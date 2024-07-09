@@ -2,25 +2,24 @@ import 'dart:async';
 
 import 'package:nyxx/nyxx.dart';
 
-import '../../core/bot/core.dart';
 import '../../core/utils/database/tables/posts.dart';
 import '../lfg_manager/lfg_manager.dart';
 
-/// Scheduler for LFG posts.
-/// It is used to schedule posts to be posted at specific time.
+/// {@template PostScheduler}
 ///
-/// Methods:
-/// - [schedulePost] - schedules post to be posted at [startTime].
-/// - [cancelPost] - cancels post with [postID].
-/// - [editTime] - edits time of post with [postID] to [newTime].
+/// Scheduler for LFG posts.
+/// It is used to schedule notifications for members about LFG posts. \
+/// It also schedules deletion of LFG posts after some time.
+///
+/// {@endtemplate}
 final class PostScheduler {
-  /// Creates new post scheduler that will restore posts from [database] and use [core] to post them.
+  /// {@macro PostScheduler}
   PostScheduler({
     required final PostsDatabase database,
-    required final LFGBotCore core,
+    required final NyxxGateway bot,
     required final LFGManager lfgManager,
   })  : _database = database,
-        _core = core,
+        _bot = bot,
         _lfgManager = lfgManager {
     _restorePosts();
     _startScheduler();
@@ -30,7 +29,7 @@ final class PostScheduler {
   final PostsDatabase _database;
 
   /// Core of the bot.
-  final LFGBotCore _core;
+  final NyxxGateway _bot;
 
   /// LFG manager, used to manage LFG,
   final LFGManager _lfgManager;
@@ -115,10 +114,10 @@ final class PostScheduler {
     if (post == null) throw Exception('Cannot find post with id $postID');
 
     final members = await _database.getMembersForPost(postID);
-    final author = await _core.bot.users.get(Snowflake(post.author));
+    final author = await _bot.users.get(Snowflake(post.author));
 
     for (final member in members) {
-      final dm = await _core.bot.users.createDm(Snowflake(member));
+      final dm = await _bot.users.createDm(Snowflake(member));
       print('[Scheduler] Notifying ${dm.recipient.username} about ${post.title}');
 
       await dm.sendMessage(

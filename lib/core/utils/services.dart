@@ -3,12 +3,10 @@ import 'dart:io';
 
 import 'package:nyxx/nyxx.dart';
 
-import '../../features/command_manager/command_manager.dart';
 import '../../features/interactor/interactor.dart';
 import '../../features/lfg_manager/lfg_manager.dart';
 import '../../features/lfg_manager/message_handler.dart';
 import '../../features/scheduler/scheduler.dart';
-import '../bot/core.dart';
 import '../const/exceptions.dart';
 import 'config.dart';
 import 'database/tables/posts.dart';
@@ -37,12 +35,11 @@ final class Services {
   /// {@macro Dependencies}
   const Services._({
     required this.config,
-    @Deprecated('Migrate to `bot` field') required this.core,
-    @Deprecated('Migrate to `Interactor`') required this.commandManager,
     required this.postScheduler,
     required this.postsDatabase,
     required this.lfgManager,
     required this.interactor,
+    required this.bot,
   });
 
   /// Stores instance of [Services].
@@ -68,20 +65,30 @@ final class Services {
 
     _loadSqlite();
 
-    final core = await LFGBotCore.initialize(config: config);
+    final bot = await Nyxx.connectGateway(
+      config.token,
+      GatewayIntents.allUnprivileged | GatewayIntents.guildMessages,
+      options: GatewayClientOptions(
+        loggerName: 'LFG Bot',
+        plugins: [
+          Logging(),
+          CliIntegration(),
+          IgnoreExceptions(),
+        ],
+      ),
+    );
 
     final postsDatabase = PostsDatabase();
 
     final lfgManager = LFGManager(database: postsDatabase, messageHandler: const MessageHandler());
 
     final dep = Services._(
+      bot: bot,
       config: config,
-      core: core,
       postsDatabase: postsDatabase,
       lfgManager: lfgManager,
-      commandManager: core.commandManager,
-      postScheduler: PostScheduler(database: postsDatabase, core: core, lfgManager: lfgManager),
-      interactor: Interactor(bot: core.bot, serverId: config.server),
+      postScheduler: PostScheduler(database: postsDatabase, bot: bot, lfgManager: lfgManager),
+      interactor: Interactor(bot: bot, serverId: config.server),
     );
 
     return _instance = dep;
@@ -90,21 +97,17 @@ final class Services {
   /// {@macro Config}
   final Config config;
 
-  @Deprecated('Use `bot` instead')
-  final LFGBotCore core;
-
-  @Deprecated('Use `Interactor` instead')
-  final CommandManager commandManager;
-
   final PostScheduler postScheduler;
 
+  ///
   final PostsDatabase postsDatabase;
 
+  /// {@macro ILFGManager}
   final ILFGManager lfgManager;
 
+  /// {@macro Interactor}
   final Interactor interactor;
 
   /// Current active bot (WebSocket).
-  // in future, after removing deprecated `core` field, this field will contain bot instance
-  NyxxGateway get bot => core.bot;
+  final NyxxGateway bot;
 }
