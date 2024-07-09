@@ -9,6 +9,7 @@ import 'package:lfg_bot/core/utils/loaders/bot_settings.dart';
 import 'package:lfg_bot/core/utils/services.dart';
 import 'package:lfg_bot/features/components/buttons/join/join_message_component.dart';
 import 'package:lfg_bot/features/components/buttons/leave/leave_message_component.dart';
+import 'package:lfg_bot/features/components/commands/admin/admin_commands_component.dart';
 import 'package:lfg_bot/features/components/commands/create/create_command_component.dart';
 import 'package:lfg_bot/features/components/commands/delete/delete_command_component.dart';
 import 'package:lfg_bot/features/components/commands/edit/edit_command_handler.dart';
@@ -48,6 +49,7 @@ void runBot() => Future(() async {
         const EditCommandHandler(),
         const JoinMessageComponent(),
         const LeaveMessageComponent(),
+        const AdminCommandComponent(),
       });
 
       await dependencies.interactor.forgetUnknown();

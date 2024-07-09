@@ -179,6 +179,11 @@ final class PostScheduler {
     _checkPosts();
   }
 
+  /// Return quantity of scheduled posts
+  int getScheduledPostsCount() {
+    return _posts.length;
+  }
+
   /// Disposes post scheduler and cancels all scheduled posts.
   void dispose() {
     _posts.clear();
