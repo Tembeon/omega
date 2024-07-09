@@ -121,9 +121,11 @@ class PostsDatabase extends _$PostsDatabase {
       (select(postsTable)..where((post) => post.isDeleted.equals(false))).get();
 
   /// Returns a int of all LFGs.
-  Future<int> getAllPostsCount() async {
-    final totalPosts = await (select(postsTable)).get();
-    return totalPosts.length;
+  Future<int?> getAllPostsCount() async {
+    final countExpression = postsTable.postMessageId.count();
+    final query = selectOnly(postsTable)..addColumns([countExpression]);
+    final result = await query.map((row) => row.read(countExpression)).getSingle();
+    return result;
   }
 
   /// Marks a LFG as deleted.

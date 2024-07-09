@@ -75,14 +75,14 @@ class AdminCommandComponent extends InteractorCommandComponent {
 
     final response = StringBuffer()
       ..writeln('**Stats:**')
-      ..writeln('Ping: ${timestamp - now}ms')
+      ..writeln('Ping: ${now - timestamp}ms')
       ..writeln()
       ..writeln('**LFGs:**');
 
     // If any exception was caught, then show it to user.
     try {
       response.writeln('Scheduled: ${scheduler.getScheduledPostsCount()}');
-    } on Exception catch (e) {
+    } on Object catch (e) {
       response.writeln('Scheduler unavailable: $e');
     }
 
@@ -113,7 +113,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
     final messageId = event.interaction.data.options!.first.options!.firstWhere(
       (e) => e.name == 'message_id',
     );
-    final database = Services.i.postsDatabase;
+    final database = services.postsDatabase;
 
     // All LFG IDs are unique, so we look for the first entry where the [message_id] is exactly what the user provided.
     final postData = await database.findPost(int.parse(messageId.value as String));
@@ -127,11 +127,10 @@ class AdminCommandComponent extends InteractorCommandComponent {
       return;
     }
 
-    final lfgManager = Services.i.lfgManager;
+    final lfgManager = services.lfgManager;
 
     await lfgManager.delete(int.parse(messageId.value as String));
 
-    // If the deletion was successful, we show it to the user.
     await event.interaction.respond(
       MessageBuilder(
         content: 'LFG пользователя "$userName", с активностью "${postData.title}" удалено.',
