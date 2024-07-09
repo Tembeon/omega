@@ -159,6 +159,13 @@ base class _Registrar {
       return;
     }
 
+    if (component is! InteractorCommandComponent) {
+      throw UnsupportedError(
+        'Type ${component.runtimeType} is not supported. '
+        'Make sure you register InteractorCommandComponent or InteractorMessageComponent',
+      );
+    }
+
     l.d('$_tag Checking component ${component.runtimeType}...');
     final commandsNames = await _verifyComponent(component);
     final builder = await component.build(Services.i);
@@ -212,6 +219,13 @@ base class _Registrar {
   ///
   /// Throws exception if component is invalid.
   Future<Iterable<String>> _verifyComponent(InteractorComponent component) async {
+    if (component is! InteractorCommandComponent) {
+      throw UnsupportedError(
+        'Type ${component.runtimeType} is not supported. '
+        'Only InteractorCommandComponent is supported for verification and registration in Discord',
+      );
+    }
+
     final builder = await component.build(Services.i);
     final commandNames = _parseCommandNames([
       _UnifiedOption(

@@ -4,16 +4,13 @@ version: 1.0.0
 repository: https://github.com/Tembeon/lfg_bot
 
 environment:
-  sdk: '>=3.4.0 <4.0.0'
+  sdk: '>=3.4.3 <4.0.0'
 
 # Add regular dependencies here.
 dependencies:
 
   # bot core
-  nyxx:
-    git:
-      url: https://github.com/nyxx-discord/nyxx.git
-      ref: fix/interaction-metadata-user
+  nyxx: ^6.3.0
 
   # platform
   path: ^1.9.0
@@ -25,6 +22,7 @@ dependencies:
 
   # utils
   l: ^4.0.2
+  meta: ^1.15.0
 
   # localization
   intl: ^0.19.0
@@ -32,7 +30,7 @@ dependencies:
 
 dev_dependencies:
   lints: ^4.0.0
-  test: ^1.25.7
+  test: ^1.25.8
   build_runner: ^2.4.11
   drift_dev: ^2.18.0
 
