@@ -64,7 +64,7 @@ class CreateCommandComponent extends InteractorCommandComponent {
                 ),
                 CommandOptionBuilder.string(
                   name: 'дата',
-                  description: 'Введите дату начала активности [15 01 2023]',
+                  description: 'Введите дату начала активности: [15 01, 15 января, 15 1]',
                   isRequired: true,
                 ),
                 CommandOptionBuilder.string(
