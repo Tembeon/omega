@@ -88,7 +88,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
 
     try {
       response.writeln('Total: ${await database.getAllPostsCount()}');
-    } on Exception catch (e) {
+    } on Object catch (e) {
       response.writeln('Database unavailable: $e');
     }
 
