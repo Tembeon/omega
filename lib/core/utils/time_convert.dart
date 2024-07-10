@@ -6,37 +6,96 @@ class TimeConverters {
     required final String dateInput,
     required final int timezoneInput,
   }) {
-    // Get the current year
-    final now = DateTime.now();
-    final String year = now.year.toString();
+    // Trim input strings
+    final trimmedDateInput = dateInput.trim();
+    var trimmedTimeInput = timeInput.trim().replaceAll(':', ' ');
 
-    // Append the current year if it's not provided
-    final List<String> dateParts = dateInput.split(' ');
-    if (dateParts.length == 2) {
-      dateParts.add(year);
-    } else if (dateParts.length != 3) {
-      throw const FormatException('Invalid date input format');
+    // Add minutes if only hours are provided
+    if (RegExp(r'^\d{1,2}$').hasMatch(trimmedTimeInput)) {
+      trimmedTimeInput = '$trimmedTimeInput 00';
     }
 
-    // Combine date and time input
-    final combinedInput = '${dateParts.join(' ')} $timeInput';
+    // Get the current date and time
+    final now = DateTime.now();
+    final String currentYear = now.year.toString();
+    final String currentMonth = now.month.toString().padLeft(2, '0');
 
-    // Determine the correct DateFormat based on the input
-    final dateFormat = dateParts[1].contains(RegExp(r'^[0-9]{1,2}$'))
-        ? DateFormat('d M yyyy HH mm', 'ru')
-        : DateFormat('d MMMM yyyy HH mm', 'ru');
+    // Handle date input
+    final dateTime = _parseDate(trimmedDateInput, currentMonth, currentYear);
+
+    // Handle time input
+    final finalDateTime = _parseTime(dateTime, trimmedTimeInput);
 
     // Calculate timezone difference
     final timeZoneDiff = DateTime.now().timeZoneOffset.inHours - timezoneInput;
 
-    // Parse the combined input and convert to Unix timestamp
-    DateTime dateTime;
-    try {
-      dateTime = dateFormat.parse(combinedInput).add(Duration(hours: timeZoneDiff));
-    } on Exception catch (e) {
-      throw FormatException('Invalid date or time format: $e');
+    // Adjust for timezone and convert to Unix timestamp
+    final adjustedDateTime = finalDateTime.add(Duration(hours: timeZoneDiff));
+
+    // Ensure the Unix timestamp is correctly formatted for the database
+    final unixTimestamp = adjustedDateTime.toUtc().millisecondsSinceEpoch;
+
+    return unixTimestamp;
+  }
+
+  static DateTime _parseDate(String dateInput, String currentMonth, String currentYear) {
+    // Create a list of possible date formats
+    final dateFormats = [
+      DateFormat('d MMMM yyyy', 'ru'),
+      DateFormat('d M yyyy', 'ru'),
+      DateFormat('d MMMM', 'ru'),
+      DateFormat('d M', 'ru'),
+      DateFormat('d', 'ru')
+    ];
+
+    // Determine the correct date input
+    List<String> dateParts = dateInput.split(' ');
+
+    if (dateParts.length == 1) {
+      // Only day provided
+      dateParts = [dateParts[0], currentMonth, currentYear];
+    } else if (dateParts.length == 2) {
+      // Day and month provided
+      dateParts.add(currentYear);
+    } else if (dateParts.length != 3) {
+      throw const FormatException('Invalid date input format');
     }
 
-    return dateTime.toUtc().millisecondsSinceEpoch;
+    final adjustedDateInput = dateParts.join(' ');
+
+    // Attempt to parse the date input using the available formats
+    for (final format in dateFormats) {
+      try {
+        return format.parse(adjustedDateInput);
+      } on Exception catch (_) {
+        continue;
+      }
+    }
+
+    // If parsing was unsuccessful, throw an exception
+    throw const FormatException('Invalid date format');
+  }
+
+  static DateTime _parseTime(DateTime date, String timeInput) {
+    // Create a list of possible time formats
+    final timeFormats = [
+      DateFormat('d MMMM yyyy HH mm', 'ru'),
+      DateFormat('d M yyyy HH mm', 'ru'),
+    ];
+
+    // Combine parsed date with time input
+    final combinedInput = '${DateFormat('d MMMM yyyy', 'ru').format(date)} $timeInput';
+
+    // Attempt to parse the combined input using the available formats
+    for (final format in timeFormats) {
+      try {
+        return format.parse(combinedInput);
+      } on Exception catch (_) {
+        continue;
+      }
+    }
+
+    // If parsing was unsuccessful, throw an exception
+    throw const FormatException('Invalid time format');
   }
 }
