@@ -7,20 +7,17 @@ export '../../core/utils/services.dart';
 
 /// Trigger reasons for interactor.
 enum UpdateEvent {
-  /// New activity was added in the system.
-  ///
-  /// Example: new raid was added.
-  activityAdded,
-
-  /// Activity was removed from the system.
-  ///
-  /// /// Example: raid was removed.
-  activityRemoved,
-
   /// Activity was updated in the system.
   ///
   /// Example: minimum members count was updated / roles updated.
-  activityUpdated,
+  activitiesUpdated,
+
+  /// Timezones were updated in the system.
+  timezonesUpdated,
+
+  lfgChannelUpdated,
+
+  promoChannelUpdated,
 }
 
 /// Base class for all interactor components.
