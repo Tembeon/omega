@@ -10,7 +10,7 @@ environment:
 dependencies:
 
   # bot core
-  nyxx: ^6.3.0
+  nyxx: ^6.3.1
 
   # platform
   path: ^1.9.0
