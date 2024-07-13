@@ -24,7 +24,7 @@ class TimeConverters {
     final dateTime = _parseDate(trimmedDateInput, currentMonth, currentYear);
 
     // Handle time input
-    final finalDateTime = _parseTime(dateTime, trimmedTimeInput);
+    final finalDateTime = _combineDateAndTime(dateTime, trimmedTimeInput);
 
     // Calculate timezone difference
     final timeZoneDiff = DateTime.now().timeZoneOffset.inHours - timezoneInput;
@@ -45,7 +45,7 @@ class TimeConverters {
       DateFormat('d M yyyy', 'ru'),
       DateFormat('d MMMM', 'ru'),
       DateFormat('d M', 'ru'),
-      DateFormat('d', 'ru')
+      DateFormat('d', 'ru'),
     ];
 
     // Determine the correct date input
@@ -66,7 +66,8 @@ class TimeConverters {
     // Attempt to parse the date input using the available formats
     for (final format in dateFormats) {
       try {
-        return format.parse(adjustedDateInput);
+        final parsedDate = format.parseStrict(adjustedDateInput);
+        return parsedDate;
       } on Exception catch (_) {
         continue;
       }
@@ -76,20 +77,32 @@ class TimeConverters {
     throw const FormatException('Invalid date format');
   }
 
-  static DateTime _parseTime(DateTime date, String timeInput) {
-    // Create a list of possible time formats
-    final timeFormats = [
+  static DateTime _combineDateAndTime(DateTime date, String timeInput) {
+    // Create a list of possible datetime formats
+    final dateTimeFormats = [
       DateFormat('d MMMM yyyy HH mm', 'ru'),
       DateFormat('d M yyyy HH mm', 'ru'),
+      DateFormat('d MMMM yyyy H mm', 'ru'),
+      DateFormat('d M yyyy H mm', 'ru'),
+      DateFormat('d MMMM yyyy HHmm', 'ru'),
+      DateFormat('d M yyyy HHmm', 'ru'),
+      DateFormat('d MMMM yyyy Hm', 'ru'),
+      DateFormat('d M yyyy Hm', 'ru'),
+      DateFormat('d MMMM yyyy HH', 'ru'),
+      DateFormat('d M yyyy HH', 'ru'),
+      DateFormat('d MMMM yyyy H', 'ru'),
+      DateFormat('d M yyyy H', 'ru'),
     ];
 
     // Combine parsed date with time input
-    final combinedInput = '${DateFormat('d MMMM yyyy', 'ru').format(date)} $timeInput';
+    final dateString = DateFormat('d MMMM yyyy', 'ru').format(date);
+    final combinedInput = '$dateString $timeInput';
 
     // Attempt to parse the combined input using the available formats
-    for (final format in timeFormats) {
+    for (final format in dateTimeFormats) {
       try {
-        return format.parse(combinedInput);
+        final parsedDateTime = format.parseStrict(combinedInput);
+        return parsedDateTime;
       } on Exception catch (_) {
         continue;
       }
