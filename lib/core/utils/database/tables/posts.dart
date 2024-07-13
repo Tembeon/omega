@@ -48,7 +48,11 @@ class MembersTable extends Table {
   IntColumn get member => integer()();
 
   /// A text column named `post`. This stores the post related to the member.
-  IntColumn get post => integer().references(PostsTable, #postMessageId, onDelete: KeyAction.cascade)();
+  IntColumn get post => integer().references(
+        PostsTable,
+        #postMessageId,
+        onDelete: KeyAction.cascade,
+      )();
 }
 
 @DriftDatabase(tables: [PostsTable, MembersTable])
@@ -88,7 +92,9 @@ class PostsDatabase extends _$PostsDatabase {
     if (post == null) throw Exception('Post with id $postID not found');
 
     final members = await getMembersForPost(postID);
-    if (members.length >= post.maxMembers) throw const TooManyPlayersException();
+    if (members.length >= post.maxMembers) {
+      throw const TooManyPlayersException();
+    }
 
     return into(membersTable).insert(MembersTableCompanion.insert(post: postID, member: memberID));
   }
@@ -97,7 +103,11 @@ class PostsDatabase extends _$PostsDatabase {
   ///
   /// Returns the number of rows deleted.
   Future<int> removeMember(int postID, int memberID) {
-    return (delete(membersTable)..where((member) => member.post.equals(postID) & member.member.equals(memberID))).go();
+    return (delete(membersTable)
+          ..where(
+            (member) => member.post.equals(postID) & member.member.equals(memberID),
+          ))
+        .go();
   }
 
   /// Returns a list of members of a LFG.
@@ -109,6 +119,14 @@ class PostsDatabase extends _$PostsDatabase {
   /// Returns a list of all active LFGs.
   Future<List<PostsTableData>> getAllPosts() =>
       (select(postsTable)..where((post) => post.isDeleted.equals(false))).get();
+
+  /// Returns a int of all LFGs.
+  Future<int?> getAllPostsCount() async {
+    final countExpression = postsTable.postMessageId.count();
+    final query = selectOnly(postsTable)..addColumns([countExpression]);
+    final result = await query.map((row) => row.read(countExpression)).getSingle();
+    return result;
+  }
 
   /// Marks a LFG as deleted.
   Future<int> deletePost(int postID) {

@@ -69,7 +69,10 @@ final class MessageHandler implements IMessageHandler {
           isInline: false,
         ),
       ]
-      ..author = EmbedAuthorBuilder(name: user.globalName ?? user.username, iconUrl: user.avatar.url)
+      ..author = EmbedAuthorBuilder(
+        name: user.globalName ?? user.username,
+        iconUrl: user.avatar.url,
+      )
       ..color = DiscordColor.parseHexString(_colors[Random().nextInt(_colors.length)])
       ..image = EmbedImageBuilder(url: (Uri.parse(builder.bannerUrl)));
 
@@ -205,7 +208,9 @@ final class MessageHandler implements IMessageHandler {
         embeds: [
           EmbedBuilder(
             fields: embedFields,
-            color: DiscordColor.parseHexString(_colors[Random().nextInt(_colors.length)]),
+            color: DiscordColor.parseHexString(
+              _colors[Random().nextInt(_colors.length)],
+            ),
             image: EmbedImageBuilder(url: Uri.parse(activity.bannerUrl)),
           ),
         ],

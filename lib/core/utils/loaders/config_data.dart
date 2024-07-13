@@ -14,7 +14,10 @@ abstract final class BotConfig {
     final config = jsonDecode(botConfig.readAsStringSync()) as Map<String, Object?>;
 
     if (config.isEmpty) {
-      throw ConfigFileMissing('bot config is empty', configPath: botConfig.path);
+      throw ConfigFileMissing(
+        'bot config is empty',
+        configPath: botConfig.path,
+      );
     }
 
     return _BotConfigLoader.fromJson(config);
