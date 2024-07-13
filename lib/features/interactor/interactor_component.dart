@@ -14,6 +14,10 @@ enum UpdateEvent {
 
   /// Timezones were updated in the system.
   timezonesUpdated,
+
+  lfgChannelUpdated,
+
+  promoChannelUpdated,
 }
 
 /// Base class for all interactor components.

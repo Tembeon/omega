@@ -55,6 +55,9 @@ class Settings {
     }
 
     await _database.guildSettingsDao.saveValue(lfgChannelKey, channelID.toString());
+    _interactor.notifyUpdate({
+      UpdateEvent.lfgChannelUpdated,
+    });
   }
 
   Future<void> updatePromotesChannel(int? channelID) async {
@@ -64,6 +67,9 @@ class Settings {
     }
 
     await _database.guildSettingsDao.saveValue(promotesChannelKey, channelID.toString());
+    _interactor.notifyUpdate({
+      UpdateEvent.promoChannelUpdated,
+    });
   }
 
   Future<List<String>> getActivitiesNames() async {
@@ -86,5 +92,44 @@ class Settings {
     final activity = await _database.activitiesDao.getActivity(name);
     final roles = await _database.activitiesDao.getRolesForActivity(name);
     return ActivityData.fromDatabase(activity: activity, roles: roles.isEmpty ? null : roles);
+  }
+
+  Future<void> addActivity(ActivityData activity) async {
+    await _database.activitiesDao.addActivity(
+      activity.name,
+      activity.maxMembers,
+      bannerUrl: activity.bannerUrl,
+    );
+
+    if (activity.roles != null) {
+      for (final role in activity.roles!) {
+        await _database.activitiesDao.addRoleToActivity(activity.name, role.role);
+      }
+    }
+
+    _interactor.notifyUpdate({
+      UpdateEvent.activitiesUpdated,
+    });
+  }
+
+  Future<void> removeActivity(String name) async {
+    await _database.activitiesDao.removeActivity(name);
+    _interactor.notifyUpdate({
+      UpdateEvent.activitiesUpdated,
+    });
+  }
+
+  Future<void> addRoleToActivity(String activity, String role) async {
+    await _database.activitiesDao.addRoleToActivity(activity, role);
+    _interactor.notifyUpdate({
+      UpdateEvent.activitiesUpdated,
+    });
+  }
+
+  Future<void> removeRoleFromActivity(String activity, String role) async {
+    await _database.activitiesDao.removeRoleFromActivity(activity, role);
+    _interactor.notifyUpdate({
+      UpdateEvent.activitiesUpdated,
+    });
   }
 }
