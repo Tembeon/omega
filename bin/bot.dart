@@ -3,15 +3,15 @@ import 'dart:io';
 
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:l/l.dart';
-import 'package:lfg_bot/core/const/exceptions.dart';
-import 'package:lfg_bot/core/utils/config.dart';
-import 'package:lfg_bot/core/utils/services.dart';
-import 'package:lfg_bot/features/components/buttons/join/join_message_component.dart';
-import 'package:lfg_bot/features/components/buttons/leave/leave_message_component.dart';
-import 'package:lfg_bot/features/components/commands/admin/admin_commands_component.dart';
-import 'package:lfg_bot/features/components/commands/create/create_command_component.dart';
-import 'package:lfg_bot/features/components/commands/delete/delete_command_component.dart';
-import 'package:lfg_bot/features/components/commands/edit/edit_command_handler.dart';
+import 'package:omega/core/const/exceptions.dart';
+import 'package:omega/core/utils/config.dart';
+import 'package:omega/core/utils/services.dart';
+import 'package:omega/features/components/buttons/join/join_message_component.dart';
+import 'package:omega/features/components/buttons/leave/leave_message_component.dart';
+import 'package:omega/features/components/commands/admin/admin_commands_component.dart';
+import 'package:omega/features/components/commands/create/create_command_component.dart';
+import 'package:omega/features/components/commands/delete/delete_command_component.dart';
+import 'package:omega/features/components/commands/edit/edit_command_handler.dart';
 
 void main(List<String> arguments) => l.capture<void>(
       () => runZonedGuarded<void>(
@@ -53,7 +53,6 @@ void runBot() => Future(() async {
 
       await dependencies.interactor.forgetUnknown();
     });
-
 
 Future<String> getCPUArchitecture() async {
   if (Platform.isWindows) {
