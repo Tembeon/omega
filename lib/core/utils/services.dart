@@ -7,8 +7,10 @@ import '../../features/interactor/interactor.dart';
 import '../../features/lfg_manager/lfg_manager.dart';
 import '../../features/lfg_manager/message_handler.dart';
 import '../../features/scheduler/scheduler.dart';
+import '../../features/settings/settings.dart';
 import '../const/exceptions.dart';
 import 'config.dart';
+import 'database/settings/db.dart';
 import 'database/tables/posts.dart';
 
 DynamicLibrary _loadSqlite() {
@@ -40,6 +42,7 @@ final class Services {
     required this.lfgManager,
     required this.interactor,
     required this.bot,
+    required this.settings,
   });
 
   /// Stores instance of [Services].
@@ -79,19 +82,21 @@ final class Services {
     );
 
     final postsDatabase = PostsDatabase();
-
+    final interactor = Interactor(bot: bot, serverId: config.server);
     final lfgManager = LFGManager(database: postsDatabase, messageHandler: const MessageHandler());
+    final settings = Settings(database: SettingsDatabase(), interactor: interactor);
 
-    final dep = Services._(
+    final services = Services._(
       bot: bot,
       config: config,
       postsDatabase: postsDatabase,
       lfgManager: lfgManager,
       postScheduler: PostScheduler(database: postsDatabase, bot: bot, lfgManager: lfgManager),
-      interactor: Interactor(bot: bot, serverId: config.server),
+      interactor: interactor,
+      settings: settings,
     );
 
-    return _instance = dep;
+    return _instance = services;
   }
 
   /// {@macro Config}
@@ -110,4 +115,6 @@ final class Services {
 
   /// Current active bot (WebSocket).
   final NyxxGateway bot;
+
+  final Settings settings;
 }

@@ -3,9 +3,7 @@ import 'dart:math';
 
 import 'package:nyxx/nyxx.dart' hide Activity;
 
-import '../../core/data/models/activity.dart';
-import '../../core/utils/context/context.dart';
-import '../../core/utils/loaders/bot_settings.dart';
+import '../../core/data/models/activity_data.dart';
 import '../../core/utils/services.dart';
 import 'data/models/register_activity.dart';
 
@@ -17,7 +15,7 @@ abstract interface class IMessageHandler {
   ///
   /// Returns ID of the message.
   Future<Message> createPost({
-    required ILFGPostBuilder builder,
+    required LFGPostBuilder builder,
     required InteractionCreateEvent<ApplicationCommandInteraction> interaction,
   });
 
@@ -47,7 +45,7 @@ final class MessageHandler implements IMessageHandler {
     '2CFA50',
   ];
 
-  Future<MessageBuilder> _buildLFGPost(ILFGPostBuilder builder) async {
+  Future<MessageBuilder> _buildLFGPost(LFGPostBuilder builder) async {
     final bot = Services.i.bot;
     final user = await bot.users.get(builder.authorID);
 
@@ -74,7 +72,7 @@ final class MessageHandler implements IMessageHandler {
         iconUrl: user.avatar.url,
       )
       ..color = DiscordColor.parseHexString(_colors[Random().nextInt(_colors.length)])
-      ..image = EmbedImageBuilder(url: (Uri.parse(builder.bannerUrl)));
+      ..image = builder.bannerUrl != null ? EmbedImageBuilder(url: (Uri.parse(builder.bannerUrl!))) : null;
 
     final messageBuilder = MessageBuilder(embeds: [embedBuilder])
       ..components = [
@@ -99,7 +97,7 @@ final class MessageHandler implements IMessageHandler {
 
   @override
   Future<Message> createPost({
-    required ILFGPostBuilder builder,
+    required LFGPostBuilder builder,
     required InteractionCreateEvent<ApplicationCommandInteraction> interaction,
   }) async {
     await interaction.interaction.respond(await _buildLFGPost(builder));
@@ -124,16 +122,12 @@ final class MessageHandler implements IMessageHandler {
     final int? unixTime,
   }) async {
     final embedFields = <EmbedFieldBuilder>[];
-    Activity activity;
+    ActivityData activity;
 
     // update description if it was changed
     if (description != null) {
       final (name, _) = _getFieldData(message, 0);
-
-      activity = Context.root.get<BotSettings>('settings').activityData.activities.firstWhere(
-            (e) => e.name == name,
-            orElse: () => throw Exception('Activity $name not found'),
-          );
+      activity = await Services.i.settings.getActivity(name);
 
       final field = EmbedFieldBuilder(
         name: name,
@@ -145,10 +139,7 @@ final class MessageHandler implements IMessageHandler {
     } else {
       final (name, value) = _getFieldData(message, 0);
 
-      activity = Context.root.get<BotSettings>('settings').activityData.activities.firstWhere(
-            (e) => e.name == name,
-            orElse: () => throw Exception('Activity $name not found'),
-          );
+      activity = await Services.i.settings.getActivity(name);
 
       final field = EmbedFieldBuilder(
         name: name,
@@ -211,7 +202,7 @@ final class MessageHandler implements IMessageHandler {
             color: DiscordColor.parseHexString(
               _colors[Random().nextInt(_colors.length)],
             ),
-            image: EmbedImageBuilder(url: Uri.parse(activity.bannerUrl)),
+            image: activity.bannerUrl != null ? EmbedImageBuilder(url: Uri.parse(activity.bannerUrl!)) : null,
           ),
         ],
       ),

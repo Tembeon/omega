@@ -4,9 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/const/command_exceptions.dart';
-import '../../core/utils/context/context.dart';
 import '../../core/utils/database/tables/posts.dart';
-import '../../core/utils/loaders/bot_settings.dart';
 import '../../core/utils/services.dart';
 import 'data/models/register_activity.dart';
 import 'message_handler.dart';
@@ -21,8 +19,8 @@ abstract interface class ILFGManager {
   const ILFGManager();
 
   /// Creates new LFG.
-  Future<ILFGPost> create({
-    required ILFGPostBuilder builder,
+  Future<void> create({
+    required LFGPostBuilder builder,
     required InteractionCreateEvent<ApplicationCommandInteraction> interaction,
   });
 
@@ -35,9 +33,6 @@ abstract interface class ILFGManager {
 
   /// Deletes existing LFG.
   Future<void> delete(int id);
-
-  /// Reads existing LFG.
-  Future<ILFGPost> read(Snowflake id);
 
   /// Adds new member to LFG.
   Future<void> addMemberTo(
@@ -66,8 +61,8 @@ final class LFGManager implements ILFGManager {
   final IMessageHandler _messageHandler;
 
   @override
-  Future<ILFGPost> create({
-    required ILFGPostBuilder builder,
+  Future<void> create({
+    required LFGPostBuilder builder,
     required InteractionCreateEvent<ApplicationCommandInteraction> interaction,
   }) async {
     // for first, we need to create post on discord and get messageID of LFG
@@ -87,20 +82,12 @@ final class LFGManager implements ILFGManager {
         maxMembers: builder.maxMembers,
       );
 
-      final dbID = await _database.insertPost(dbPost);
+      await _database.insertPost(dbPost);
       await addMemberTo(discordLfgPost, interaction.interaction.member!.user!, fromCreate: true);
 
       Services.i.postScheduler.schedulePost(
         startTime: dbPost.date.value,
         postID: dbPost.postMessageId.value,
-      );
-
-      // return LFGPost
-      return LFGPost.fromBuilder(
-        builder,
-        id: dbID,
-        members: [builder.authorID],
-        messageID: discordLfgPost.id,
       );
     } on Object {
       // if something went wrong, we need to delete post from discord
@@ -115,13 +102,15 @@ final class LFGManager implements ILFGManager {
     if (post == null) throw CantRespondException('LFG $id не найден');
 
     final bot = Services.i.bot;
-    final settings = Context.root.get<BotSettings>('settings');
+    final settings = Services.i.settings;
+    final lfgChannel = await settings.getLFGChannel();
+    if (lfgChannel == null) throw const CantRespondException('Канал LFG не настроен');
 
-    final channel = await bot.channels.fetch(Snowflake(settings.botConfig.lfgChannel));
+    final channel = await bot.channels.fetch(Snowflake(lfgChannel));
     if (channel.type != ChannelType.guildText) {
       throw CantRespondException(
         'Канал LFG не найден или настроен неправильно\n'
-        'ID: ${settings.botConfig.lfgChannel}',
+        'ID: $lfgChannel',
       );
     }
 
@@ -133,11 +122,6 @@ final class LFGManager implements ILFGManager {
 
     print('[LFGManager] Unsheduling post with id $id');
     Services.i.postScheduler.cancelPost(postID: id);
-  }
-
-  @override
-  Future<ILFGPost> read(Snowflake id) {
-    throw UnimplementedError();
   }
 
   @override
