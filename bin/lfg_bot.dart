@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:l/l.dart';
 import 'package:lfg_bot/core/const/exceptions.dart';
 import 'package:lfg_bot/core/utils/config.dart';
@@ -39,6 +40,7 @@ void main(List<String> arguments) => l.capture<void>(
 void runBot() => Future(() async {
       final config = Config.fromEnvironment();
       final dependencies = await Services.initialize(config: config);
+      await initializeDateFormatting('ru', null);
 
       await dependencies.interactor.addComponents({
         const CreateCommandComponent(),
