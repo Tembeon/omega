@@ -1,6 +1,3 @@
-import 'dart:ffi';
-import 'dart:io';
-
 import 'package:nyxx/nyxx.dart';
 
 import '../../features/interactor/interactor.dart';
@@ -8,24 +5,9 @@ import '../../features/lfg_manager/lfg_manager.dart';
 import '../../features/lfg_manager/message_handler.dart';
 import '../../features/scheduler/scheduler.dart';
 import '../../features/settings/settings.dart';
-import '../const/exceptions.dart';
 import 'config.dart';
 import 'database/settings/db.dart';
 import 'database/tables/posts.dart';
-
-DynamicLibrary _loadSqlite() {
-  return DynamicLibrary.open(_sqliteLibraryPath);
-}
-
-String get _sqliteLibraryPath {
-  final scriptDir = File(Platform.script.toFilePath()).parent.parent;
-  final libraryNextToScript = File('${scriptDir.path}/data/dependencies');
-  if (Platform.isWindows) return '${libraryNextToScript.path}/dll/sqlite3.dll';
-  if (Platform.isLinux) return '${libraryNextToScript.path}/so/sqlite3';
-  if (Platform.isMacOS) return '${libraryNextToScript.path}/osx/sqlite3_arm64';
-
-  throw FatalException('Unsupported platform: ${Platform.operatingSystem}');
-}
 
 /// {@template Dependencies}
 ///
@@ -65,8 +47,6 @@ final class Services {
     if (_instance != null) {
       throw Exception('Dependencies already initialized. Use Dependencies.instance to get instance.');
     }
-
-    _loadSqlite();
 
     final bot = await Nyxx.connectGateway(
       config.token,
