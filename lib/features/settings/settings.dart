@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../core/data/models/activity_data.dart';
 import '../../core/utils/database/settings/db.dart';
 import '../interactor/interactor.dart';
@@ -113,10 +115,19 @@ class Settings {
   }
 
   Future<void> removeActivity(String name) async {
+    final activity = await _database.activitiesDao.getActivity(name);
     await _database.activitiesDao.removeActivity(name);
     _interactor.notifyUpdate({
       UpdateEvent.activitiesUpdated,
     });
+
+    final banner = activity.bannerUrl;
+    if (banner != null && !Uri.parse(banner).isScheme('https')) {
+      final file = File(banner);
+      if (file.existsSync()) {
+        file.deleteSync();
+      }
+    }
   }
 
   Future<void> addRoleToActivity(String activity, String role) async {

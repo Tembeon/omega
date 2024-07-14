@@ -12,6 +12,11 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
   const ActivityCommandsComponent();
 
   @override
+  Set<UpdateEvent> get updateWhen => {
+        UpdateEvent.activitiesUpdated,
+      };
+
+  @override
   Future<ApplicationCommandBuilder> build(Services services) async {
     return ApplicationCommandBuilder(
       defaultMemberPermissions: Permissions.administrator,
@@ -52,7 +57,7 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
           description: 'Удалить активность',
           options: [
             CommandOptionBuilder.string(
-              name: 'название',
+              name: 'name',
               description: 'Введите название активности',
               choices: await _getActivityChoices(services.settings),
               isRequired: true,
@@ -141,5 +146,15 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
   Future<void> _handleActivityRemove(
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
-  ) async {}
+  ) async {
+    final activityName = findInOption<String>('name', event.interaction.data.options!);
+
+    final setting = services.settings;
+    await setting.removeActivity(activityName!);
+
+    await event.interaction.respond(
+      MessageBuilder(content: 'Активность "$activityName" удалена'),
+      isEphemeral: false,
+    );
+  }
 }
