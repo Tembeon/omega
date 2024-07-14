@@ -14,9 +14,7 @@ enum UpdateEvent {
 
   /// Timezones were updated in the system.
   timezonesUpdated,
-
   lfgChannelUpdated,
-
   promoChannelUpdated,
 }
 
@@ -32,7 +30,11 @@ abstract class InteractorComponent<T extends Interaction<Object?>> {
   const InteractorComponent();
 
   /// Called when Interactor receives an event that this component should handle.
-  Future<void> handle(String commandName, InteractionCreateEvent<T> event, Services services);
+  Future<void> handle(
+    String commandName,
+    InteractionCreateEvent<T> event,
+    Services services,
+  );
 
   /// Called when Interactor wants to update components.
   ///
