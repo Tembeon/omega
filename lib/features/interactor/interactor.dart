@@ -52,23 +52,25 @@ base mixin _Syncer on _Registrar {
   /// Notifies Interactor that some of events happened.
   ///
   /// Interactor will update components that should be updated when some of events happened.
-  void notifyUpdate(Set<UpdateEvent> events) {
-    l.d('$_tag Received update events: $events');
-    final List<InteractorComponent> toUpdate = [];
-    for (final component in components) {
-      if (component.updateWhen.intersection(events).isNotEmpty) {
-        toUpdate.add(component);
-        l.d('$_tag Component "${component.runtimeType}" will be updated because of $events');
-      }
-    }
+  void notifyUpdate(Set<UpdateEvent> events) => Future(() async {
+        l.d('$_tag Received update events: $events');
+        final List<InteractorComponent> toUpdate = [];
+        for (final component in components) {
+          if (component.updateWhen.intersection(events).isNotEmpty) {
+            toUpdate.add(component);
+            l.d('$_tag Component "${component.runtimeType}" will be updated because of $events');
+          }
+        }
 
-    if (toUpdate.isEmpty) {
-      l.d('$_tag No components to update, skipping sync');
-      return;
-    }
+        toUpdate.addAll(_disabled);
 
-    _sync(toUpdate);
-  }
+        if (toUpdate.isEmpty) {
+          l.d('$_tag No components to update, skipping sync');
+          return;
+        }
+
+        await _sync(toUpdate);
+      });
 
   /// Synchronizes components with Discord.
   Future<void> _sync(List<InteractorComponent> components) async {
@@ -100,6 +102,8 @@ base class _Registrar {
 
   /// Contains all registered components.
   final Map<String, _RegisteredComponent> _registered = {};
+
+  final List<InteractorComponent> _disabled = [];
 
   /// Adds component to registration.
   ///
@@ -168,6 +172,7 @@ base class _Registrar {
     // if component doesn't want to be registered, then we should remove it from Discord
     if (!wantToRegister) {
       await _unregisterComponent(component);
+      _disabled.add(component);
       return;
     }
 
@@ -263,9 +268,7 @@ base class _Registrar {
 
     final intersection = commandNames.toSet().intersection(_registered.keys.toSet());
     if (intersection.isNotEmpty) {
-      throw ComponentFormatError(
-          'Component ${component.runtimeType} has command(s) that already exists: $intersection\n'
-          'Please, change command name(s) to unique');
+      l.w('$_tag Component ${component.runtimeType} has command(s) that already exists: $intersection');
     }
 
     return commandNames;

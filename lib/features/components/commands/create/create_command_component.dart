@@ -15,9 +15,15 @@ class CreateCommandComponent extends InteractorCommandComponent {
 
   @override
   Set<UpdateEvent> get updateWhen => {
-    UpdateEvent.timezonesUpdated,
-    UpdateEvent.activitiesUpdated,
-  };
+        UpdateEvent.timezonesUpdated,
+        UpdateEvent.activitiesUpdated,
+        UpdateEvent.lfgChannelUpdated,
+      };
+
+  @override
+  Future<bool> enabledWhen(Services services) async {
+    return await services.settings.getLFGChannel() != null;
+  }
 
   @override
   Future<ApplicationCommandBuilder> build(Services services) async {
@@ -83,6 +89,19 @@ class CreateCommandComponent extends InteractorCommandComponent {
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
   ) async {
+    final channelLfg = await services.settings.getLFGChannel();
+    if (channelLfg == null) {
+      print('LFG channel is not set');
+      return;
+    }
+
+    if (channelLfg != event.interaction.channelId?.value) {
+      return event.interaction.respond(
+        MessageBuilder(content: 'Команда доступна только в канале для поиска группы: <#$channelLfg>'),
+        isEphemeral: true,
+      );
+    }
+
     // in this handle in doesn't matter which type of activity was received,
     // so ignore `commandName` parameter
 

@@ -51,22 +51,22 @@ class Settings {
   Future<void> updateLFGChannel(int? channelID) async {
     if (channelID == null) {
       await _database.guildSettingsDao.removeValue(lfgChannelKey);
-      return;
+    } else {
+      await _database.guildSettingsDao.saveValue(lfgChannelKey, channelID.toString());
     }
 
-    await _database.guildSettingsDao.saveValue(lfgChannelKey, channelID.toString());
-    _interactor.notifyUpdate({
-      UpdateEvent.lfgChannelUpdated,
-    });
+      _interactor.notifyUpdate({
+        UpdateEvent.lfgChannelUpdated,
+      });
   }
 
   Future<void> updatePromotesChannel(int? channelID) async {
     if (channelID == null) {
       await _database.guildSettingsDao.removeValue(promotesChannelKey);
-      return;
+    } else {
+      await _database.guildSettingsDao.saveValue(promotesChannelKey, channelID.toString());
     }
 
-    await _database.guildSettingsDao.saveValue(promotesChannelKey, channelID.toString());
     _interactor.notifyUpdate({
       UpdateEvent.promoChannelUpdated,
     });
