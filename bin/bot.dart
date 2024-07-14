@@ -8,6 +8,7 @@ import 'package:omega/core/utils/config.dart';
 import 'package:omega/core/utils/services.dart';
 import 'package:omega/features/components/buttons/join/join_message_component.dart';
 import 'package:omega/features/components/buttons/leave/leave_message_component.dart';
+import 'package:omega/features/components/commands/activity/activity_commands_component.dart';
 import 'package:omega/features/components/commands/admin/admin_commands_component.dart';
 import 'package:omega/features/components/commands/create/create_command_component.dart';
 import 'package:omega/features/components/commands/delete/delete_command_component.dart';
@@ -49,6 +50,7 @@ void runBot() => Future(() async {
         const JoinMessageComponent(),
         const LeaveMessageComponent(),
         const AdminCommandComponent(),
+        const ActivityCommandsComponent(),
       });
 
       await dependencies.interactor.forgetUnknown();

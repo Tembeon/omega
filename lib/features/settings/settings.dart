@@ -55,9 +55,9 @@ class Settings {
       await _database.guildSettingsDao.saveValue(lfgChannelKey, channelID.toString());
     }
 
-      _interactor.notifyUpdate({
-        UpdateEvent.lfgChannelUpdated,
-      });
+    _interactor.notifyUpdate({
+      UpdateEvent.lfgChannelUpdated,
+    });
   }
 
   Future<void> updatePromotesChannel(int? channelID) async {

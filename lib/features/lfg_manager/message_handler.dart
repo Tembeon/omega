@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:nyxx/nyxx.dart' hide Activity;
@@ -48,6 +49,23 @@ final class MessageHandler implements IMessageHandler {
   Future<MessageBuilder> _buildLFGPost(LFGPostBuilder builder) async {
     final bot = Services.i.bot;
     final user = await bot.users.get(builder.authorID);
+    final banner = builder.bannerUrl != null ? Uri.parse(builder.bannerUrl!) : null;
+    final List<AttachmentBuilder> attachments = [];
+    bool useBannerAsFile = false;
+
+    // check if Uri if local file
+    if (banner != null && !banner.isScheme('https')) {
+      print('Banner is local file');
+      final file = File(banner.toFilePath());
+      attachments.add(AttachmentBuilder(data: file.readAsBytesSync(), fileName: 'image.png'));
+      useBannerAsFile = true;
+    }
+
+    final embedImage = builder.bannerUrl != null
+        ? EmbedImageBuilder(
+            url: useBannerAsFile ? Uri(scheme: 'attachment', host: 'image.png') : (Uri.parse(builder.bannerUrl!)),
+          )
+        : null;
 
     final embedBuilder = EmbedBuilder()
       ..fields = [
@@ -72,10 +90,12 @@ final class MessageHandler implements IMessageHandler {
         iconUrl: user.avatar.url,
       )
       ..color = DiscordColor.parseHexString(_colors[Random().nextInt(_colors.length)])
-      ..image = builder.bannerUrl != null ? EmbedImageBuilder(url: (Uri.parse(builder.bannerUrl!))) : null;
+      ..image = embedImage;
 
-    final messageBuilder = MessageBuilder(embeds: [embedBuilder])
-      ..components = [
+    final messageBuilder = MessageBuilder(
+      embeds: [embedBuilder],
+      attachments: useBannerAsFile ? attachments : null,
+    )..components = [
         ActionRowBuilder(
           components: [
             ButtonBuilder(
@@ -194,18 +214,51 @@ final class MessageHandler implements IMessageHandler {
       embedFields.add(field);
     }
 
+    final banner = activity.bannerUrl != null && activity.bannerUrl!.isNotEmpty ? Uri.parse(activity.bannerUrl!) : null;
+    final List<AttachmentBuilder> attachments = [];
+    bool useBannerAsFile = false;
+    print('Edited banner: $banner');
+    print('Source: $banner');
+
+    // check if Uri if local file
+    if (banner != null && !banner.isScheme('https')) {
+      print('Banner is local file');
+      final file = File(banner.toFilePath());
+      attachments.add(AttachmentBuilder(data: file.readAsBytesSync(), fileName: 'image.png'));
+      useBannerAsFile = true;
+    }
+
+    final embedImage = activity.bannerUrl != null
+        ? EmbedImageBuilder(
+            url: useBannerAsFile ? Uri(scheme: 'attachment', host: 'image.png') : (Uri.parse(activity.bannerUrl!)),
+          )
+        : null;
+
     await message.edit(
-      MessageUpdateBuilder(
-        embeds: [
-          EmbedBuilder(
-            fields: embedFields,
-            color: DiscordColor.parseHexString(
-              _colors[Random().nextInt(_colors.length)],
+      useBannerAsFile
+          ? MessageUpdateBuilder(
+              embeds: [
+                EmbedBuilder(
+                  fields: embedFields,
+                  color: DiscordColor.parseHexString(
+                    _colors[Random().nextInt(_colors.length)],
+                  ),
+                  image: embedImage,
+                ),
+              ],
+              attachments: attachments,
+            )
+          : MessageUpdateBuilder(
+              embeds: [
+                EmbedBuilder(
+                  fields: embedFields,
+                  color: DiscordColor.parseHexString(
+                    _colors[Random().nextInt(_colors.length)],
+                  ),
+                  image: embedImage,
+                ),
+              ],
             ),
-            image: activity.bannerUrl != null ? EmbedImageBuilder(url: Uri.parse(activity.bannerUrl!)) : null,
-          ),
-        ],
-      ),
     );
   }
 }
