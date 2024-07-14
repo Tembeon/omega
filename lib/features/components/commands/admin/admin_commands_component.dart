@@ -1,3 +1,4 @@
+import '../../../../core/utils/event_parsers.dart';
 import '../../../interactor/interactor_component.dart';
 
 /// {@template AdminCommandComponent}
@@ -9,8 +10,8 @@ import '../../../interactor/interactor_component.dart';
 /// * health - shows some useful meta info about bot such as: ping, scheduled LFGs, total of all LFGs.
 /// * delete - deletes LFG post regardless of its author.
 /// {@endtemplate}
-
 class AdminCommandComponent extends InteractorCommandComponent {
+  /// {@macro AdminCommandComponent}
   const AdminCommandComponent();
 
   @override
@@ -21,6 +22,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
       description: 'Команды администратора',
       type: ApplicationCommandType.chatInput,
       options: [
+        // delete LFG command
         CommandOptionBuilder.subCommand(
           name: 'delete',
           description: 'Удалить LFG',
@@ -32,10 +34,42 @@ class AdminCommandComponent extends InteractorCommandComponent {
             ),
           ],
         ),
+        // health command
         CommandOptionBuilder.subCommand(
           name: 'health',
           description: 'Узнать состояние бота',
           options: [],
+        ),
+        // set commands
+        CommandOptionBuilder.subCommandGroup(
+          name: 'set',
+          description: 'Настройки бота',
+          options: [
+            CommandOptionBuilder.subCommand(
+              name: 'lfg_channel',
+              description: 'Установить LFG канал',
+              options: [
+                CommandOptionBuilder.channel(
+                  name: 'channel',
+                  description: 'канал',
+                  channelTypes: [ChannelType.guildText],
+                  isRequired: false,
+                ),
+              ],
+            ),
+            CommandOptionBuilder.subCommand(
+              name: 'promo_channel',
+              description: 'Установить канал для оповещений о LFG',
+              options: [
+                CommandOptionBuilder.channel(
+                  name: 'channel',
+                  description: 'канал',
+                  channelTypes: [ChannelType.guildText],
+                  isRequired: false,
+                ),
+              ],
+            ),
+          ],
         ),
       ],
     );
@@ -47,9 +81,18 @@ class AdminCommandComponent extends InteractorCommandComponent {
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
   ) async {
+    final member = event.interaction.member;
+
+    if (member == null) return; // refuse to work with bots
+    if (!(member.permissions?.has(Permissions.administrator) ?? false)) {
+      return; // Check if user is administrator
+    }
+
     return switch (commandName) {
       'admin health' => _healthHandler(event, services),
       'admin delete' => _deleteHandler(event, services),
+      'admin set lfg_channel' => _setLFGChannelHandler(event, services),
+      'admin set promo_channel' => _setPromoChannelHandler(event, services),
       _ => throw UnsupportedError('Unsupported command: $commandName'),
     };
   }
@@ -58,13 +101,6 @@ class AdminCommandComponent extends InteractorCommandComponent {
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
   ) async {
-    final member = event.interaction.member;
-
-    if (member == null) return; // refuse to work with bots
-    if (!(member.permissions?.has(Permissions.administrator) ?? false)) {
-      return; // Check if user is administrator
-    }
-
     // To calculate the ping we will take the time when the command was executed [timestamp]
     // and the time when it was sent [now] and subtract them.
     final now = DateTime.now().millisecondsSinceEpoch;
@@ -102,11 +138,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
   ) async {
-    final member = event.interaction.member;
-    if (member == null) return; // refuse to work with bots
-    if (!(member.permissions?.has(Permissions.administrator) ?? false)) {
-      return; // Check if user is administrator
-    }
+    final member = event.interaction.member!;
     final userName = member.nick ?? member.user?.username;
 
     // This is designed to extract the value of the message_id parameter from the interaction data.
@@ -135,6 +167,39 @@ class AdminCommandComponent extends InteractorCommandComponent {
       MessageBuilder(
         content: 'LFG пользователя "$userName", с активностью "${postData.title}" удалено.',
       ),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _setLFGChannelHandler(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final channelValue = findInOption<String>('channel', event.interaction.data.options!);
+    final channel = channelValue == null ? null : Snowflake(int.parse(channelValue));
+    final settings = services.settings;
+
+    await settings.updateLFGChannel(channel?.value);
+
+    await event.interaction.respond(
+      MessageBuilder(content: channel != null ? 'LFG канал установлен' : 'LFG канал удален'),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _setPromoChannelHandler(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final channelValue = findInOption<String>('channel', event.interaction.data.options!);
+    final channel = channelValue == null ? null : Snowflake(int.parse(channelValue));
+
+    final settings = services.settings;
+
+    await settings.updatePromotesChannel(channel?.value);
+
+    await event.interaction.respond(
+      MessageBuilder(content: channel != null ? 'Канал уведомлений установлен' : 'Канал уведомлений удален'),
       isEphemeral: true,
     );
   }
