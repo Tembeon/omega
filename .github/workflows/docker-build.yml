@@ -25,4 +25,4 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: omega_bot:latest
+          tags: tembeon/omega_bot:latest
