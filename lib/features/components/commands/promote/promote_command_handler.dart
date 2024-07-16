@@ -1,3 +1,5 @@
+import 'package:l/l.dart';
+
 import '../../../interactor/interactor_component.dart';
 import '../../../promoter/promoter_messages.dart';
 
@@ -47,7 +49,7 @@ class PromoteCommandComponent extends InteractorCommandComponent {
 
     // if author of the post is not the same as author of the command, then it's not LFG of the author
     if (postData.author != event.interaction.member?.user?.id.value) {
-      print('User "${event.interaction.member?.user}" tried to delete LFG of user "${postData.author}"');
+      l.i('User "${event.interaction.member?.user}" tried to promote LFG of user "${postData.author}"');
 
       await event.interaction.respond(
         MessageBuilder(

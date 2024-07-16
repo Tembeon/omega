@@ -52,7 +52,7 @@ void runBot() => Future(() async {
         const LeaveMessageComponent(),
         const AdminCommandComponent(),
         const ActivityCommandsComponent(),
-        PromoteCommandComponent(),
+        const PromoteCommandComponent(),
       });
 
       await dependencies.interactor.forgetUnknown();
