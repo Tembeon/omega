@@ -1,0 +1,8 @@
+services:
+  app:
+    image: omega_bot
+    build: .
+    env_file: .env
+    volumes:
+      - ./data/db:/app/data/db
+      - ./data/attachments:/app/data/attachments
