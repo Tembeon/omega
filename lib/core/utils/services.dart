@@ -3,6 +3,7 @@ import 'package:nyxx/nyxx.dart';
 import '../../features/interactor/interactor.dart';
 import '../../features/lfg_manager/lfg_manager.dart';
 import '../../features/lfg_manager/message_handler.dart';
+import '../../features/promoter/promoter.dart';
 import '../../features/scheduler/scheduler.dart';
 import '../../features/settings/settings.dart';
 import 'config.dart';
@@ -62,10 +63,10 @@ final class Services {
     );
 
     final postsDatabase = PostsDatabase();
+    final promoter = Promoter(bot: bot, );
     final interactor = Interactor(bot: bot, serverId: config.server);
-    final lfgManager = LFGManager(database: postsDatabase, messageHandler: const MessageHandler());
+    final lfgManager = LFGManager(database: postsDatabase, messageHandler: const MessageHandler(), promoter: promoter);
     final settings = Settings(database: SettingsDatabase(), interactor: interactor);
-
     final services = Services._(
       bot: bot,
       config: config,

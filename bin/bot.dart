@@ -13,6 +13,7 @@ import 'package:omega/features/components/commands/admin/admin_commands_componen
 import 'package:omega/features/components/commands/create/create_command_component.dart';
 import 'package:omega/features/components/commands/delete/delete_command_component.dart';
 import 'package:omega/features/components/commands/edit/edit_command_handler.dart';
+import 'package:omega/features/components/commands/promote/promote_command_handler.dart';
 
 void main(List<String> arguments) => l.capture<void>(
       () => runZonedGuarded<void>(
@@ -51,6 +52,7 @@ void runBot() => Future(() async {
         const LeaveMessageComponent(),
         const AdminCommandComponent(),
         const ActivityCommandsComponent(),
+        PromoteCommandComponent(),
       });
 
       await dependencies.interactor.forgetUnknown();
