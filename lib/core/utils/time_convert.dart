@@ -6,9 +6,13 @@ class TimeConverters {
     required final String dateInput,
     required final int timezoneInput,
   }) {
+    // Convert input strings to lowercase
+    final lowerTimeInput = timeInput.toLowerCase();
+    final lowerDateInput = dateInput.toLowerCase();
+
     // Trim input strings
-    final trimmedDateInput = dateInput.trim();
-    var trimmedTimeInput = timeInput.trim().replaceAll(':', ' ');
+    final trimmedDateInput = lowerDateInput.trim();
+    var trimmedTimeInput = lowerTimeInput.trim().replaceAll(':', ' ');
 
     // Add minutes if only hours are provided
     if (RegExp(r'^\d{1,2}$').hasMatch(trimmedTimeInput)) {
@@ -66,7 +70,7 @@ class TimeConverters {
     // Attempt to parse the date input using the available formats
     for (final format in dateFormats) {
       try {
-        final parsedDate = format.parseStrict(adjustedDateInput);
+        final parsedDate = format.parse(adjustedDateInput);
         return parsedDate;
       } on Exception catch (_) {
         continue;
@@ -101,7 +105,7 @@ class TimeConverters {
     // Attempt to parse the combined input using the available formats
     for (final format in dateTimeFormats) {
       try {
-        final parsedDateTime = format.parseStrict(combinedInput);
+        final parsedDateTime = format.parse(combinedInput);
         return parsedDateTime;
       } on Exception catch (_) {
         continue;
