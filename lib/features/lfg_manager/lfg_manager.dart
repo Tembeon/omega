@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:drift/drift.dart';
-import 'package:l/l.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/const/command_exceptions.dart';
