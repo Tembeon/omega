@@ -110,6 +110,17 @@ class AdminCommandComponent extends InteractorCommandComponent {
             ),
           ],
         ),
+        CommandOptionBuilder.subCommandGroup(
+          name: 'bot',
+          description: 'Тут можно получить информацию о настройках бота',
+          options: [
+            CommandOptionBuilder.subCommand(
+              name: 'channels',
+              description: 'Каналы, в которых бот работает',
+              options: [],
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -135,6 +146,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
       'admin promotes add' => _addPromoteMessageHandler(event, services),
       'admin promotes remove' => _removePromoteMessageHandler(event, services),
       'admin promotes list' => _listPromoteMessageHandler(event, services),
+      'admin bot channels' => _botChannelsHandler(event, services),
       _ => throw UnsupportedError('Unsupported command: $commandName'),
     };
   }
@@ -296,6 +308,28 @@ class AdminCommandComponent extends InteractorCommandComponent {
 
     await event.interaction.respond(
       MessageBuilder(content: response.toString()),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _botChannelsHandler(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final settings = services.settings;
+    final lfgChannel = await settings.getLFGChannel();
+    final promoChannel = await settings.getPromotesChannel();
+
+    final StringBuffer response = StringBuffer()
+      ..write('LFG канал: ')
+      ..writeln(lfgChannel != null ? '<#$lfgChannel>' : 'Не установлен')
+      ..write('Канал уведомлений: ')
+      ..write(promoChannel != null ? '<#$promoChannel>' : 'Не установлен');
+
+    await event.interaction.respond(
+      MessageBuilder(
+        content: response.toString(),
+      ),
       isEphemeral: true,
     );
   }
