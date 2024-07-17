@@ -18,7 +18,7 @@ part 'db.g.dart';
 ///
 /// {@endtemplate}
 @DriftDatabase(
-  tables: [KeyedSettingsTable, TimezonesTable, ActivitiesTable, ActivitiesRolesTable, RolesTable],
+  tables: [KeyedSettingsTable, TimezonesTable, ActivitiesTable, ActivitiesRolesTable, RolesTable, PromoteMessagesTable],
   daos: [ActivitiesDao, GuildSettingsDao],
 )
 class SettingsDatabase extends _$SettingsDatabase {

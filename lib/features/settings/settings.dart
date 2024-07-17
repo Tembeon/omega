@@ -143,4 +143,30 @@ class Settings {
       UpdateEvent.activitiesUpdated,
     });
   }
+
+  Future<Map<int, String>> getPromoteMessages() async {
+    final messages = await _database.guildSettingsDao.getPromoteMessages();
+    return {for (final message in messages) message.id: message.message};
+  }
+
+  /// Same as [getPromoteMessages], but returns as many messages as they have weight.
+  Future<List<String>> getPromoteMessagesWithWeight() async {
+    final messages = await _database.guildSettingsDao.getPromoteMessages();
+    final List<String> result = [];
+    for (final message in messages) {
+      for (var i = 0; i < message.weight; i++) {
+        result.add(message.message);
+      }
+    }
+
+    return result;
+  }
+
+  Future<void> addPromoteMessage(String message, int weight) {
+    return _database.guildSettingsDao.addPromoteMessage(message, weight);
+  }
+
+  Future<void> removePromoteMessage(int id) {
+    return _database.guildSettingsDao.removePromoteMessage(id);
+  }
 }

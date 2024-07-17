@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:nyxx/nyxx.dart' hide Activity;
 
 import '../../core/data/models/activity_data.dart';
+import '../../core/utils/color_palette.dart';
 import '../../core/utils/services.dart';
 import 'data/models/register_activity.dart';
 
@@ -37,14 +37,6 @@ abstract interface class IMessageHandler {
 /// Discord message handler.
 final class MessageHandler implements IMessageHandler {
   const MessageHandler();
-
-  static const List<String> _colors = <String>[
-    'DAB729',
-    'F52D74',
-    '2FE2F7',
-    '4270F8',
-    '2CFA50',
-  ];
 
   Future<MessageBuilder> _buildLFGPost(LFGPostBuilder builder) async {
     final bot = Services.i.bot;
@@ -89,7 +81,7 @@ final class MessageHandler implements IMessageHandler {
         name: user.globalName ?? user.username,
         iconUrl: user.avatar.url,
       )
-      ..color = DiscordColor.parseHexString(_colors[Random().nextInt(_colors.length)])
+      ..color = ColorPalette.getRandomDiscordColor()
       ..image = embedImage;
 
     final messageBuilder = MessageBuilder(
@@ -240,9 +232,7 @@ final class MessageHandler implements IMessageHandler {
               embeds: [
                 EmbedBuilder(
                   fields: embedFields,
-                  color: DiscordColor.parseHexString(
-                    _colors[Random().nextInt(_colors.length)],
-                  ),
+                  color: ColorPalette.getRandomDiscordColor(),
                   image: embedImage,
                 ),
               ],
@@ -252,9 +242,7 @@ final class MessageHandler implements IMessageHandler {
               embeds: [
                 EmbedBuilder(
                   fields: embedFields,
-                  color: DiscordColor.parseHexString(
-                    _colors[Random().nextInt(_colors.length)],
-                  ),
+                  color: ColorPalette.getRandomDiscordColor(),
                   image: embedImage,
                 ),
               ],

@@ -2,6 +2,8 @@ services:
   app:
     image: omega_bot
     build: .
+    restart:
+      on-failure
     env_file: .env
     volumes:
       - ./data/db:/app/data/db

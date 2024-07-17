@@ -6,6 +6,7 @@ import 'package:nyxx/nyxx.dart';
 import '../../core/const/command_exceptions.dart';
 import '../../core/utils/database/tables/posts.dart';
 import '../../core/utils/services.dart';
+import '../promoter/promoter.dart';
 import 'data/models/register_activity.dart';
 import 'message_handler.dart';
 
@@ -51,14 +52,19 @@ final class LFGManager implements ILFGManager {
   LFGManager({
     required PostsDatabase database,
     required IMessageHandler messageHandler,
+    required Promoter promoter,
   })  : _database = database,
-        _messageHandler = messageHandler;
+        _messageHandler = messageHandler,
+        _promoter = promoter;
 
   /// Database used for storing LFG posts.
   final PostsDatabase _database;
 
   /// Discord LFG message handler.
   final IMessageHandler _messageHandler;
+
+  /// Promoter for notifying about new LFG posts.
+  final Promoter _promoter;
 
   @override
   Future<void> create({
@@ -89,6 +95,8 @@ final class LFGManager implements ILFGManager {
         startTime: dbPost.date.value,
         postID: dbPost.postMessageId.value,
       );
+
+      _promoter.notifyAboutLFG(builder, discordLfgPost.id);
     } on Object {
       // if something went wrong, we need to delete post from discord
       await _messageHandler.deletePost(discordLfgPost);

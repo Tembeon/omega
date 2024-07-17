@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:io/io.dart';
 import 'package:l/l.dart';
 import 'package:omega/core/const/exceptions.dart';
 import 'package:omega/core/utils/config.dart';
@@ -27,7 +28,7 @@ void main(List<String> arguments) => l.capture<void>(
             exit(exitCode);
           }
 
-          // exit(ExitCode.software.code);
+          exit(ExitCode.software.code);
         },
       ),
       LogOptions(
@@ -55,15 +56,3 @@ void runBot() => Future(() async {
 
       await dependencies.interactor.forgetUnknown();
     });
-
-Future<String> getCPUArchitecture() async {
-  if (Platform.isWindows) {
-    final cpu = Platform.environment['PROCESSOR_ARCHITECTURE'];
-    if (cpu == null) throw FatalException('Failed to get CPU architecture');
-    return cpu;
-  } else {
-    final info = await Process.run('uname', ['-m']);
-    final cpu = info.stdout.toString().replaceAll('\n', '');
-    return cpu;
-  }
-}
