@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:l/l.dart';
 
 import 'interactor_component.dart';
@@ -342,7 +344,34 @@ base mixin _Listener on _Registrar {
           return;
         }
 
-        registry.component.handle(commandName, event, Services.instance);
+        runZonedGuarded<void>(
+          () => registry.component.handle(commandName, event, Services.instance),
+          (error, stack) {
+            if (error is FormatException) {
+              event.interaction.respond(
+                MessageBuilder(
+                  content: 'Произошла ошибка при чтении даты.'
+                      '\nПожалуйста, используйте допустимые форматы:'
+                      '\n"5", "5 июня", "5 6", "01 01 2030"'
+                      '\n\nОшибка: $error',
+                ),
+                isEphemeral: true,
+              );
+
+              return;
+            }
+
+            event.interaction.respond(
+              MessageBuilder(
+                content: 'Произошла ошибка при выполнении команды :('
+                    '\n\n$error',
+              ),
+              isEphemeral: true,
+            );
+
+            throw Error.throwWithStackTrace(error, stack);
+          },
+        );
       },
     );
 
@@ -358,7 +387,16 @@ base mixin _Listener on _Registrar {
           l.d('$_tag Handler for button "${event.interaction.data.customId}" not found');
           return;
         } else {
-          registry.component.handle(event.interaction.data.customId, event, Services.i);
+          runZonedGuarded(
+            () => registry.component.handle(event.interaction.data.customId, event, Services.i),
+            (error, stack) => event.interaction.respond(
+              MessageBuilder(
+                content: 'Произошла ошибка при выполнении команды :('
+                    '\n\n$error',
+              ),
+              isEphemeral: true,
+            ),
+          );
         }
       },
     );
