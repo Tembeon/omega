@@ -1023,6 +1023,185 @@ class ActivitiesRolesTableCompanion
   }
 }
 
+class $PromoteMessagesTableTable extends PromoteMessagesTable
+    with TableInfo<$PromoteMessagesTableTable, PromoteMessagesTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PromoteMessagesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _messageMeta =
+      const VerificationMeta('message');
+  @override
+  late final GeneratedColumn<String> message = GeneratedColumn<String>(
+      'message', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, message];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'promote_messages_table';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<PromoteMessagesTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('message')) {
+      context.handle(_messageMeta,
+          message.isAcceptableOrUnknown(data['message']!, _messageMeta));
+    } else if (isInserting) {
+      context.missing(_messageMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PromoteMessagesTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PromoteMessagesTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      message: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}message'])!,
+    );
+  }
+
+  @override
+  $PromoteMessagesTableTable createAlias(String alias) {
+    return $PromoteMessagesTableTable(attachedDatabase, alias);
+  }
+}
+
+class PromoteMessagesTableData extends DataClass
+    implements Insertable<PromoteMessagesTableData> {
+  final int id;
+  final String message;
+  const PromoteMessagesTableData({required this.id, required this.message});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['message'] = Variable<String>(message);
+    return map;
+  }
+
+  PromoteMessagesTableCompanion toCompanion(bool nullToAbsent) {
+    return PromoteMessagesTableCompanion(
+      id: Value(id),
+      message: Value(message),
+    );
+  }
+
+  factory PromoteMessagesTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PromoteMessagesTableData(
+      id: serializer.fromJson<int>(json['id']),
+      message: serializer.fromJson<String>(json['message']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'message': serializer.toJson<String>(message),
+    };
+  }
+
+  PromoteMessagesTableData copyWith({int? id, String? message}) =>
+      PromoteMessagesTableData(
+        id: id ?? this.id,
+        message: message ?? this.message,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('PromoteMessagesTableData(')
+          ..write('id: $id, ')
+          ..write('message: $message')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, message);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PromoteMessagesTableData &&
+          other.id == this.id &&
+          other.message == this.message);
+}
+
+class PromoteMessagesTableCompanion
+    extends UpdateCompanion<PromoteMessagesTableData> {
+  final Value<int> id;
+  final Value<String> message;
+  const PromoteMessagesTableCompanion({
+    this.id = const Value.absent(),
+    this.message = const Value.absent(),
+  });
+  PromoteMessagesTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String message,
+  }) : message = Value(message);
+  static Insertable<PromoteMessagesTableData> custom({
+    Expression<int>? id,
+    Expression<String>? message,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (message != null) 'message': message,
+    });
+  }
+
+  PromoteMessagesTableCompanion copyWith(
+      {Value<int>? id, Value<String>? message}) {
+    return PromoteMessagesTableCompanion(
+      id: id ?? this.id,
+      message: message ?? this.message,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (message.present) {
+      map['message'] = Variable<String>(message.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PromoteMessagesTableCompanion(')
+          ..write('id: $id, ')
+          ..write('message: $message')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$SettingsDatabase extends GeneratedDatabase {
   _$SettingsDatabase(QueryExecutor e) : super(e);
   _$SettingsDatabaseManager get managers => _$SettingsDatabaseManager(this);
@@ -1034,6 +1213,8 @@ abstract class _$SettingsDatabase extends GeneratedDatabase {
   late final $RolesTableTable rolesTable = $RolesTableTable(this);
   late final $ActivitiesRolesTableTable activitiesRolesTable =
       $ActivitiesRolesTableTable(this);
+  late final $PromoteMessagesTableTable promoteMessagesTable =
+      $PromoteMessagesTableTable(this);
   late final ActivitiesDao activitiesDao =
       ActivitiesDao(this as SettingsDatabase);
   late final GuildSettingsDao guildSettingsDao =
@@ -1047,7 +1228,8 @@ abstract class _$SettingsDatabase extends GeneratedDatabase {
         timezonesTable,
         activitiesTable,
         rolesTable,
-        activitiesRolesTable
+        activitiesRolesTable,
+        promoteMessagesTable
       ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
@@ -1631,6 +1813,97 @@ class $$ActivitiesRolesTableTableOrderingComposer
   }
 }
 
+typedef $$PromoteMessagesTableTableInsertCompanionBuilder
+    = PromoteMessagesTableCompanion Function({
+  Value<int> id,
+  required String message,
+});
+typedef $$PromoteMessagesTableTableUpdateCompanionBuilder
+    = PromoteMessagesTableCompanion Function({
+  Value<int> id,
+  Value<String> message,
+});
+
+class $$PromoteMessagesTableTableTableManager extends RootTableManager<
+    _$SettingsDatabase,
+    $PromoteMessagesTableTable,
+    PromoteMessagesTableData,
+    $$PromoteMessagesTableTableFilterComposer,
+    $$PromoteMessagesTableTableOrderingComposer,
+    $$PromoteMessagesTableTableProcessedTableManager,
+    $$PromoteMessagesTableTableInsertCompanionBuilder,
+    $$PromoteMessagesTableTableUpdateCompanionBuilder> {
+  $$PromoteMessagesTableTableTableManager(
+      _$SettingsDatabase db, $PromoteMessagesTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer: $$PromoteMessagesTableTableFilterComposer(
+              ComposerState(db, table)),
+          orderingComposer: $$PromoteMessagesTableTableOrderingComposer(
+              ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$PromoteMessagesTableTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<String> message = const Value.absent(),
+          }) =>
+              PromoteMessagesTableCompanion(
+            id: id,
+            message: message,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            required String message,
+          }) =>
+              PromoteMessagesTableCompanion.insert(
+            id: id,
+            message: message,
+          ),
+        ));
+}
+
+class $$PromoteMessagesTableTableProcessedTableManager
+    extends ProcessedTableManager<
+        _$SettingsDatabase,
+        $PromoteMessagesTableTable,
+        PromoteMessagesTableData,
+        $$PromoteMessagesTableTableFilterComposer,
+        $$PromoteMessagesTableTableOrderingComposer,
+        $$PromoteMessagesTableTableProcessedTableManager,
+        $$PromoteMessagesTableTableInsertCompanionBuilder,
+        $$PromoteMessagesTableTableUpdateCompanionBuilder> {
+  $$PromoteMessagesTableTableProcessedTableManager(super.$state);
+}
+
+class $$PromoteMessagesTableTableFilterComposer
+    extends FilterComposer<_$SettingsDatabase, $PromoteMessagesTableTable> {
+  $$PromoteMessagesTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get message => $state.composableBuilder(
+      column: $state.table.message,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$PromoteMessagesTableTableOrderingComposer
+    extends OrderingComposer<_$SettingsDatabase, $PromoteMessagesTableTable> {
+  $$PromoteMessagesTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get message => $state.composableBuilder(
+      column: $state.table.message,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
 class _$SettingsDatabaseManager {
   final _$SettingsDatabase _db;
   _$SettingsDatabaseManager(this._db);
@@ -1644,4 +1917,6 @@ class _$SettingsDatabaseManager {
       $$RolesTableTableTableManager(_db, _db.rolesTable);
   $$ActivitiesRolesTableTableTableManager get activitiesRolesTable =>
       $$ActivitiesRolesTableTableTableManager(_db, _db.activitiesRolesTable);
+  $$PromoteMessagesTableTableTableManager get promoteMessagesTable =>
+      $$PromoteMessagesTableTableTableManager(_db, _db.promoteMessagesTable);
 }

@@ -143,4 +143,17 @@ class Settings {
       UpdateEvent.activitiesUpdated,
     });
   }
+
+  Future<Map<int, String>> getPromoteMessages() async {
+    final messages = await _database.guildSettingsDao.getPromoteMessages();
+    return {for (final message in messages) message.id: message.message};
+  }
+
+  Future<void> addPromoteMessage(String message) {
+    return _database.guildSettingsDao.addPromoteMessage(message);
+  }
+
+  Future<void> removePromoteMessage(int id) {
+    return _database.guildSettingsDao.removePromoteMessage(id);
+  }
 }

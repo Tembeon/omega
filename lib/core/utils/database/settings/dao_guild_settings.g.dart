@@ -7,4 +7,6 @@ mixin _$GuildSettingsDaoMixin on DatabaseAccessor<SettingsDatabase> {
   $KeyedSettingsTableTable get keyedSettingsTable =>
       attachedDatabase.keyedSettingsTable;
   $TimezonesTableTable get timezonesTable => attachedDatabase.timezonesTable;
+  $PromoteMessagesTableTable get promoteMessagesTable =>
+      attachedDatabase.promoteMessagesTable;
 }

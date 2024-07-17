@@ -30,12 +30,19 @@ class TimezonesTable extends Table {
   IntColumn get offset => integer()();
 }
 
+/// Table that stores all messages that used to promote LFG posts.
+class PromoteMessagesTable extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get message => text()();
+}
+
 /// {@template SettingsDatabase.GuildSettings}
 ///
 /// DAO which provides access to [GuildSettingsTable] and [TimezonesTable].
 ///
 /// {@endtemplate}
-@DriftAccessor(tables: [KeyedSettingsTable, TimezonesTable])
+@DriftAccessor(tables: [KeyedSettingsTable, TimezonesTable, PromoteMessagesTable])
 class GuildSettingsDao extends DatabaseAccessor<SettingsDatabase> with _$GuildSettingsDaoMixin {
   /// {@macro SettingsDatabase.GuildSettings}
   GuildSettingsDao(super.db);
@@ -77,5 +84,21 @@ class GuildSettingsDao extends DatabaseAccessor<SettingsDatabase> with _$GuildSe
   /// Removes a timezone from the database.
   Future<int> removeTimezone(String name) {
     return (delete(timezonesTable)..where((tbl) => tbl.name.equals(name))).go();
+  }
+
+  Future<int> addPromoteMessage(String message) {
+    return into(promoteMessagesTable).insert(
+      PromoteMessagesTableCompanion.insert(
+        message: message,
+      ),
+    );
+  }
+
+  Future<List<PromoteMessagesTableData>> getPromoteMessages() {
+    return select(promoteMessagesTable).get();
+  }
+
+  Future<int> removePromoteMessage(int id) {
+    return (delete(promoteMessagesTable)..where((tbl) => tbl.id.equals(id))).go();
   }
 }
