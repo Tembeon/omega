@@ -71,6 +71,45 @@ class AdminCommandComponent extends InteractorCommandComponent {
             ),
           ],
         ),
+        CommandOptionBuilder.subCommandGroup(
+          name: 'promotes',
+          description: 'Настройки объявлений бота',
+          options: [
+            CommandOptionBuilder.subCommand(
+              name: 'add',
+              description: 'Добавить новое сообщение',
+              options: [
+                CommandOptionBuilder.string(
+                  name: 'message',
+                  description: 'Шаблоны: {AUTHOR}, {DESCRIPTION}, {DATE}, {MAX_MEMBERS}, {NAME}, {MESSAGE_URL}',
+                  isRequired: true,
+                ),
+                CommandOptionBuilder.integer(
+                  name: 'weight',
+                  description: 'Вес сообщения',
+                  isRequired: false,
+                  minValue: 1,
+                  maxValue: 10,
+                ),
+              ],
+            ),
+            CommandOptionBuilder.subCommand(
+              name: 'remove',
+              description: 'Удалить сообщение по ID',
+              options: [
+                CommandOptionBuilder.integer(
+                  name: 'id',
+                  description: 'ID сообщения',
+                ),
+              ],
+            ),
+            CommandOptionBuilder.subCommand(
+              name: 'list',
+              description: 'Показать все сообщения',
+              options: [],
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -93,6 +132,9 @@ class AdminCommandComponent extends InteractorCommandComponent {
       'admin delete' => _deleteHandler(event, services),
       'admin set lfg_channel' => _setLFGChannelHandler(event, services),
       'admin set promo_channel' => _setPromoChannelHandler(event, services),
+      'admin promotes add' => _addPromoteMessageHandler(event, services),
+      'admin promotes remove' => _removePromoteMessageHandler(event, services),
+      'admin promotes list' => _listPromoteMessageHandler(event, services),
       _ => throw UnsupportedError('Unsupported command: $commandName'),
     };
   }
@@ -200,6 +242,60 @@ class AdminCommandComponent extends InteractorCommandComponent {
 
     await event.interaction.respond(
       MessageBuilder(content: channel != null ? 'Канал уведомлений установлен' : 'Канал уведомлений удален'),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _addPromoteMessageHandler(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final message = findInOption<String>('message', event.interaction.data.options!);
+    final weight = findInOption<int>('вес', event.interaction.data.options!) ?? 1;
+    if (message == null) return;
+
+    final settings = services.settings;
+    await settings.addPromoteMessage(message, weight);
+
+    await event.interaction.respond(
+      MessageBuilder(content: 'Сообщение добавлено'),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _removePromoteMessageHandler(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final id = findInOption<int>('id', event.interaction.data.options!);
+    if (id == null) return;
+
+    final settings = services.settings;
+    await settings.removePromoteMessage(id);
+
+    await event.interaction.respond(
+      MessageBuilder(content: 'Сообщение удалено'),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _listPromoteMessageHandler(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final settings = services.settings;
+    final messages = await settings.getPromoteMessages();
+
+    final response = StringBuffer()
+      ..writeln('**Сообщения:**')
+      ..writeln();
+
+    for (final message in messages.entries) {
+      response.writeln('${message.key}: ${message.value}');
+    }
+
+    await event.interaction.respond(
+      MessageBuilder(content: response.toString()),
       isEphemeral: true,
     );
   }

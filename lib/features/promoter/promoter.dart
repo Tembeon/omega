@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:l/l.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/const/command_exceptions.dart';
@@ -31,7 +32,10 @@ class Promoter {
   ) async {
     final promoChannel = await _settings.getPromotesChannel();
     final lfgChannel = await _settings.getLFGChannel();
-    if (promoChannel == null || lfgChannel == null) return;
+    if (promoChannel == null || lfgChannel == null) {
+      l.w('[Promoter] No promo or LFG channel set. Skipping notifying');
+      return;
+    }
 
     final channel = await _bot.channels.fetch(Snowflake(promoChannel));
 
@@ -47,23 +51,23 @@ class Promoter {
     await channel.sendMessage(
       await _createRandomMessage(
         builder,
-        'https://discord.com/channels/${channel.guildId.value}/$promoChannel/${postId.value}',
+        'https://discord.com/channels/${channel.guildId.value}/$lfgChannel/${postId.value}',
       ),
     );
   }
 
   Future<MessageBuilder> _createRandomMessage(LFGPostBuilder builder, String lfgMessageUrl) async {
-    final messages = await _settings.getPromoteMessages();
+    final messages = await _settings.getPromoteMessagesWithWeight();
     final message =
-        messages.isNotEmpty ? messages[Random().nextInt(messages.length)]! : '{AUTHOR} собирает людей в {LFG_NAME}';
+        messages.isNotEmpty ? messages[Random().nextInt(messages.length)] : '{AUTHOR} собирает людей в {LFG_NAME}';
 
     final content = message
         .replaceAll('{AUTHOR}', '<@${builder.authorID}>')
         .replaceAll('{DESCRIPTION}', builder.description)
         .replaceAll('{DATE}', '<t:${builder.unixDate ~/ 1000}:F>')
-        .replaceAll('{MAX_MEMBERS}}', builder.maxMembers.toString())
+        .replaceAll('{MAX_MEMBERS}', builder.maxMembers.toString())
         .replaceAll('{NAME}', builder.name)
-        .replaceAll('{MESSAGE_URL}}', lfgMessageUrl);
+        .replaceAll('{MESSAGE_URL}', lfgMessageUrl);
 
     return MessageBuilder(
       embeds: [

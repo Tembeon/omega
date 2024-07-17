@@ -1044,8 +1044,13 @@ class $PromoteMessagesTableTable extends PromoteMessagesTable
   late final GeneratedColumn<String> message = GeneratedColumn<String>(
       'message', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _weightMeta = const VerificationMeta('weight');
   @override
-  List<GeneratedColumn> get $columns => [id, message];
+  late final GeneratedColumn<int> weight = GeneratedColumn<int>(
+      'weight', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, message, weight];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1066,6 +1071,12 @@ class $PromoteMessagesTableTable extends PromoteMessagesTable
     } else if (isInserting) {
       context.missing(_messageMeta);
     }
+    if (data.containsKey('weight')) {
+      context.handle(_weightMeta,
+          weight.isAcceptableOrUnknown(data['weight']!, _weightMeta));
+    } else if (isInserting) {
+      context.missing(_weightMeta);
+    }
     return context;
   }
 
@@ -1080,6 +1091,8 @@ class $PromoteMessagesTableTable extends PromoteMessagesTable
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       message: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}message'])!,
+      weight: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}weight'])!,
     );
   }
 
@@ -1093,12 +1106,15 @@ class PromoteMessagesTableData extends DataClass
     implements Insertable<PromoteMessagesTableData> {
   final int id;
   final String message;
-  const PromoteMessagesTableData({required this.id, required this.message});
+  final int weight;
+  const PromoteMessagesTableData(
+      {required this.id, required this.message, required this.weight});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['message'] = Variable<String>(message);
+    map['weight'] = Variable<int>(weight);
     return map;
   }
 
@@ -1106,6 +1122,7 @@ class PromoteMessagesTableData extends DataClass
     return PromoteMessagesTableCompanion(
       id: Value(id),
       message: Value(message),
+      weight: Value(weight),
     );
   }
 
@@ -1115,6 +1132,7 @@ class PromoteMessagesTableData extends DataClass
     return PromoteMessagesTableData(
       id: serializer.fromJson<int>(json['id']),
       message: serializer.fromJson<String>(json['message']),
+      weight: serializer.fromJson<int>(json['weight']),
     );
   }
   @override
@@ -1123,60 +1141,71 @@ class PromoteMessagesTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'message': serializer.toJson<String>(message),
+      'weight': serializer.toJson<int>(weight),
     };
   }
 
-  PromoteMessagesTableData copyWith({int? id, String? message}) =>
+  PromoteMessagesTableData copyWith({int? id, String? message, int? weight}) =>
       PromoteMessagesTableData(
         id: id ?? this.id,
         message: message ?? this.message,
+        weight: weight ?? this.weight,
       );
   @override
   String toString() {
     return (StringBuffer('PromoteMessagesTableData(')
           ..write('id: $id, ')
-          ..write('message: $message')
+          ..write('message: $message, ')
+          ..write('weight: $weight')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, message);
+  int get hashCode => Object.hash(id, message, weight);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is PromoteMessagesTableData &&
           other.id == this.id &&
-          other.message == this.message);
+          other.message == this.message &&
+          other.weight == this.weight);
 }
 
 class PromoteMessagesTableCompanion
     extends UpdateCompanion<PromoteMessagesTableData> {
   final Value<int> id;
   final Value<String> message;
+  final Value<int> weight;
   const PromoteMessagesTableCompanion({
     this.id = const Value.absent(),
     this.message = const Value.absent(),
+    this.weight = const Value.absent(),
   });
   PromoteMessagesTableCompanion.insert({
     this.id = const Value.absent(),
     required String message,
-  }) : message = Value(message);
+    required int weight,
+  })  : message = Value(message),
+        weight = Value(weight);
   static Insertable<PromoteMessagesTableData> custom({
     Expression<int>? id,
     Expression<String>? message,
+    Expression<int>? weight,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (message != null) 'message': message,
+      if (weight != null) 'weight': weight,
     });
   }
 
   PromoteMessagesTableCompanion copyWith(
-      {Value<int>? id, Value<String>? message}) {
+      {Value<int>? id, Value<String>? message, Value<int>? weight}) {
     return PromoteMessagesTableCompanion(
       id: id ?? this.id,
       message: message ?? this.message,
+      weight: weight ?? this.weight,
     );
   }
 
@@ -1189,6 +1218,9 @@ class PromoteMessagesTableCompanion
     if (message.present) {
       map['message'] = Variable<String>(message.value);
     }
+    if (weight.present) {
+      map['weight'] = Variable<int>(weight.value);
+    }
     return map;
   }
 
@@ -1196,7 +1228,8 @@ class PromoteMessagesTableCompanion
   String toString() {
     return (StringBuffer('PromoteMessagesTableCompanion(')
           ..write('id: $id, ')
-          ..write('message: $message')
+          ..write('message: $message, ')
+          ..write('weight: $weight')
           ..write(')'))
         .toString();
   }
@@ -1817,11 +1850,13 @@ typedef $$PromoteMessagesTableTableInsertCompanionBuilder
     = PromoteMessagesTableCompanion Function({
   Value<int> id,
   required String message,
+  required int weight,
 });
 typedef $$PromoteMessagesTableTableUpdateCompanionBuilder
     = PromoteMessagesTableCompanion Function({
   Value<int> id,
   Value<String> message,
+  Value<int> weight,
 });
 
 class $$PromoteMessagesTableTableTableManager extends RootTableManager<
@@ -1847,18 +1882,22 @@ class $$PromoteMessagesTableTableTableManager extends RootTableManager<
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
             Value<String> message = const Value.absent(),
+            Value<int> weight = const Value.absent(),
           }) =>
               PromoteMessagesTableCompanion(
             id: id,
             message: message,
+            weight: weight,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
             required String message,
+            required int weight,
           }) =>
               PromoteMessagesTableCompanion.insert(
             id: id,
             message: message,
+            weight: weight,
           ),
         ));
 }
@@ -1888,6 +1927,11 @@ class $$PromoteMessagesTableTableFilterComposer
       column: $state.table.message,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get weight => $state.composableBuilder(
+      column: $state.table.weight,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$PromoteMessagesTableTableOrderingComposer
@@ -1900,6 +1944,11 @@ class $$PromoteMessagesTableTableOrderingComposer
 
   ColumnOrderings<String> get message => $state.composableBuilder(
       column: $state.table.message,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get weight => $state.composableBuilder(
+      column: $state.table.weight,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
