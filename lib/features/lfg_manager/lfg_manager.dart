@@ -96,14 +96,13 @@ final class LFGManager implements ILFGManager {
         startTime: dbPost.date.value,
         postID: dbPost.postMessageId.value,
       );
+
+      _promoter.notifyAboutLFG(builder, discordLfgPost.id, Services.i.settings).ignore();
     } on Object {
       // if something went wrong, we need to delete post from discord
       await _messageHandler.deletePost(discordLfgPost);
       rethrow;
     }
-    // Notify about the new LFG post
-    l.i('[Notifier] Users notified about new post!');
-    await _promoter.notifyAboutLFG(builder, discordLfgPost.id);
   }
 
   @override
