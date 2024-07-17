@@ -57,7 +57,6 @@ final class Services {
         plugins: [
           Logging(),
           CliIntegration(),
-          IgnoreExceptions(),
         ],
       ),
     );
