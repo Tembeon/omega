@@ -92,12 +92,12 @@ final class MessageHandler implements IMessageHandler {
           components: [
             ButtonBuilder(
               customId: 'join',
-              label: '➕ Присоединиться',
+              label: '➕  Вступить',
               style: ButtonStyle.success,
             ),
             ButtonBuilder(
               customId: 'leave',
-              label: '➖ Покинуть',
+              label: '➖  Покинуть',
               style: ButtonStyle.danger,
             ),
           ],
