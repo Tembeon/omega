@@ -53,6 +53,9 @@ class MembersTable extends Table {
         #postMessageId,
         onDelete: KeyAction.cascade,
       )();
+
+  /// A text column named `role`. This stores the role of the member.
+  TextColumn get role => text().nullable()();
 }
 
 @DriftDatabase(tables: [PostsTable, MembersTable])
@@ -87,7 +90,7 @@ class PostsDatabase extends _$PostsDatabase {
   /// Adds a new member to a LFG.
   ///
   /// Checks if the LFG is full, if it is, it throws an error.
-  Future<int> addMember(int postID, int memberID) async {
+  Future<int> addMember(int postID, int memberID, {String? role}) async {
     final post = await findPost(postID);
     if (post == null) throw Exception('Post with id $postID not found');
 
@@ -96,7 +99,13 @@ class PostsDatabase extends _$PostsDatabase {
       throw const TooManyPlayersException();
     }
 
-    return into(membersTable).insert(MembersTableCompanion.insert(post: postID, member: memberID));
+    return into(membersTable).insert(
+      MembersTableCompanion.insert(
+        post: postID,
+        member: memberID,
+        role: Value(role),
+      ),
+    );
   }
 
   /// Removes a member from a LFG.
