@@ -105,7 +105,7 @@ class Settings {
 
     if (activity.roles != null) {
       for (final role in activity.roles!) {
-        await _database.activitiesDao.addRoleToActivity(activity.name, role.role);
+        await _database.activitiesDao.addRoleToActivity(activity.name, role.role, role.quantity);
       }
     }
 
@@ -130,8 +130,8 @@ class Settings {
     }
   }
 
-  Future<void> addRoleToActivity(String activity, String role) async {
-    await _database.activitiesDao.addRoleToActivity(activity, role);
+  Future<void> addRoleToActivity(String activity, String role, int quantity) async {
+    await _database.activitiesDao.addRoleToActivity(activity, role, quantity);
     _interactor.notifyUpdate({
       UpdateEvent.activitiesUpdated,
     });
@@ -168,5 +168,21 @@ class Settings {
 
   Future<void> removePromoteMessage(int id) {
     return _database.guildSettingsDao.removePromoteMessage(id);
+  }
+
+  Future<List<String>> getAllRoles() async {
+    return (await _database.activitiesDao.getRoles())
+        .map(
+          (e) => e.name,
+        )
+        .toList(growable: false);
+  }
+
+  Future<void> addRole(String role) {
+    return _database.activitiesDao.addRole(role);
+  }
+
+  Future<void> removeRole(String role) {
+    return _database.activitiesDao.removeRole(role);
   }
 }

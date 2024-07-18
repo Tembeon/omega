@@ -17,7 +17,7 @@ base class ActivityData {
         name: activity.name,
         maxMembers: activity.maxMembers,
         bannerUrl: activity.bannerUrl,
-        roles: roles?.map((role) => ActivityRole(role: role.role)).toList(),
+        roles: roles?.map((role) => ActivityRole(role: role.role, quantity: role.quantity)).toList(),
         enabled: activity.enabled,
       );
 
@@ -35,7 +35,10 @@ base class ActivityData {
 class ActivityRole {
   const ActivityRole({
     required this.role,
+    this.quantity = 1,
   });
 
   final String role;
+
+  final int quantity;
 }

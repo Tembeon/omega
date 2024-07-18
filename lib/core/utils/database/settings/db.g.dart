@@ -848,8 +848,16 @@ class $ActivitiesRolesTableTable extends ActivitiesRolesTable
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'REFERENCES roles_table (name) ON DELETE CASCADE'));
+  static const VerificationMeta _quantityMeta =
+      const VerificationMeta('quantity');
   @override
-  List<GeneratedColumn> get $columns => [activity, role];
+  late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
+      'quantity', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1));
+  @override
+  List<GeneratedColumn> get $columns => [activity, role, quantity];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -873,6 +881,10 @@ class $ActivitiesRolesTableTable extends ActivitiesRolesTable
     } else if (isInserting) {
       context.missing(_roleMeta);
     }
+    if (data.containsKey('quantity')) {
+      context.handle(_quantityMeta,
+          quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta));
+    }
     return context;
   }
 
@@ -887,6 +899,8 @@ class $ActivitiesRolesTableTable extends ActivitiesRolesTable
           .read(DriftSqlType.string, data['${effectivePrefix}activity'])!,
       role: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}role'])!,
+      quantity: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}quantity'])!,
     );
   }
 
@@ -903,12 +917,17 @@ class ActivitiesRolesTableData extends DataClass
 
   /// Name of the role that is assigned to the activity.
   final String role;
-  const ActivitiesRolesTableData({required this.activity, required this.role});
+
+  /// How much of this role needs to be assigned to the activity.
+  final int quantity;
+  const ActivitiesRolesTableData(
+      {required this.activity, required this.role, required this.quantity});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['activity'] = Variable<String>(activity);
     map['role'] = Variable<String>(role);
+    map['quantity'] = Variable<int>(quantity);
     return map;
   }
 
@@ -916,6 +935,7 @@ class ActivitiesRolesTableData extends DataClass
     return ActivitiesRolesTableCompanion(
       activity: Value(activity),
       role: Value(role),
+      quantity: Value(quantity),
     );
   }
 
@@ -925,6 +945,7 @@ class ActivitiesRolesTableData extends DataClass
     return ActivitiesRolesTableData(
       activity: serializer.fromJson<String>(json['activity']),
       role: serializer.fromJson<String>(json['role']),
+      quantity: serializer.fromJson<int>(json['quantity']),
     );
   }
   @override
@@ -933,66 +954,80 @@ class ActivitiesRolesTableData extends DataClass
     return <String, dynamic>{
       'activity': serializer.toJson<String>(activity),
       'role': serializer.toJson<String>(role),
+      'quantity': serializer.toJson<int>(quantity),
     };
   }
 
-  ActivitiesRolesTableData copyWith({String? activity, String? role}) =>
+  ActivitiesRolesTableData copyWith(
+          {String? activity, String? role, int? quantity}) =>
       ActivitiesRolesTableData(
         activity: activity ?? this.activity,
         role: role ?? this.role,
+        quantity: quantity ?? this.quantity,
       );
   @override
   String toString() {
     return (StringBuffer('ActivitiesRolesTableData(')
           ..write('activity: $activity, ')
-          ..write('role: $role')
+          ..write('role: $role, ')
+          ..write('quantity: $quantity')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(activity, role);
+  int get hashCode => Object.hash(activity, role, quantity);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is ActivitiesRolesTableData &&
           other.activity == this.activity &&
-          other.role == this.role);
+          other.role == this.role &&
+          other.quantity == this.quantity);
 }
 
 class ActivitiesRolesTableCompanion
     extends UpdateCompanion<ActivitiesRolesTableData> {
   final Value<String> activity;
   final Value<String> role;
+  final Value<int> quantity;
   final Value<int> rowid;
   const ActivitiesRolesTableCompanion({
     this.activity = const Value.absent(),
     this.role = const Value.absent(),
+    this.quantity = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ActivitiesRolesTableCompanion.insert({
     required String activity,
     required String role,
+    this.quantity = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : activity = Value(activity),
         role = Value(role);
   static Insertable<ActivitiesRolesTableData> custom({
     Expression<String>? activity,
     Expression<String>? role,
+    Expression<int>? quantity,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (activity != null) 'activity': activity,
       if (role != null) 'role': role,
+      if (quantity != null) 'quantity': quantity,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   ActivitiesRolesTableCompanion copyWith(
-      {Value<String>? activity, Value<String>? role, Value<int>? rowid}) {
+      {Value<String>? activity,
+      Value<String>? role,
+      Value<int>? quantity,
+      Value<int>? rowid}) {
     return ActivitiesRolesTableCompanion(
       activity: activity ?? this.activity,
       role: role ?? this.role,
+      quantity: quantity ?? this.quantity,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1006,6 +1041,9 @@ class ActivitiesRolesTableCompanion
     if (role.present) {
       map['role'] = Variable<String>(role.value);
     }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1017,6 +1055,7 @@ class ActivitiesRolesTableCompanion
     return (StringBuffer('ActivitiesRolesTableCompanion(')
           ..write('activity: $activity, ')
           ..write('role: $role, ')
+          ..write('quantity: $quantity, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1723,12 +1762,14 @@ typedef $$ActivitiesRolesTableTableInsertCompanionBuilder
     = ActivitiesRolesTableCompanion Function({
   required String activity,
   required String role,
+  Value<int> quantity,
   Value<int> rowid,
 });
 typedef $$ActivitiesRolesTableTableUpdateCompanionBuilder
     = ActivitiesRolesTableCompanion Function({
   Value<String> activity,
   Value<String> role,
+  Value<int> quantity,
   Value<int> rowid,
 });
 
@@ -1755,21 +1796,25 @@ class $$ActivitiesRolesTableTableTableManager extends RootTableManager<
           getUpdateCompanionBuilder: ({
             Value<String> activity = const Value.absent(),
             Value<String> role = const Value.absent(),
+            Value<int> quantity = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               ActivitiesRolesTableCompanion(
             activity: activity,
             role: role,
+            quantity: quantity,
             rowid: rowid,
           ),
           getInsertCompanionBuilder: ({
             required String activity,
             required String role,
+            Value<int> quantity = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               ActivitiesRolesTableCompanion.insert(
             activity: activity,
             role: role,
+            quantity: quantity,
             rowid: rowid,
           ),
         ));
@@ -1791,6 +1836,11 @@ class $$ActivitiesRolesTableTableProcessedTableManager
 class $$ActivitiesRolesTableTableFilterComposer
     extends FilterComposer<_$SettingsDatabase, $ActivitiesRolesTableTable> {
   $$ActivitiesRolesTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get quantity => $state.composableBuilder(
+      column: $state.table.quantity,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
   $$ActivitiesTableTableFilterComposer get activity {
     final $$ActivitiesTableTableFilterComposer composer =
         $state.composerBuilder(
@@ -1820,6 +1870,11 @@ class $$ActivitiesRolesTableTableFilterComposer
 class $$ActivitiesRolesTableTableOrderingComposer
     extends OrderingComposer<_$SettingsDatabase, $ActivitiesRolesTableTable> {
   $$ActivitiesRolesTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get quantity => $state.composableBuilder(
+      column: $state.table.quantity,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
   $$ActivitiesTableTableOrderingComposer get activity {
     final $$ActivitiesTableTableOrderingComposer composer =
         $state.composerBuilder(

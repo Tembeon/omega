@@ -64,6 +64,77 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
             ),
           ],
         ),
+        CommandOptionBuilder.subCommandGroup(
+          name: 'roles',
+          description: 'Управлять ролями активности',
+          options: [
+            CommandOptionBuilder.subCommand(
+              name: 'add',
+              description: 'Добавить роль в базу',
+              options: [
+                CommandOptionBuilder.string(
+                  name: 'role',
+                  description: 'Введите название роли (можно вставлять эмодзи)',
+                  isRequired: true,
+                ),
+              ],
+            ),
+            CommandOptionBuilder.subCommand(
+              name: 'remove',
+              description: 'Убрать роль из базы',
+              options: [
+                CommandOptionBuilder.string(
+                  name: 'role',
+                  description: 'Введите название роли',
+                  isRequired: true,
+                  choices: await _getAllRoles(services.settings),
+                ),
+              ],
+            ),
+            CommandOptionBuilder.subCommand(
+              name: 'connect',
+              description: 'Привязать роль к активности',
+              options: [
+                CommandOptionBuilder.string(
+                  name: 'role',
+                  description: 'Введите название роли',
+                  isRequired: true,
+                  choices: await _getAllRoles(services.settings),
+                ),
+                CommandOptionBuilder.integer(
+                  name: 'quantity',
+                  description: 'Сколько участников требуется для этой роли',
+                  isRequired: true,
+                  minValue: 1,
+                ),
+                CommandOptionBuilder.string(
+                  name: 'activity',
+                  description: 'Введите название активности',
+                  choices: await _getActivityChoices(services.settings),
+                  isRequired: true,
+                ),
+              ],
+            ),
+            CommandOptionBuilder.subCommand(
+              name: 'disconnect',
+              description: 'Отвязать роль от активности',
+              options: [
+                CommandOptionBuilder.string(
+                  name: 'role',
+                  description: 'Введите название роли',
+                  isRequired: true,
+                  choices: await _getAllRoles(services.settings),
+                ),
+                CommandOptionBuilder.string(
+                  name: 'activity',
+                  description: 'Введите название активности',
+                  choices: await _getActivityChoices(services.settings),
+                  isRequired: true,
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -90,6 +161,10 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
     return switch (commandName) {
       'activity add' => _handleActivityAdd(event, services),
       'activity remove' => _handleActivityRemove(event, services),
+      'activity roles add' => _handleActivityRolesAdd(event, services),
+      'activity roles remove' => _handleActivityRolesRemove(event, services),
+      'activity roles connect' => _handleActivityRolesConnect(event, services),
+      'activity roles disconnect' => _handleActivityRolesDisconnect(event, services),
       _ => throw UnsupportedError('Unsupported command: $commandName'),
     };
   }
@@ -155,6 +230,74 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
     await event.interaction.respond(
       MessageBuilder(content: 'Активность "$activityName" удалена'),
       isEphemeral: false,
+    );
+  }
+
+  Future<List<CommandOptionChoiceBuilder<String>>?> _getAllRoles(Settings settings) async {
+    final roles = await settings.getAllRoles();
+    return roles.map((e) => CommandOptionChoiceBuilder<String>(name: e, value: e)).toList();
+  }
+
+  Future<void> _handleActivityRolesAdd(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final role = findInOption<String>('role', event.interaction.data.options!);
+
+    final setting = services.settings;
+    await setting.addRole(role!);
+
+    await event.interaction.respond(
+      MessageBuilder(content: 'Роль "$role" добавлена к базу данных'),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _handleActivityRolesRemove(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final role = findInOption<String>('role', event.interaction.data.options!);
+
+    final setting = services.settings;
+    await setting.removeRole(role!);
+
+    await event.interaction.respond(
+      MessageBuilder(content: 'Роль "$role" удалена из базы данных'),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _handleActivityRolesConnect(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final role = findInOption<String>('role', event.interaction.data.options!);
+    final activity = findInOption<String>('activity', event.interaction.data.options!);
+    final quantity = findInOption<int>('quantity', event.interaction.data.options!);
+
+    final setting = services.settings;
+    await setting.addRoleToActivity(activity!, role!, quantity!);
+
+    await event.interaction.respond(
+      MessageBuilder(content: 'Роль "$role" привязана к активности "$activity"'),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _handleActivityRolesDisconnect(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final role = findInOption<String>('role', event.interaction.data.options!);
+    final activity = findInOption<String>('activity', event.interaction.data.options!);
+
+    final setting = services.settings;
+    await setting.removeRoleFromActivity(activity!, role!);
+
+    await event.interaction.respond(
+      MessageBuilder(content: 'Роль "$role" отвязана от активности "$activity"'),
+      isEphemeral: true,
     );
   }
 }

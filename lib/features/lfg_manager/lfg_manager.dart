@@ -96,7 +96,7 @@ final class LFGManager implements ILFGManager {
         postID: dbPost.postMessageId.value,
       );
 
-      _promoter.notifyAboutLFG(builder, discordLfgPost.id);
+      _promoter.notifyAboutLFG(builder, discordLfgPost.id).ignore();
     } on Object {
       // if something went wrong, we need to delete post from discord
       await _messageHandler.deletePost(discordLfgPost);

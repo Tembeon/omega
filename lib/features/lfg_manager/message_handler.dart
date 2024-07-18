@@ -231,6 +231,11 @@ final class MessageHandler implements IMessageHandler {
           ? MessageUpdateBuilder(
               embeds: [
                 EmbedBuilder(
+                  author: EmbedAuthorBuilder(
+                    name: message.embeds.first.author!.name,
+                    url: message.embeds.first.author?.url,
+                    iconUrl: message.embeds.first.author?.iconUrl,
+                  ),
                   fields: embedFields,
                   color: ColorPalette.getRandomDiscordColor(),
                   image: embedImage,
@@ -241,6 +246,11 @@ final class MessageHandler implements IMessageHandler {
           : MessageUpdateBuilder(
               embeds: [
                 EmbedBuilder(
+                  author: EmbedAuthorBuilder(
+                    name: message.embeds.first.author!.name,
+                    url: message.embeds.first.author?.url,
+                    iconUrl: message.embeds.first.author?.iconUrl,
+                  ),
                   fields: embedFields,
                   color: ColorPalette.getRandomDiscordColor(),
                   image: embedImage,
