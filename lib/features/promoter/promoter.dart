@@ -69,16 +69,19 @@ class Promoter {
         .replaceAll('{NAME}', builder.name)
         .replaceAll('{MESSAGE_URL}', lfgMessageUrl);
 
+    final splitMessage = content.split(r'\n');
+
     return MessageBuilder(
       embeds: [
         EmbedBuilder(
           color: ColorPalette.getRandomDiscordColor(),
           fields: [
-            EmbedFieldBuilder(
-              name: 'Новый сбор!',
-              value: content,
-              isInline: false,
-            ),
+            for (int i = 0; i < splitMessage.length; i++)
+              EmbedFieldBuilder(
+                name: i == 0 ? 'Новый сбор!' : '',
+                value: splitMessage[i],
+                isInline: false,
+              ),
           ],
         ),
       ],
