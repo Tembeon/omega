@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:drift/drift.dart';
+import 'package:drift/remote.dart';
+import 'package:l/l.dart';
 import 'package:nyxx/nyxx.dart';
+import 'package:sqlite3/sqlite3.dart';
 
 import '../../core/const/command_exceptions.dart';
 import '../../core/utils/database/tables/posts.dart';
@@ -97,10 +100,14 @@ final class LFGManager implements ILFGManager {
       );
 
       _promoter.notifyAboutLFG(builder, discordLfgPost.id).ignore();
-    } on Object {
+    } on Object catch (e) {
+      l.e('[LFGManager] Error while creating LFG post. Deleting original post\n$e');
       // if something went wrong, we need to delete post from discord
       await _messageHandler.deletePost(discordLfgPost);
-      rethrow;
+
+      if (e is! SqliteException && e is! DriftRemoteException) {
+        rethrow;
+      }
     }
   }
 
