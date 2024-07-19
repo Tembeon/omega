@@ -119,6 +119,29 @@ class AdminCommandComponent extends InteractorCommandComponent {
               description: 'Каналы, в которых бот работает',
               options: [],
             ),
+            CommandOptionBuilder.subCommand(
+              name: 'roles',
+              description: 'Получить список ролей для активности',
+              options: [
+                CommandOptionBuilder.string(
+                  name: 'activity',
+                  description: 'Активность',
+                  isRequired: true,
+                ),
+                CommandOptionBuilder.string(
+                  name: 'role',
+                  description: 'role',
+                  choices: await services.settings.getAllRoles().then(
+                        (roles) => roles
+                            .map(
+                              (role) => CommandOptionChoiceBuilder(name: role, value: role),
+                            )
+                            .toList(),
+                      ),
+                  isRequired: true,
+                ),
+              ],
+            ),
           ],
         ),
       ],
@@ -147,6 +170,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
       'admin promotes remove' => _removePromoteMessageHandler(event, services),
       'admin promotes list' => _listPromoteMessageHandler(event, services),
       'admin bot channels' => _botChannelsHandler(event, services),
+      'admin bot roles' => _rolesHandler(event, services),
       _ => throw UnsupportedError('Unsupported command: $commandName'),
     };
   }
@@ -330,6 +354,24 @@ class AdminCommandComponent extends InteractorCommandComponent {
       MessageBuilder(
         content: response.toString(),
       ),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _rolesHandler(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final activityRaw = findInOption<String>('activity', event.interaction.data.options!);
+    final activity = int.parse(activityRaw!);
+    final role = findInOption<String>('role', event.interaction.data.options!);
+    if (activity == null || role == null) return;
+
+    final settings = services.settings;
+    final roles = await settings.getFreeRoleCount(id: activity, role: role);
+
+    await event.interaction.respond(
+      MessageBuilder(content: 'Активность "$activity" имеет $roles свободных ролей "$role"'),
       isEphemeral: true,
     );
   }

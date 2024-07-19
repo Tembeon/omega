@@ -63,7 +63,7 @@ final class Services {
 
     final postsDatabase = PostsDatabase();
     final interactor = Interactor(bot: bot, serverId: config.server);
-    final settings = Settings(database: SettingsDatabase(), interactor: interactor);
+    final settings = Settings(database: SettingsDatabase(), interactor: interactor, postsDatabase: postsDatabase);
     final promoter = Promoter(bot: bot, settings: settings);
     final lfgManager = LFGManager(
       database: postsDatabase,

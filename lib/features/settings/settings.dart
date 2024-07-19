@@ -1,7 +1,11 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
+import 'package:l/l.dart';
+
 import '../../core/data/models/activity_data.dart';
 import '../../core/utils/database/settings/db.dart';
+import '../../core/utils/database/tables/posts.dart';
 import '../interactor/interactor.dart';
 import '../interactor/interactor_component.dart';
 
@@ -9,14 +13,18 @@ class Settings {
   const Settings({
     required SettingsDatabase database,
     required Interactor interactor,
+    required PostsDatabase postsDatabase,
   })  : _database = database,
-        _interactor = interactor;
+        _interactor = interactor,
+        _postsDatabase = postsDatabase;
 
   static const String lfgChannelKey = 'lfg_channel';
   static const String promotesChannelKey = 'promotes_channel';
 
   /// Database used for storing settings.
   final SettingsDatabase _database;
+
+  final PostsDatabase _postsDatabase;
 
   /// Interactor for notifying about settings changes.
   final Interactor _interactor;
@@ -184,5 +192,31 @@ class Settings {
 
   Future<void> removeRole(String role) {
     return _database.activitiesDao.removeRole(role);
+  }
+
+  /// Returns the number of free roles for given activity
+  Future<int> getFreeRoleCount({
+    required int id,
+    required String role,
+  }) async {
+    final db = Services.i.postsDatabase;
+    final post = await db.findPost(id);
+
+    if (post == null) {
+      return -1;
+    }
+    // // activity with raw data
+    final activityData = await getActivity(post!.title);
+    //
+    // // all roles in this activity
+    // final roles = activityData.roles ?? [];
+
+    // get all taken roles
+    final takenRoles = await _postsDatabase.getAllTakenRoles(activity: activityData, id: id);
+
+    l.d('Taken roles: $takenRoles');
+
+    final taken = takenRoles.firstWhereOrNull((element) => element.role == role);
+    return taken == null ? 0 : taken.total - taken.taken;
   }
 }

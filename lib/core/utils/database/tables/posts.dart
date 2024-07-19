@@ -7,6 +7,8 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 
 import '../../../const/command_exceptions.dart';
+import '../../../data/models/activity_data.dart';
+import '../../../data/models/taken_roles.dart';
 
 part 'posts.g.dart';
 
@@ -145,6 +147,33 @@ class PostsDatabase extends _$PostsDatabase {
 
   Future<int> updatePost(int postID, PostsTableCompanion post) {
     return (update(postsTable)..where((post) => post.postMessageId.equals(postID))).write(post);
+  }
+
+  /// Returns map of taken roles.
+  ///
+  /// * key is a role name \
+  /// * value is how much this role is taken in this Activity
+  Future<List<TakenRoles>> getAllTakenRoles({
+    required ActivityData activity,
+    required int id,
+  }) async {
+    // шаги работы:
+    // 1. найти активность и все роли, привязанные к ней. это будет список всех ролей. этот список также содержит максимальное кол-во игроков для каждой роли
+    // 2. получить всех участников этой активности и их роли (если у активности есть роль, то у всех участников тоже должна быть роль)
+    // 3. конвертировать результат в список TakenRoles
+
+    final roles = activity.roles ?? (throw const FormatException('Activity has no roles'));
+
+    final members = await (select(membersTable)..where((member) => member.post.equals(id))).get();
+
+    final takenRoles = <TakenRoles>[];
+
+    for (final role in roles) {
+      final roleMembers = members.where((member) => member.role == role.role).toList();
+      takenRoles.add(TakenRoles(role: role.role, taken: roleMembers.length, total: role.quantity));
+    }
+
+    return takenRoles;
   }
 }
 
