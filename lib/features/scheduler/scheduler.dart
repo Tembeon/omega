@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/utils/database/tables/posts.dart';
@@ -157,7 +158,11 @@ final class PostScheduler {
   void cancelPost({
     required final int postID,
   }) {
-    final post = _posts.entries.firstWhere((e) => e.value == postID);
+    final post = _posts.entries.firstWhereOrNull((e) => e.value == postID);
+    if (post == null) {
+      print('[Scheduler] Post with id $postID was not found in scheduler, maybe it was already posted or stale');
+      return;
+    }
     final value = _posts.remove(post.key);
 
     if (value != null) {
