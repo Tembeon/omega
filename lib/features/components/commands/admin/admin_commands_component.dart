@@ -1,5 +1,7 @@
 import '../../../../core/utils/event_parsers.dart';
+import '../../../interactor/component_interceptor.dart';
 import '../../../interactor/interactor_component.dart';
+import '../../interceptors/always_user_interceptor.dart';
 
 /// {@template AdminCommandComponent}
 /// Builds `/admin` command.
@@ -149,31 +151,29 @@ class AdminCommandComponent extends InteractorCommandComponent {
   }
 
   @override
+  Set<ComponentInterceptor> get interceptors => {
+        ...super.interceptors,
+        const OnlyAdminUserInterceptor(),
+      };
+
+  @override
   Future<void> handle(
     String commandName,
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
-  ) async {
-    final member = event.interaction.member;
-
-    if (member == null) return; // refuse to work with bots
-    if (!(member.permissions?.has(Permissions.administrator) ?? false)) {
-      return; // Check if user is administrator
-    }
-
-    return switch (commandName) {
-      'admin health' => _healthHandler(event, services),
-      'admin delete' => _deleteHandler(event, services),
-      'admin set lfg_channel' => _setLFGChannelHandler(event, services),
-      'admin set promo_channel' => _setPromoChannelHandler(event, services),
-      'admin promotes add' => _addPromoteMessageHandler(event, services),
-      'admin promotes remove' => _removePromoteMessageHandler(event, services),
-      'admin promotes list' => _listPromoteMessageHandler(event, services),
-      'admin bot channels' => _botChannelsHandler(event, services),
-      'admin bot roles' => _rolesHandler(event, services),
-      _ => throw UnsupportedError('Unsupported command: $commandName'),
-    };
-  }
+  ) async =>
+      switch (commandName) {
+        'admin health' => _healthHandler(event, services),
+        'admin delete' => _deleteHandler(event, services),
+        'admin set lfg_channel' => _setLFGChannelHandler(event, services),
+        'admin set promo_channel' => _setPromoChannelHandler(event, services),
+        'admin promotes add' => _addPromoteMessageHandler(event, services),
+        'admin promotes remove' => _removePromoteMessageHandler(event, services),
+        'admin promotes list' => _listPromoteMessageHandler(event, services),
+        'admin bot channels' => _botChannelsHandler(event, services),
+        'admin bot roles' => _rolesHandler(event, services),
+        _ => throw UnsupportedError('Unsupported command: $commandName'),
+      };
 
   Future<void> _healthHandler(
     InteractionCreateEvent<ApplicationCommandInteraction> event,
@@ -365,7 +365,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
     final activityRaw = findInOption<String>('activity', event.interaction.data.options!);
     final activity = int.parse(activityRaw!);
     final role = findInOption<String>('role', event.interaction.data.options!);
-    if (activity == null || role == null) return;
+    if (role == null) return;
 
     final settings = services.settings;
     final roles = await settings.getFreeRoleCount(id: activity, role: role);

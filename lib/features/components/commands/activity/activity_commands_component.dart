@@ -5,8 +5,10 @@ import 'package:l/l.dart';
 
 import '../../../../core/data/models/activity_data.dart';
 import '../../../../core/utils/event_parsers.dart';
+import '../../../interactor/component_interceptor.dart';
 import '../../../interactor/interactor_component.dart';
 import '../../../settings/settings.dart';
+import '../../interceptors/always_user_interceptor.dart';
 
 class ActivityCommandsComponent extends InteractorCommandComponent {
   const ActivityCommandsComponent();
@@ -146,28 +148,26 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
   }
 
   @override
+  Set<ComponentInterceptor> get interceptors => {
+        ...super.interceptors,
+        const OnlyAdminUserInterceptor(),
+      };
+
+  @override
   Future<void> handle(
     String commandName,
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
-  ) async {
-    final member = event.interaction.member;
-
-    if (member == null) return; // refuse to work with bots
-    if (!(member.permissions?.has(Permissions.administrator) ?? false)) {
-      return; // Check if user is administrator
-    }
-
-    return switch (commandName) {
-      'activity add' => _handleActivityAdd(event, services),
-      'activity remove' => _handleActivityRemove(event, services),
-      'activity roles add' => _handleActivityRolesAdd(event, services),
-      'activity roles remove' => _handleActivityRolesRemove(event, services),
-      'activity roles connect' => _handleActivityRolesConnect(event, services),
-      'activity roles disconnect' => _handleActivityRolesDisconnect(event, services),
-      _ => throw UnsupportedError('Unsupported command: $commandName'),
-    };
-  }
+  ) async =>
+      switch (commandName) {
+        'activity add' => _handleActivityAdd(event, services),
+        'activity remove' => _handleActivityRemove(event, services),
+        'activity roles add' => _handleActivityRolesAdd(event, services),
+        'activity roles remove' => _handleActivityRolesRemove(event, services),
+        'activity roles connect' => _handleActivityRolesConnect(event, services),
+        'activity roles disconnect' => _handleActivityRolesDisconnect(event, services),
+        _ => throw UnsupportedError('Unsupported command: $commandName'),
+      };
 
   Future<void> _handleActivityAdd(
     InteractionCreateEvent<ApplicationCommandInteraction> event,

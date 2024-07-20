@@ -1,3 +1,4 @@
+import '../../../../core/utils/event_parsers.dart';
 import '../../../../core/utils/time_convert.dart';
 import '../../../interactor/interactor_component.dart';
 import '../../../lfg_manager/data/models/register_activity.dart';
@@ -74,7 +75,7 @@ class CreateCommandComponent extends InteractorCommandComponent {
 
     if (activities.isEmpty) return null;
 
-    return activities.map((e) => CommandOptionChoiceBuilder<String>(name: e, value: e)).toList();
+    return activities.map((e) => CommandOptionChoiceBuilder<String>(name: sanitize(e), value: e)).toList();
   }
 
   Future<List<CommandOptionChoiceBuilder<int>>> _getTimezoneChoices(Settings settings) async {
@@ -129,7 +130,7 @@ class CreateCommandComponent extends InteractorCommandComponent {
     print('Creating new LFG post for user "$userName" with activity "$name" and description "$description"');
     await manager.create(
       interaction: event,
-      builder: LFGPostBuilder.fromActivity(
+      builder: LFGPostBuilder(
         activity: activity,
         authorID: member.user!.id,
         description: description,
