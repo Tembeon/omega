@@ -15,9 +15,9 @@ class JoinMessageComponent extends InteractorMessageComponent {
 
   @override
   Set<ComponentInterceptor<Interaction<Object?>>> get interceptors => {
-    ...super.interceptors,
-    const RoleListInterceptor(),
-  };
+        ...super.interceptors,
+        const RoleListInterceptor(),
+      };
 
   @override
   Future<void> handle(
@@ -33,7 +33,7 @@ class JoinMessageComponent extends InteractorMessageComponent {
     try {
       await lfgManager.addMemberTo(
         event.interaction.message!,
-        event.interaction.member!.user!,
+        event.interaction.member!,
         rolePicker: () async {
           final customID = 'role_picker_${event.interaction.member!.user!.id.value}';
           final Completer<String?> pickedRole = Completer();
@@ -48,11 +48,11 @@ class JoinMessageComponent extends InteractorMessageComponent {
           return pickedRole.future;
         },
       );
-      await event.interaction.createFollowup(MessageBuilder(content: 'Вы добавлены в LFG'), isEphemeral: true);
+      await event.interaction.respond(MessageBuilder(content: 'Вы добавлены в LFG'), isEphemeral: true);
     } on CommandException catch (e) {
-      await event.interaction.createFollowup(MessageBuilder(content: e.toHumanMessage()), isEphemeral: true);
+      await event.interaction.respond(MessageBuilder(content: e.toHumanMessage()), isEphemeral: true);
     } on Object catch (e, st) {
-      await event.interaction.createFollowup(
+      await event.interaction.respond(
         MessageBuilder(
           content: 'Произошла неизвестная ошибка при добавлении вас в LFG\n'
               'Метаданные: $e\n'

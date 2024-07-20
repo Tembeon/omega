@@ -42,7 +42,7 @@ abstract interface class ILFGManager {
   /// Adds new member to LFG.
   Future<void> addMemberTo(
     Message message,
-    User user, {
+    Member user, {
     bool fromCreate = false,
     Future<String?> Function()? rolePicker,
   });
@@ -141,7 +141,7 @@ final class LFGManager implements ILFGManager {
       await _database.insertPost(dbPost);
       await addMemberTo(
         discordLfgPost,
-        interaction.interaction.member!.user!,
+        interaction.interaction.member!,
         fromCreate: true,
         rolePicker: () => selectedRole.future,
       );
@@ -208,11 +208,13 @@ final class LFGManager implements ILFGManager {
       ),
     );
 
-    await _lfgBuilder.update(
+    final updated = await _lfgBuilder.update(
       message,
       description: description,
       unixTime: unixTime,
     );
+
+    await message.edit(updated);
 
     if (unixTime != null) {
       Services.i.postScheduler.editTime(
@@ -225,16 +227,13 @@ final class LFGManager implements ILFGManager {
   @override
   Future<void> addMemberTo(
     Message message,
-    User user, {
+    Member user, {
     bool fromCreate = false,
     Future<String?> Function()? rolePicker,
   }) async {
     // for first, check if post exists
     final post = await _database.findPost(message.id.value);
     if (post == null) throw CantRespondException('LFG ${message.id.value} не найден');
-
-    // check if user is author of LFG. Author cannot join their own LFG
-    if (post.author == user.id.value && !fromCreate) throw const AlreadyJoinedException();
 
     // check if max members is reached
     final membersIDS = await _database.getMembersForPost(message.id.value);
@@ -256,19 +255,22 @@ final class LFGManager implements ILFGManager {
     }
 
     final botCore = Services.i.bot;
+    final membersManager = botCore.guilds[Services.i.config.server].members;
     for (int index = 0; index < membersIDS.length; index++) {
-      final user = await botCore.users.fetch(Snowflake(membersIDS[index]));
-      members[index] = user.globalName ?? user.username;
+      final member = await membersManager.get(Snowflake(membersIDS[index]));
+      members[index] = member.nick ?? member.user!.globalName ?? member.user!.username;
     }
 
     // add user to message (visible part, not database)
-    members.last = user.globalName ?? user.username;
+    members.last = user.nick ?? user.user!.globalName ?? user.user!.username;
 
-    await _lfgBuilder.update(
+    final updated = await _lfgBuilder.update(
       message,
       newMembers: members,
       maxMembers: post.maxMembers,
     );
+
+    await message.edit(updated);
   }
 
   @override
@@ -292,10 +294,12 @@ final class LFGManager implements ILFGManager {
       members[index] = user.globalName ?? user.username;
     }
 
-    await _lfgBuilder.update(
+    final updated = await _lfgBuilder.update(
       message,
       newMembers: members,
       maxMembers: post.maxMembers,
     );
+
+    await message.edit(updated);
   }
 }

@@ -67,7 +67,12 @@ base class LfgMessageBuilder {
     final embedColor = _buildColor();
     final embedDescription = _buildDescription(builder: builder);
     final embedStartTime = _buildStartTime(builder: builder);
-    final embedMembers = _buildMembers(members: [], maxMembers: builder.activity.maxMembers);
+    final embedMembers = _buildMembers(
+      members: [
+        member.nick ?? member.user!.globalName ?? member.user!.username,
+      ],
+      maxMembers: builder.activity.maxMembers,
+    );
 
     return MessageBuilder(
       content: authorRole,
