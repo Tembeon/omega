@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/const/command_exceptions.dart';
+import '../../core/data/models/taken_roles.dart';
 import '../../core/utils/color_palette.dart';
 import '../../core/utils/services.dart';
 import 'data/models/register_activity.dart';
@@ -20,16 +21,51 @@ base class LfgMessageBuilder {
     final dbPost = await Services.i.postsDatabase.findPost(message.id.value);
     if (dbPost == null) throw CantRespondException('LFG ${message.id.value} не найден');
     final activityData = await Services.i.settings.getActivity(dbPost.title);
+    // list of members : role
+    // each list related to a role
+    Map<List<String>, TakenRoles>? data;
+
+    final members = await Services.i.postsDatabase.getRawMembersForPost(message.id.value);
+
+    if (activityData.roles != null && newMembers != null) {
+      final takenRoles = await Services.i.postsDatabase.getAllTakenRoles(activity: activityData, id: message.id.value);
+
+      final membersManager = Services.i.bot.guilds[Services.i.config.server].members;
+      final List<Member> membersDiscord = [];
+
+      for (final memberID in members) {
+        final member = await membersManager.get(Snowflake(memberID.member));
+        membersDiscord.add(member);
+      }
+
+      // at this moment we have a list of members, list of post members (with roles) and all roles in activity.
+      // we need to go through all roles and find members for each role
+      data = {};
+      for (final role in activityData.roles!) {
+        final roleMembers = members.where((member) => member.role == role.role).toList();
+        final membersList = roleMembers.map((member) {
+          final memberDiscord = membersDiscord.firstWhere((element) => element.id == Snowflake(member.member));
+          return memberDiscord.nick ?? memberDiscord.user!.globalName ?? memberDiscord.user!.username;
+        }).toList();
+
+        data[membersList] = takenRoles.firstWhere((element) => element.role == role.role);
+      }
+    }
 
     final embedAuthor = _buildAuthorField(origin: message);
     final embedColor = _buildColor(origin: message);
-    final embedDescription = _buildDescription(forceDescription: description, origin: message);
+    final embedDescription = _buildDescription(
+      forceDescription: description,
+      origin: message,
+      membersCount: data == null ? null : (members.length, activityData.maxMembers),
+    );
     final embedStartTime = _buildStartTime(origin: message, unixTime: unixTime);
     final embedMembers = _buildMembers(
       members: newMembers,
       maxMembers: maxMembers ?? activityData.maxMembers,
       origin: message,
     );
+
     final (embedImage, attachment) = _buildImage(uri: activityData.bannerUrl);
 
     final builder = MessageUpdateBuilder(
@@ -41,7 +77,7 @@ base class LfgMessageBuilder {
           fields: [
             embedDescription,
             embedStartTime,
-            embedMembers,
+            if (data != null) ..._buildRolesMembers(data) else embedMembers,
           ],
         ),
       ],
@@ -57,7 +93,7 @@ base class LfgMessageBuilder {
   }
 
   /// Builds a formatted message for LFG post.
-  Future<MessageBuilder> build(LFGPostBuilder builder, {String? authorRole}) async {
+  Future<MessageBuilder> build(LFGPostBuilder builder, {Map<List<String>, TakenRoles>? authorRole}) async {
     final bot = Services.i.bot;
 
     final member = await bot.guilds[Services.i.config.server].members.get(builder.authorID);
@@ -65,7 +101,10 @@ base class LfgMessageBuilder {
     final (embedImage, attachment) = _buildImage(uri: builder.activity.bannerUrl);
     final embedAuthor = _buildAuthorField(member: member);
     final embedColor = _buildColor();
-    final embedDescription = _buildDescription(builder: builder);
+    final embedDescription = _buildDescription(
+      builder: builder,
+      membersCount: authorRole == null ? null : (1, builder.activity.maxMembers),
+    );
     final embedStartTime = _buildStartTime(builder: builder);
     final embedMembers = _buildMembers(
       members: [
@@ -75,7 +114,6 @@ base class LfgMessageBuilder {
     );
 
     return MessageBuilder(
-      content: authorRole,
       attachments: attachment != null
           ? [
               AttachmentBuilder(data: attachment.readAsBytesSync(), fileName: 'image.png'),
@@ -89,7 +127,7 @@ base class LfgMessageBuilder {
           fields: [
             embedDescription,
             embedStartTime,
-            embedMembers,
+            if (authorRole != null) ..._buildRolesMembers(authorRole) else embedMembers,
           ],
         ),
       ],
@@ -123,11 +161,24 @@ base class LfgMessageBuilder {
 
   DiscordColor _buildColor({Message? origin}) => origin?.embeds.first.color ?? ColorPalette.getRandomDiscordColor();
 
-  EmbedFieldBuilder _buildDescription({LFGPostBuilder? builder, Message? origin, String? forceDescription}) {
+  EmbedFieldBuilder _buildDescription({
+    LFGPostBuilder? builder,
+    Message? origin,
+    String? forceDescription,
+    (int, int)? membersCount,
+  }) {
     final (name, description) = origin == null ? (null, null) : _getFieldData(origin, 0);
+    final buildName = () {
+      final rawName = builder?.activity.name ?? name!;
+      if (membersCount != null) {
+        return '$rawName (${membersCount.$1}/${membersCount.$2})';
+      }
+
+      return rawName;
+    }();
 
     return EmbedFieldBuilder(
-      name: builder?.activity.name ?? name!,
+      name: buildName,
       value: forceDescription ?? builder?.description ?? description!,
       isInline: false,
     );
@@ -152,6 +203,23 @@ base class LfgMessageBuilder {
       value: value,
       isInline: false,
     );
+  }
+
+  // Builds a list of roles and their members.
+  // Format:
+  // title: $ROLE_NAME ($ROLE_MEMBERS_COUNT/$ROLE_MAX_MEMBERS)
+  // value: List of MEMBERS
+  List<EmbedFieldBuilder> _buildRolesMembers(Map<List<String>, TakenRoles> data) {
+    return data.entries.map((entry) {
+      final role = entry.value;
+      final members = entry.key;
+
+      return EmbedFieldBuilder(
+        name: '${role.role} (${members.length}/${role.quantity})',
+        value: members.join(', '),
+        isInline: false,
+      );
+    }).toList();
   }
 
   EmbedFieldBuilder _buildMembers({

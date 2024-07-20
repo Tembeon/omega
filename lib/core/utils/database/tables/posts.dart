@@ -89,6 +89,7 @@ class PostsDatabase extends _$PostsDatabase {
   Future<PostsTableData?> findPost(int id) =>
       (select(postsTable)..where((post) => post.postMessageId.equals(id))).getSingleOrNull();
 
+
   /// Adds a new member to a LFG.
   ///
   /// Checks if the LFG is full, if it is, it throws an error.
@@ -125,6 +126,10 @@ class PostsDatabase extends _$PostsDatabase {
   Future<List<int>> getMembersForPost(int postID) async {
     final members = await (select(membersTable)..where((member) => member.post.equals(postID))).get();
     return members.map((e) => e.member).toList();
+  }
+
+  Future<List<MembersTableData>> getRawMembersForPost(int postID) async {
+    return (select(membersTable)..where((member) => member.post.equals(postID))).get();
   }
 
   /// Returns a list of all active LFGs.

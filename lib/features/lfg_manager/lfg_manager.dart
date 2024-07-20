@@ -7,6 +7,7 @@ import 'package:nyxx/nyxx.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../../core/const/command_exceptions.dart';
+import '../../core/data/models/taken_roles.dart';
 import '../../core/utils/database/tables/posts.dart';
 import '../../core/utils/services.dart';
 import '../components/buttons/role_picker/role_picker_component.dart';
@@ -82,7 +83,7 @@ final class LFGManager implements ILFGManager {
 
     if (withRoles) {
       final customID = 'role_picker_author_${interaction.interaction.member!.user!.id.value}';
-      final roleBuilder = RolePickerComponent.builder(
+      final roleBuilder = await RolePickerComponent.builder(
         activityData: builder.activity,
         customID: customID,
       );
@@ -116,7 +117,24 @@ final class LFGManager implements ILFGManager {
       selectedRole.complete(null);
     }
 
-    final discordLfgPostBuilder = await _lfgBuilder.build(builder, authorRole: await selectedRole.future);
+    Map<List<String>, TakenRoles>? authorRole;
+    if (withRoles) {
+      final role = await selectedRole.future;
+      final targetRole = builder.activity.roles!.firstWhere((element) => element.role == role);
+      final memberName = interaction.interaction.member?.nick ??
+          interaction.interaction.member?.user?.globalName ??
+          interaction.interaction.member!.user!.username;
+
+      authorRole = {
+        [memberName]: TakenRoles(
+          role: targetRole.role,
+          taken: 1,
+          total: targetRole.quantity,
+        ),
+      };
+    }
+
+    final discordLfgPostBuilder = await _lfgBuilder.build(builder, authorRole: authorRole);
 
     final Message discordLfgPost;
     if (withRoles) {

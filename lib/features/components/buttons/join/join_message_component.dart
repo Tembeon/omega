@@ -51,6 +51,8 @@ class JoinMessageComponent extends InteractorMessageComponent {
       await event.interaction.respond(MessageBuilder(content: 'Вы добавлены в LFG'), isEphemeral: true);
     } on CommandException catch (e) {
       await event.interaction.respond(MessageBuilder(content: e.toHumanMessage()), isEphemeral: true);
+      rethrow;
+
     } on Object catch (e, st) {
       await event.interaction.respond(
         MessageBuilder(
@@ -60,6 +62,8 @@ class JoinMessageComponent extends InteractorMessageComponent {
         ),
         isEphemeral: true,
       );
+
+      rethrow;
     }
   }
 }
