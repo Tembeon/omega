@@ -281,6 +281,9 @@ base mixin _Listener on _Registrar {
   final Map<String, Future<void> Function(InteractionCreateEvent<ModalSubmitInteraction> interaction)>
       _modalSubscriptions = {};
 
+  final Map<String, Future<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction)>
+      _componentSubscriptions = {};
+
   /// Register `handler` to be called when modal with `modalID` is submitted.
   ///
   /// If modal is not submitted in `timeout` time, then handler will be removed.
@@ -296,6 +299,29 @@ base mixin _Listener on _Registrar {
       l.d('$_tag Timeout for $modalID reached');
       _modalSubscriptions.remove(modalID);
     }).ignore();
+  }
+
+  void subscribeToComponent({
+    required final String customID,
+    required final Future<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction) handler,
+    final Duration timeout = const Duration(minutes: 15),
+    void Function()? onTimeout,
+  }) {
+    _componentSubscriptions[customID] = handler;
+    l.d('$_tag Subscribed to component: "$customID"');
+
+    Future<void>.delayed(timeout, () {
+      l.d('$_tag Timeout for $customID reached');
+      _componentSubscriptions.remove(customID);
+      onTimeout?.call();
+    }).ignore();
+  }
+
+  void unsubscribeFromComponent({
+    required final String customID,
+  }) {
+    _componentSubscriptions.remove(customID);
+    l.d('$_tag Unsubscribed from component: "$customID"');
   }
 
   /// Unsubscribes from modal with `customID`.
@@ -345,7 +371,14 @@ base mixin _Listener on _Registrar {
         }
 
         runZonedGuarded<void>(
-          () => registry.component.handle(commandName, event, Services.instance),
+          () async {
+            final component = registry.component;
+            for (final interceptor in registry.component.interceptors) {
+              await interceptor.intercept(event, Services.instance);
+            }
+
+            await component.handle(commandName, event, Services.instance);
+          },
           (error, stack) {
             if (error is FormatException) {
               event.interaction.respond(
@@ -382,20 +415,50 @@ base mixin _Listener on _Registrar {
           'for ${event.interaction.member?.user?.username}',
         );
 
+        final subbed = _componentSubscriptions[event.interaction.data.customId];
+        if (subbed != null) {
+          runZonedGuarded(
+            () => subbed(event),
+            (error, stack) {
+              event.interaction.respond(
+                MessageBuilder(
+                  content: 'Произошла ошибка при выполнении команды :('
+                      '\n\n$error',
+                ),
+                isEphemeral: true,
+              );
+
+              throw Error.throwWithStackTrace(error, stack);
+            },
+          );
+          return;
+        }
+
         final registry = _registered[event.interaction.data.customId];
         if (registry == null) {
           l.d('$_tag Handler for button "${event.interaction.data.customId}" not found');
           return;
         } else {
           runZonedGuarded(
-            () => registry.component.handle(event.interaction.data.customId, event, Services.i),
-            (error, stack) => event.interaction.respond(
-              MessageBuilder(
-                content: 'Произошла ошибка при выполнении команды :('
-                    '\n\n$error',
-              ),
-              isEphemeral: true,
-            ),
+            () async {
+              final component = registry.component;
+              for (final interceptor in registry.component.interceptors) {
+                await interceptor.intercept(event, Services.instance);
+              }
+
+              await component.handle(event.interaction.data.customId, event, Services.instance);
+            },
+            (error, stack) {
+              event.interaction.respond(
+                MessageBuilder(
+                  content: 'Произошла ошибка при выполнении команды :('
+                      '\n\n$error',
+                ),
+                isEphemeral: true,
+              );
+
+              throw Error.throwWithStackTrace(error, stack);
+            },
           );
         }
       },

@@ -1,6 +1,8 @@
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/utils/services.dart';
+import '../components/interceptors/always_user_interceptor.dart';
+import 'component_interceptor.dart';
 
 export 'package:nyxx/nyxx.dart';
 export '../../core/utils/services.dart';
@@ -51,6 +53,10 @@ abstract class InteractorComponent<T extends Interaction<Object?>> {
   /// If you want to disable only some of subcommands, then you should return `true`
   /// and do not include subcommands in [build] method.
   Future<bool> enabledWhen(Services services) => Future.value(true);
+
+  Set<ComponentInterceptor> get interceptors => {
+    const AlwaysMemberInterceptor(),
+  };
 }
 
 /// Base class for all interactor command components.
