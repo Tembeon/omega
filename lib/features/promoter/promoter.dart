@@ -65,8 +65,8 @@ class Promoter {
         .replaceAll('{AUTHOR}', '<@${builder.authorID}>')
         .replaceAll('{DESCRIPTION}', builder.description)
         .replaceAll('{DATE}', '<t:${builder.unixDate ~/ 1000}:F>')
-        .replaceAll('{MAX_MEMBERS}', builder.maxMembers.toString())
-        .replaceAll('{NAME}', builder.name)
+        .replaceAll('{MAX_MEMBERS}', builder.activity.maxMembers.toString())
+        .replaceAll('{NAME}', builder.activity.name)
         .replaceAll('{MESSAGE_URL}', lfgMessageUrl);
 
     final splitMessage = content.split(r'\n');

@@ -206,7 +206,7 @@ class Settings {
       return -1;
     }
     // // activity with raw data
-    final activityData = await getActivity(post!.title);
+    final activityData = await getActivity(post.title);
     //
     // // all roles in this activity
     // final roles = activityData.roles ?? [];
