@@ -37,6 +37,9 @@ class ActivitiesRolesTable extends Table {
         #name,
         onDelete: KeyAction.cascade,
       )();
+
+  /// How much of this role needs to be assigned to the activity.
+  IntColumn get quantity => integer().withDefault(const Constant(1))();
 }
 
 /// Table that represents the roles that can be assigned to an activity.
@@ -66,11 +69,12 @@ class ActivitiesDao extends DatabaseAccessor<SettingsDatabase> with _$Activities
   }
 
   /// Adds a new role to the database for an activity.
-  Future<int> addRoleToActivity(String activity, String role) {
+  Future<int> addRoleToActivity(String activity, String role, int quantity) {
     return into(activitiesRolesTable).insert(
       ActivitiesRolesTableCompanion.insert(
         activity: activity,
         role: role,
+        quantity: Value(quantity),
       ),
     );
   }
@@ -96,5 +100,20 @@ class ActivitiesDao extends DatabaseAccessor<SettingsDatabase> with _$Activities
   /// Returns all roles assigned to an activity.
   Future<List<ActivitiesRolesTableData>> getRolesForActivity(String activity) {
     return (select(activitiesRolesTable)..where((tbl) => tbl.activity.equals(activity))).get();
+  }
+
+  /// Returns all roles from table
+  Future<List<RolesTableData>> getRoles() {
+    return select(rolesTable).get();
+  }
+
+  /// Adds role to table
+  Future<int> addRole(String name) {
+    return into(rolesTable).insert(RolesTableCompanion.insert(name: name));
+  }
+
+  /// Removes role from table
+  Future<int> removeRole(String name) {
+    return (delete(rolesTable)..where((tbl) => tbl.name.equals(name))).go();
   }
 }

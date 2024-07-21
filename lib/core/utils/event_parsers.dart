@@ -17,3 +17,18 @@ T? findInOption<T>(String name, List<InteractionOption> option) {
   }
   return null;
 }
+
+/// Removes from [input] all discord tags.
+///
+/// Removes all:
+/// * emojis format `<:emoji_name:emoji_id>`
+/// * users format `<@!user_id>` or `<@user_id>`
+/// * channels format `<#channel_id>`
+/// * roles format `<@&role_id>`
+///
+String sanitize(String input) {
+  return input
+      .replaceAll(RegExp(r'<a?:\w+:\d+>'), '')
+      .replaceAll(RegExp(r'<@&?\d+>'), '')
+      .replaceAll(RegExp(r'<#\d+>'), '');
+}

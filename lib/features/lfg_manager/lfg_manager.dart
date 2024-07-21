@@ -1,14 +1,19 @@
 import 'dart:async';
 
 import 'package:drift/drift.dart';
+import 'package:drift/remote.dart';
+import 'package:l/l.dart';
 import 'package:nyxx/nyxx.dart';
+import 'package:sqlite3/sqlite3.dart';
 
 import '../../core/const/command_exceptions.dart';
+import '../../core/data/models/taken_roles.dart';
 import '../../core/utils/database/tables/posts.dart';
 import '../../core/utils/services.dart';
+import '../components/buttons/role_picker/role_picker_component.dart';
 import '../promoter/promoter.dart';
 import 'data/models/register_activity.dart';
-import 'message_handler.dart';
+import 'lfg_message_builder.dart';
 
 /// {@template ILFGManager}
 /// Manager for LFG posts.
@@ -38,8 +43,9 @@ abstract interface class ILFGManager {
   /// Adds new member to LFG.
   Future<void> addMemberTo(
     Message message,
-    User user, {
+    Member user, {
     bool fromCreate = false,
+    Future<String?> Function()? rolePicker,
   });
 
   /// Removes member from LFG.
@@ -51,17 +57,17 @@ final class LFGManager implements ILFGManager {
   /// {@macro ILFGManager}
   LFGManager({
     required PostsDatabase database,
-    required IMessageHandler messageHandler,
+    required LfgMessageBuilder lfgBuilder,
     required Promoter promoter,
   })  : _database = database,
-        _messageHandler = messageHandler,
+        _lfgBuilder = lfgBuilder,
         _promoter = promoter;
 
   /// Database used for storing LFG posts.
   final PostsDatabase _database;
 
   /// Discord LFG message handler.
-  final IMessageHandler _messageHandler;
+  final LfgMessageBuilder _lfgBuilder;
 
   /// Promoter for notifying about new LFG posts.
   final Promoter _promoter;
@@ -71,36 +77,107 @@ final class LFGManager implements ILFGManager {
     required LFGPostBuilder builder,
     required InteractionCreateEvent<ApplicationCommandInteraction> interaction,
   }) async {
-    // for first, we need to create post on discord and get messageID of LFG
-    final discordLfgPost = await _messageHandler.createPost(
-      builder: builder,
-      interaction: interaction,
-    );
+    final Services services = Services.i;
+    final withRoles = builder.activity.roles != null;
+    final Completer<String?> selectedRole = Completer();
+
+    if (withRoles) {
+      final customID = 'role_picker_author_${interaction.interaction.member!.user!.id.value}';
+      final roleBuilder = await RolePickerComponent.builder(
+        activityData: builder.activity,
+        customID: customID,
+      );
+
+      await interaction.interaction.respond(roleBuilder, isEphemeral: true);
+      services.interactor.subscribeToComponent(
+        customID: customID,
+        onTimeout: () {
+          if (!selectedRole.isCompleted) {
+            selectedRole.completeError(
+              TimeoutException(
+                'Превышено время ожидания выбора роли',
+              ),
+            );
+          }
+        },
+        handler: (interaction) async {
+          if (selectedRole.isCompleted) return;
+          final role = interaction.interaction.data.values!.first;
+          selectedRole.complete(role);
+
+          await interaction.interaction.respond(
+            MessageBuilder(content: 'Выбрана роль: $role'),
+            isEphemeral: true,
+          );
+        },
+      );
+
+      await selectedRole.future;
+    } else {
+      selectedRole.complete(null);
+    }
+
+    Map<List<String>, TakenRoles>? authorRole;
+    if (withRoles) {
+      final role = await selectedRole.future;
+      final targetRole = builder.activity.roles!.firstWhere((element) => element.role == role);
+      final memberName = interaction.interaction.member?.nick ??
+          interaction.interaction.member?.user?.globalName ??
+          interaction.interaction.member!.user!.username;
+
+      authorRole = {
+        [memberName]: TakenRoles(
+          role: targetRole.role,
+          taken: 1,
+          total: targetRole.quantity,
+        ),
+      };
+    }
+
+    final discordLfgPostBuilder = await _lfgBuilder.build(builder, authorRole: authorRole);
+
+    final Message discordLfgPost;
+    if (withRoles) {
+      discordLfgPost = await interaction.interaction.createFollowup(discordLfgPostBuilder);
+    } else {
+      await interaction.interaction.respond(discordLfgPostBuilder);
+      discordLfgPost = await interaction.interaction.fetchOriginalResponse();
+    }
+
     try {
       // Now we can create post in database
       final dbPost = PostsTableCompanion.insert(
-        title: builder.name,
+        title: builder.activity.name,
         description: builder.description,
         date: DateTime.fromMillisecondsSinceEpoch(builder.unixDate),
         timezone: builder.timezone,
         author: builder.authorID.value,
         postMessageId: (discordLfgPost.id.value),
-        maxMembers: builder.maxMembers,
+        maxMembers: builder.activity.maxMembers,
       );
 
       await _database.insertPost(dbPost);
-      await addMemberTo(discordLfgPost, interaction.interaction.member!.user!, fromCreate: true);
+      await addMemberTo(
+        discordLfgPost,
+        interaction.interaction.member!,
+        fromCreate: true,
+        rolePicker: () => selectedRole.future,
+      );
 
       Services.i.postScheduler.schedulePost(
         startTime: dbPost.date.value,
         postID: dbPost.postMessageId.value,
       );
 
-      _promoter.notifyAboutLFG(builder, discordLfgPost.id);
-    } on Object {
+      _promoter.notifyAboutLFG(builder, discordLfgPost.id).ignore();
+    } on Object catch (e) {
+      l.e('[LFGManager] Error while creating LFG post. Deleting original post\n$e');
       // if something went wrong, we need to delete post from discord
-      await _messageHandler.deletePost(discordLfgPost);
-      rethrow;
+      await _lfgBuilder.deletePost(discordLfgPost);
+
+      if (e is! SqliteException && e is! DriftRemoteException) {
+        rethrow;
+      }
     }
   }
 
@@ -122,13 +199,13 @@ final class LFGManager implements ILFGManager {
       );
     }
 
-    print('[LFGManager] Deleting post with id $id from database');
+    l.i('[LFGManager] Deleting post with id $id from database');
     await _database.deletePost(id);
 
-    print('[LFGManager] Deleting post with id $id');
+    l.i('[LFGManager] Deleting post with id $id');
     await (channel as GuildTextChannel).messages.fetch(Snowflake(post.postMessageId)).then((value) => value.delete());
 
-    print('[LFGManager] Unsheduling post with id $id');
+    l.i('[LFGManager] Unsheduling post with id $id');
     Services.i.postScheduler.cancelPost(postID: id);
   }
 
@@ -149,11 +226,13 @@ final class LFGManager implements ILFGManager {
       ),
     );
 
-    await _messageHandler.updatePost(
+    final updated = await _lfgBuilder.update(
       message,
       description: description,
       unixTime: unixTime,
     );
+
+    await message.edit(updated);
 
     if (unixTime != null) {
       Services.i.postScheduler.editTime(
@@ -166,15 +245,13 @@ final class LFGManager implements ILFGManager {
   @override
   Future<void> addMemberTo(
     Message message,
-    User user, {
+    Member user, {
     bool fromCreate = false,
+    Future<String?> Function()? rolePicker,
   }) async {
     // for first, check if post exists
     final post = await _database.findPost(message.id.value);
     if (post == null) throw CantRespondException('LFG ${message.id.value} не найден');
-
-    // check if user is author of LFG. Author cannot join their own LFG
-    if (post.author == user.id.value && !fromCreate) throw const AlreadyJoinedException();
 
     // check if max members is reached
     final membersIDS = await _database.getMembersForPost(message.id.value);
@@ -186,23 +263,32 @@ final class LFGManager implements ILFGManager {
 
     if (membersIDS.length >= post.maxMembers) throw const TooManyPlayersException();
 
-    // all good, add user to database
-    await _database.addMember(message.id.value, user.id.value);
+    final activityOrigin = await Services.i.settings.getActivity(post.title);
+    if (activityOrigin.roles != null) {
+      final role = await rolePicker?.call();
+      if (role == null) throw const CantRespondException('Роль не выбрана');
+      await _database.addMember(message.id.value, user.id.value, role: role);
+    } else {
+      await _database.addMember(message.id.value, user.id.value);
+    }
 
     final botCore = Services.i.bot;
+    final membersManager = botCore.guilds[Services.i.config.server].members;
     for (int index = 0; index < membersIDS.length; index++) {
-      final user = await botCore.users.fetch(Snowflake(membersIDS[index]));
-      members[index] = user.globalName ?? user.username;
+      final member = await membersManager.get(Snowflake(membersIDS[index]));
+      members[index] = member.nick ?? member.user!.globalName ?? member.user!.username;
     }
 
     // add user to message (visible part, not database)
-    members.last = user.globalName ?? user.username;
+    members.last = user.nick ?? user.user!.globalName ?? user.user!.username;
 
-    await _messageHandler.updatePost(
+    final updated = await _lfgBuilder.update(
       message,
       newMembers: members,
       maxMembers: post.maxMembers,
     );
+
+    await message.edit(updated);
   }
 
   @override
@@ -226,10 +312,12 @@ final class LFGManager implements ILFGManager {
       members[index] = user.globalName ?? user.username;
     }
 
-    await _messageHandler.updatePost(
+    final updated = await _lfgBuilder.update(
       message,
       newMembers: members,
       maxMembers: post.maxMembers,
     );
+
+    await message.edit(updated);
   }
 }

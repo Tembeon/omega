@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:l/l.dart';
 import 'package:meta/meta.dart';
 
 typedef VoidCallback = void Function();
@@ -412,7 +413,7 @@ mixin class ChangeNotifier implements Listenable {
       try {
         _listeners[i]?.call();
       } on Object {
-        print('An exception was raised while dispatching notifications for $runtimeType.');
+        l.i('An exception was raised while dispatching notifications for $runtimeType.');
         rethrow;
       }
     }

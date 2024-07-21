@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:l/l.dart';
 
+import '../../core/const/command_exceptions.dart';
+import '../../core/utils/interaction_answer.dart';
 import 'interactor_component.dart';
 
 /// Logger tag
@@ -281,6 +283,9 @@ base mixin _Listener on _Registrar {
   final Map<String, Future<void> Function(InteractionCreateEvent<ModalSubmitInteraction> interaction)>
       _modalSubscriptions = {};
 
+  final Map<String, Future<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction)>
+      _componentSubscriptions = {};
+
   /// Register `handler` to be called when modal with `modalID` is submitted.
   ///
   /// If modal is not submitted in `timeout` time, then handler will be removed.
@@ -296,6 +301,29 @@ base mixin _Listener on _Registrar {
       l.d('$_tag Timeout for $modalID reached');
       _modalSubscriptions.remove(modalID);
     }).ignore();
+  }
+
+  void subscribeToComponent({
+    required final String customID,
+    required final Future<void> Function(InteractionCreateEvent<MessageComponentInteraction> interaction) handler,
+    final Duration timeout = const Duration(minutes: 15),
+    void Function()? onTimeout,
+  }) {
+    _componentSubscriptions[customID] = handler;
+    l.d('$_tag Subscribed to component: "$customID"');
+
+    Future<void>.delayed(timeout, () {
+      l.d('$_tag Timeout for $customID reached');
+      _componentSubscriptions.remove(customID);
+      onTimeout?.call();
+    }).ignore();
+  }
+
+  void unsubscribeFromComponent({
+    required final String customID,
+  }) {
+    _componentSubscriptions.remove(customID);
+    l.d('$_tag Unsubscribed from component: "$customID"');
   }
 
   /// Unsubscribes from modal with `customID`.
@@ -324,7 +352,7 @@ base mixin _Listener on _Registrar {
 
         if (matches.isEmpty) {
           l.d('$_tag Handler for interaction "${event.interaction.data.name}" not found');
-          event.interaction.respond(
+          event.interaction.answer(
             MessageBuilder(content: 'Я не знаю, как на это ответить :('),
             isEphemeral: true,
           );
@@ -337,39 +365,27 @@ base mixin _Listener on _Registrar {
           l.d('$_tag handler for interaction "$commandName" not found or '
               'doesn\'t match InteractorCommandComponent'
               '\nExpected: InteractorCommandComponent, got: ${registry.runtimeType}');
-          event.interaction.respond(
+          event.interaction.answer(
             MessageBuilder(content: 'Я не знаю, как на это ответить :('),
             isEphemeral: true,
           );
           return;
         }
 
-        runZonedGuarded<void>(
-          () => registry.component.handle(commandName, event, Services.instance),
-          (error, stack) {
-            if (error is FormatException) {
-              event.interaction.respond(
-                MessageBuilder(
-                  content: 'Произошла ошибка при чтении даты.'
-                      '\nПожалуйста, используйте допустимые форматы:'
-                      '\n"5", "5 июня", "5 6", "01 01 2030"'
-                      '\n\nОшибка: $error',
-                ),
-                isEphemeral: true,
-              );
-
-              return;
+        _handleExecution(
+          () async {
+            final component = registry.component;
+            for (final interceptor in registry.component.interceptors) {
+              await interceptor.intercept(event, Services.instance);
             }
 
-            event.interaction.respond(
-              MessageBuilder(
-                content: 'Произошла ошибка при выполнении команды :('
-                    '\n\n$error',
-              ),
+            await component.handle(commandName, event, Services.instance);
+          },
+          errorAnswer: (message) {
+            return event.interaction.answer(
+              message,
               isEphemeral: true,
             );
-
-            throw Error.throwWithStackTrace(error, stack);
           },
         );
       },
@@ -382,20 +398,43 @@ base mixin _Listener on _Registrar {
           'for ${event.interaction.member?.user?.username}',
         );
 
+        final subbed = _componentSubscriptions[event.interaction.data.customId];
+        if (subbed != null) {
+          _handleExecution(
+            () {
+              _componentSubscriptions.remove(event.interaction.data.customId);
+              return subbed(event);
+            },
+            errorAnswer: (message) {
+              return event.interaction.answer(
+                message,
+                isEphemeral: true,
+              );
+            },
+          );
+          return;
+        }
+
         final registry = _registered[event.interaction.data.customId];
         if (registry == null) {
           l.d('$_tag Handler for button "${event.interaction.data.customId}" not found');
           return;
         } else {
-          runZonedGuarded(
-            () => registry.component.handle(event.interaction.data.customId, event, Services.i),
-            (error, stack) => event.interaction.respond(
-              MessageBuilder(
-                content: 'Произошла ошибка при выполнении команды :('
-                    '\n\n$error',
-              ),
-              isEphemeral: true,
-            ),
+          _handleExecution(
+            () async {
+              final component = registry.component;
+              for (final interceptor in registry.component.interceptors) {
+                await interceptor.intercept(event, Services.instance);
+              }
+
+              await component.handle(event.interaction.data.customId, event, Services.instance);
+            },
+            errorAnswer: (message) {
+              return event.interaction.answer(
+                message,
+                isEphemeral: true,
+              );
+            },
           );
         }
       },
@@ -414,6 +453,29 @@ base mixin _Listener on _Registrar {
       }
     });
   }
+}
+
+void _handleExecution(
+  Future<void> Function() function, {
+  required Future<void> Function(MessageBuilder message) errorAnswer,
+}) {
+  return runZonedGuarded<void>(
+    function,
+    (error, stack) {
+      final (errorMessage, useRethrow) = switch (error) {
+        final CommandException exception => (exception.toHumanMessage(), false),
+        _ => ('Произошла ошибка при выполнении команды :(\n\n$error', true),
+      };
+
+      errorAnswer(
+        MessageBuilder(
+          content: errorMessage,
+        ),
+      );
+
+      if (useRethrow) throw Error.throwWithStackTrace(error, stack);
+    },
+  );
 }
 
 Iterable<String> _parseCommandNames(List<_UnifiedOption> options, [String? prefix]) sync* {

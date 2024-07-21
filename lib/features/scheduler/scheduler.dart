@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
+import 'package:l/l.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/utils/database/tables/posts.dart';
@@ -36,9 +38,9 @@ final class PostScheduler {
 
   /// Map of all scheduled posts.
   ///
-  /// Key is the date of the post. \
-  /// Value is the ID of the post in database.
-  final Map<DateTime, int> _posts = {};
+  /// Value is the date of the post. \
+  /// Key is the ID of the post in database.
+  final Map<int, DateTime> _posts = {};
 
   /// Timer used to check posts.
   Timer? _timer;
@@ -54,13 +56,13 @@ final class PostScheduler {
     final now = DateTime.now();
     final posts = await _database.getAllPosts();
     for (final post in posts) {
-      // skip post if difference between now and post time is more than 2 hours
-      if (now.difference(post.date).inHours > 2) {
-        print('[Scheduler] Schedule post with id ${post.postMessageId} will be deleted because it is too old');
+      // skip post if difference between now and post time is more than 1 hour
+      if (now.difference(post.date).inHours > 1) {
+        l.i('[Scheduler] Schedule post with id ${post.postMessageId} will be deleted because it is too old');
         await _deleteLFGPostAfter(postID: post.postMessageId, duration: Duration.zero);
       }
 
-      _posts[post.date] = post.postMessageId;
+      _posts[post.postMessageId] = post.date;
     }
   }
 
@@ -83,25 +85,25 @@ final class PostScheduler {
     }
 
     final now = DateTime.now();
-    print('[Scheduler] Checking posts...');
+    l.i('[Scheduler] Checking posts...');
 
     final toDelete = <int>[];
 
     for (final post in _posts.entries) {
-      if (post.key.isBefore(now)) {
-        final postID = post.value;
+      if (post.value.isBefore(now)) {
+        final postID = post.key;
         toDelete.add(postID);
 
-        print('[Scheduler] Post with id $postID is ready to be posted');
+        l.i('[Scheduler] Post with id $postID is ready to be posted');
         _notifyMembers(postID: postID);
       }
     }
 
     for (final postID in toDelete) {
-      _posts.removeWhere((_, value) => value == postID);
+      _posts.removeWhere((key, _) => key == postID);
     }
 
-    print('[Scheduler] ${_posts.length} post(s) checked');
+    l.i('[Scheduler] ${_posts.length} post(s) checked');
   }
 
   /// Notifies all members of post with [postID] that it is time to play.
@@ -118,7 +120,7 @@ final class PostScheduler {
 
     for (final member in members) {
       final dm = await _bot.users.createDm(Snowflake(member));
-      print('[Scheduler] Notifying ${dm.recipient.username} about ${post.title}');
+      l.i('[Scheduler] Notifying ${dm.recipient.username} about ${post.title}');
 
       await dm.sendMessage(
         MessageBuilder(
@@ -130,7 +132,7 @@ final class PostScheduler {
       await Future<void>.delayed(const Duration(seconds: 1));
     }
 
-    print('[Scheduler] All members notified, scheduling deleting post with id $postID');
+    l.i('[Scheduler] All members notified, scheduling deleting post with id $postID');
     await _deleteLFGPostAfter(postID: postID);
   }
 
@@ -149,7 +151,7 @@ final class PostScheduler {
     required final DateTime startTime,
     required final int postID,
   }) {
-    _posts[startTime] = postID;
+    _posts[postID] = startTime;
     _checkPosts();
   }
 
@@ -157,13 +159,17 @@ final class PostScheduler {
   void cancelPost({
     required final int postID,
   }) {
-    final post = _posts.entries.firstWhere((e) => e.value == postID);
+    final post = _posts.entries.firstWhereOrNull((e) => e.key == postID);
+    if (post == null) {
+      l.i('[Scheduler] Post with id $postID was not found in scheduler, maybe it was already posted or stale');
+      return;
+    }
     final value = _posts.remove(post.key);
 
     if (value != null) {
-      print('[Scheduler] Post with id $postID was removed from scheduler');
+      l.i('[Scheduler] Post with id $postID was removed from scheduler');
     } else {
-      print('[Scheduler] Post with id $postID was not found in scheduler');
+      l.i('[Scheduler] Post with id $postID was not found in scheduler');
     }
   }
 
@@ -172,9 +178,9 @@ final class PostScheduler {
     required final int postID,
     required final DateTime newTime,
   }) {
-    final post = _posts.entries.firstWhere((e) => e.value == postID);
+    final post = _posts.entries.firstWhere((e) => e.key == postID);
     _posts.remove(post.key);
-    _posts[newTime] = postID;
+    _posts[postID] = newTime;
     _checkPosts();
   }
 

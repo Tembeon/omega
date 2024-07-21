@@ -503,8 +503,13 @@ class $MembersTableTable extends MembersTable
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'REFERENCES posts_table (post_message_id) ON DELETE CASCADE'));
+  static const VerificationMeta _roleMeta = const VerificationMeta('role');
   @override
-  List<GeneratedColumn> get $columns => [member, post];
+  late final GeneratedColumn<String> role = GeneratedColumn<String>(
+      'role', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [member, post, role];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -527,6 +532,10 @@ class $MembersTableTable extends MembersTable
     } else if (isInserting) {
       context.missing(_postMeta);
     }
+    if (data.containsKey('role')) {
+      context.handle(
+          _roleMeta, role.isAcceptableOrUnknown(data['role']!, _roleMeta));
+    }
     return context;
   }
 
@@ -540,6 +549,8 @@ class $MembersTableTable extends MembersTable
           .read(DriftSqlType.int, data['${effectivePrefix}member'])!,
       post: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}post'])!,
+      role: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}role']),
     );
   }
 
@@ -556,12 +567,18 @@ class MembersTableData extends DataClass
 
   /// A text column named `post`. This stores the post related to the member.
   final int post;
-  const MembersTableData({required this.member, required this.post});
+
+  /// A text column named `role`. This stores the role of the member.
+  final String? role;
+  const MembersTableData({required this.member, required this.post, this.role});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['member'] = Variable<int>(member);
     map['post'] = Variable<int>(post);
+    if (!nullToAbsent || role != null) {
+      map['role'] = Variable<String>(role);
+    }
     return map;
   }
 
@@ -569,6 +586,7 @@ class MembersTableData extends DataClass
     return MembersTableCompanion(
       member: Value(member),
       post: Value(post),
+      role: role == null && nullToAbsent ? const Value.absent() : Value(role),
     );
   }
 
@@ -578,6 +596,7 @@ class MembersTableData extends DataClass
     return MembersTableData(
       member: serializer.fromJson<int>(json['member']),
       post: serializer.fromJson<int>(json['post']),
+      role: serializer.fromJson<String?>(json['role']),
     );
   }
   @override
@@ -586,64 +605,81 @@ class MembersTableData extends DataClass
     return <String, dynamic>{
       'member': serializer.toJson<int>(member),
       'post': serializer.toJson<int>(post),
+      'role': serializer.toJson<String?>(role),
     };
   }
 
-  MembersTableData copyWith({int? member, int? post}) => MembersTableData(
+  MembersTableData copyWith(
+          {int? member,
+          int? post,
+          Value<String?> role = const Value.absent()}) =>
+      MembersTableData(
         member: member ?? this.member,
         post: post ?? this.post,
+        role: role.present ? role.value : this.role,
       );
   @override
   String toString() {
     return (StringBuffer('MembersTableData(')
           ..write('member: $member, ')
-          ..write('post: $post')
+          ..write('post: $post, ')
+          ..write('role: $role')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(member, post);
+  int get hashCode => Object.hash(member, post, role);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is MembersTableData &&
           other.member == this.member &&
-          other.post == this.post);
+          other.post == this.post &&
+          other.role == this.role);
 }
 
 class MembersTableCompanion extends UpdateCompanion<MembersTableData> {
   final Value<int> member;
   final Value<int> post;
+  final Value<String?> role;
   final Value<int> rowid;
   const MembersTableCompanion({
     this.member = const Value.absent(),
     this.post = const Value.absent(),
+    this.role = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   MembersTableCompanion.insert({
     required int member,
     required int post,
+    this.role = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : member = Value(member),
         post = Value(post);
   static Insertable<MembersTableData> custom({
     Expression<int>? member,
     Expression<int>? post,
+    Expression<String>? role,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (member != null) 'member': member,
       if (post != null) 'post': post,
+      if (role != null) 'role': role,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   MembersTableCompanion copyWith(
-      {Value<int>? member, Value<int>? post, Value<int>? rowid}) {
+      {Value<int>? member,
+      Value<int>? post,
+      Value<String?>? role,
+      Value<int>? rowid}) {
     return MembersTableCompanion(
       member: member ?? this.member,
       post: post ?? this.post,
+      role: role ?? this.role,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -657,6 +693,9 @@ class MembersTableCompanion extends UpdateCompanion<MembersTableData> {
     if (post.present) {
       map['post'] = Variable<int>(post.value);
     }
+    if (role.present) {
+      map['role'] = Variable<String>(role.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -668,6 +707,7 @@ class MembersTableCompanion extends UpdateCompanion<MembersTableData> {
     return (StringBuffer('MembersTableCompanion(')
           ..write('member: $member, ')
           ..write('post: $post, ')
+          ..write('role: $role, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -921,12 +961,14 @@ typedef $$MembersTableTableInsertCompanionBuilder = MembersTableCompanion
     Function({
   required int member,
   required int post,
+  Value<String?> role,
   Value<int> rowid,
 });
 typedef $$MembersTableTableUpdateCompanionBuilder = MembersTableCompanion
     Function({
   Value<int> member,
   Value<int> post,
+  Value<String?> role,
   Value<int> rowid,
 });
 
@@ -952,21 +994,25 @@ class $$MembersTableTableTableManager extends RootTableManager<
           getUpdateCompanionBuilder: ({
             Value<int> member = const Value.absent(),
             Value<int> post = const Value.absent(),
+            Value<String?> role = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               MembersTableCompanion(
             member: member,
             post: post,
+            role: role,
             rowid: rowid,
           ),
           getInsertCompanionBuilder: ({
             required int member,
             required int post,
+            Value<String?> role = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               MembersTableCompanion.insert(
             member: member,
             post: post,
+            role: role,
             rowid: rowid,
           ),
         ));
@@ -992,6 +1038,11 @@ class $$MembersTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
+  ColumnFilters<String> get role => $state.composableBuilder(
+      column: $state.table.role,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
   $$PostsTableTableFilterComposer get post {
     final $$PostsTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
@@ -1010,6 +1061,11 @@ class $$MembersTableTableOrderingComposer
   $$MembersTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get member => $state.composableBuilder(
       column: $state.table.member,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get role => $state.composableBuilder(
+      column: $state.table.role,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
