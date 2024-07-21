@@ -159,7 +159,7 @@ final class PostScheduler {
   void cancelPost({
     required final int postID,
   }) {
-    final post = _posts.entries.firstWhereOrNull((e) => e.value == postID);
+    final post = _posts.entries.firstWhereOrNull((e) => e.key == postID);
     if (post == null) {
       l.i('[Scheduler] Post with id $postID was not found in scheduler, maybe it was already posted or stale');
       return;
@@ -178,7 +178,7 @@ final class PostScheduler {
     required final int postID,
     required final DateTime newTime,
   }) {
-    final post = _posts.entries.firstWhere((e) => e.value == postID);
+    final post = _posts.entries.firstWhere((e) => e.key == postID);
     _posts.remove(post.key);
     _posts[postID] = newTime;
     _checkPosts();
