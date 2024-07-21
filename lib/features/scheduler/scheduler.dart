@@ -38,9 +38,9 @@ final class PostScheduler {
 
   /// Map of all scheduled posts.
   ///
-  /// Key is the date of the post. \
-  /// Value is the ID of the post in database.
-  final Map<DateTime, int> _posts = {};
+  /// Value is the date of the post. \
+  /// Key is the ID of the post in database.
+  final Map<int, DateTime> _posts = {};
 
   /// Timer used to check posts.
   Timer? _timer;
@@ -56,13 +56,13 @@ final class PostScheduler {
     final now = DateTime.now();
     final posts = await _database.getAllPosts();
     for (final post in posts) {
-      // skip post if difference between now and post time is more than 2 hours
-      if (now.difference(post.date).inHours > 2) {
+      // skip post if difference between now and post time is more than 1 hour
+      if (now.difference(post.date).inHours > 1) {
         l.i('[Scheduler] Schedule post with id ${post.postMessageId} will be deleted because it is too old');
         await _deleteLFGPostAfter(postID: post.postMessageId, duration: Duration.zero);
       }
 
-      _posts[post.date] = post.postMessageId;
+      _posts[post.postMessageId] = post.date;
     }
   }
 
@@ -90,8 +90,8 @@ final class PostScheduler {
     final toDelete = <int>[];
 
     for (final post in _posts.entries) {
-      if (post.key.isBefore(now)) {
-        final postID = post.value;
+      if (post.value.isBefore(now)) {
+        final postID = post.key;
         toDelete.add(postID);
 
         l.i('[Scheduler] Post with id $postID is ready to be posted');
@@ -100,7 +100,7 @@ final class PostScheduler {
     }
 
     for (final postID in toDelete) {
-      _posts.removeWhere((_, value) => value == postID);
+      _posts.removeWhere((key, _) => key == postID);
     }
 
     l.i('[Scheduler] ${_posts.length} post(s) checked');
@@ -151,7 +151,7 @@ final class PostScheduler {
     required final DateTime startTime,
     required final int postID,
   }) {
-    _posts[startTime] = postID;
+    _posts[postID] = startTime;
     _checkPosts();
   }
 
@@ -180,7 +180,7 @@ final class PostScheduler {
   }) {
     final post = _posts.entries.firstWhere((e) => e.value == postID);
     _posts.remove(post.key);
-    _posts[newTime] = postID;
+    _posts[postID] = newTime;
     _checkPosts();
   }
 
