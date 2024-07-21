@@ -57,6 +57,7 @@ base class LfgMessageBuilder {
     final embedDescription = _buildDescription(
       forceDescription: description,
       origin: message,
+      originName: dbPost.title,
       membersCount: data == null ? null : (members.length, activityData.maxMembers),
     );
     final embedStartTime = _buildStartTime(origin: message, unixTime: unixTime);
@@ -165,13 +166,14 @@ base class LfgMessageBuilder {
     LFGPostBuilder? builder,
     Message? origin,
     String? forceDescription,
+    String? originName,
     (int, int)? membersCount,
   }) {
     final (name, description) = origin == null ? (null, null) : _getFieldData(origin, 0);
     final buildName = () {
       final rawName = builder?.activity.name ?? name!;
       if (membersCount != null) {
-        return '$rawName (${membersCount.$1}/${membersCount.$2})';
+        return '${originName ?? rawName} (${membersCount.$1}/${membersCount.$2})';
       }
 
       return rawName;
@@ -215,8 +217,8 @@ base class LfgMessageBuilder {
       final members = entry.key;
 
       return EmbedFieldBuilder(
-        name: '${role.role} (${members.length}/${role.quantity})',
-        value: members.join(', '),
+        name: '${role.role} (${role.taken}/${role.total})',
+        value: members.isEmpty ? '—' : members.join(', '),
         isInline: false,
       );
     }).toList();

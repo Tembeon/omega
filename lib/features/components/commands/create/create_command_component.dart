@@ -1,3 +1,5 @@
+import 'package:l/l.dart';
+
 import '../../../../core/utils/event_parsers.dart';
 import '../../../../core/utils/time_convert.dart';
 import '../../../interactor/interactor_component.dart';
@@ -92,7 +94,7 @@ class CreateCommandComponent extends InteractorCommandComponent {
   ) async {
     final channelLfg = await services.settings.getLFGChannel();
     if (channelLfg == null) {
-      print('LFG channel is not set');
+      l.i('LFG channel is not set');
       return;
     }
 
@@ -110,7 +112,7 @@ class CreateCommandComponent extends InteractorCommandComponent {
     if (member == null) return; // refuse to work with bots
 
     final userName = member.nick ?? member.user?.username;
-    print('User "$userName" is trying to create new raid LFG post');
+    l.i('User "$userName" is trying to create new raid LFG post');
 
     final manager = services.lfgManager;
 
@@ -127,7 +129,7 @@ class CreateCommandComponent extends InteractorCommandComponent {
 
     final activity = await services.settings.getActivity(name);
 
-    print('Creating new LFG post for user "$userName" with activity "$name" and description "$description"');
+    l.i('Creating new LFG post for user "$userName" with activity "$name" and description "$description"');
     await manager.create(
       interaction: event,
       builder: LFGPostBuilder(

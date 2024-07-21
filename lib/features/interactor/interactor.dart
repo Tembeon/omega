@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:l/l.dart';
 
+import '../../core/const/command_exceptions.dart';
+import '../../core/utils/interaction_answer.dart';
 import 'interactor_component.dart';
 
 /// Logger tag
@@ -350,7 +352,7 @@ base mixin _Listener on _Registrar {
 
         if (matches.isEmpty) {
           l.d('$_tag Handler for interaction "${event.interaction.data.name}" not found');
-          event.interaction.respond(
+          event.interaction.answer(
             MessageBuilder(content: 'Я не знаю, как на это ответить :('),
             isEphemeral: true,
           );
@@ -363,14 +365,14 @@ base mixin _Listener on _Registrar {
           l.d('$_tag handler for interaction "$commandName" not found or '
               'doesn\'t match InteractorCommandComponent'
               '\nExpected: InteractorCommandComponent, got: ${registry.runtimeType}');
-          event.interaction.respond(
+          event.interaction.answer(
             MessageBuilder(content: 'Я не знаю, как на это ответить :('),
             isEphemeral: true,
           );
           return;
         }
 
-        runZonedGuarded<void>(
+        _handleExecution(
           () async {
             final component = registry.component;
             for (final interceptor in registry.component.interceptors) {
@@ -379,30 +381,11 @@ base mixin _Listener on _Registrar {
 
             await component.handle(commandName, event, Services.instance);
           },
-          (error, stack) {
-            if (error is FormatException) {
-              event.interaction.respond(
-                MessageBuilder(
-                  content: 'Произошла ошибка при чтении даты.'
-                      '\nПожалуйста, используйте допустимые форматы:'
-                      '\n"5", "5 июня", "5 6", "01 01 2030"'
-                      '\n\nОшибка: $error',
-                ),
-                isEphemeral: true,
-              );
-
-              return;
-            }
-
-            event.interaction.respond(
-              MessageBuilder(
-                content: 'Произошла ошибка при выполнении команды :('
-                    '\n\n$error',
-              ),
+          errorAnswer: (message) {
+            return event.interaction.answer(
+              message,
               isEphemeral: true,
             );
-
-            throw Error.throwWithStackTrace(error, stack);
           },
         );
       },
@@ -417,18 +400,16 @@ base mixin _Listener on _Registrar {
 
         final subbed = _componentSubscriptions[event.interaction.data.customId];
         if (subbed != null) {
-          runZonedGuarded(
-            () => subbed(event),
-            (error, stack) {
-              event.interaction.respond(
-                MessageBuilder(
-                  content: 'Произошла ошибка при выполнении команды :('
-                      '\n\n$error',
-                ),
+          _handleExecution(
+            () {
+              _componentSubscriptions.remove(event.interaction.data.customId);
+              return subbed(event);
+            },
+            errorAnswer: (message) {
+              return event.interaction.answer(
+                message,
                 isEphemeral: true,
               );
-
-              throw Error.throwWithStackTrace(error, stack);
             },
           );
           return;
@@ -439,7 +420,7 @@ base mixin _Listener on _Registrar {
           l.d('$_tag Handler for button "${event.interaction.data.customId}" not found');
           return;
         } else {
-          runZonedGuarded(
+          _handleExecution(
             () async {
               final component = registry.component;
               for (final interceptor in registry.component.interceptors) {
@@ -448,16 +429,11 @@ base mixin _Listener on _Registrar {
 
               await component.handle(event.interaction.data.customId, event, Services.instance);
             },
-            (error, stack) {
-              event.interaction.respond(
-                MessageBuilder(
-                  content: 'Произошла ошибка при выполнении команды :('
-                      '\n\n$error',
-                ),
+            errorAnswer: (message) {
+              return event.interaction.answer(
+                message,
                 isEphemeral: true,
               );
-
-              throw Error.throwWithStackTrace(error, stack);
             },
           );
         }
@@ -477,6 +453,29 @@ base mixin _Listener on _Registrar {
       }
     });
   }
+}
+
+void _handleExecution(
+  Future<void> Function() function, {
+  required Future<void> Function(MessageBuilder message) errorAnswer,
+}) {
+  return runZonedGuarded<void>(
+    function,
+    (error, stack) {
+      final (errorMessage, useRethrow) = switch (error) {
+        final CommandException exception => (exception.toHumanMessage(), false),
+        _ => ('Произошла ошибка при выполнении команды :(\n\n$error', true),
+      };
+
+      errorAnswer(
+        MessageBuilder(
+          content: errorMessage,
+        ),
+      );
+
+      if (useRethrow) throw Error.throwWithStackTrace(error, stack);
+    },
+  );
 }
 
 Iterable<String> _parseCommandNames(List<_UnifiedOption> options, [String? prefix]) sync* {

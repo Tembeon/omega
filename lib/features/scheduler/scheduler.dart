@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:l/l.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/utils/database/tables/posts.dart';
@@ -57,7 +58,7 @@ final class PostScheduler {
     for (final post in posts) {
       // skip post if difference between now and post time is more than 2 hours
       if (now.difference(post.date).inHours > 2) {
-        print('[Scheduler] Schedule post with id ${post.postMessageId} will be deleted because it is too old');
+        l.i('[Scheduler] Schedule post with id ${post.postMessageId} will be deleted because it is too old');
         await _deleteLFGPostAfter(postID: post.postMessageId, duration: Duration.zero);
       }
 
@@ -84,7 +85,7 @@ final class PostScheduler {
     }
 
     final now = DateTime.now();
-    print('[Scheduler] Checking posts...');
+    l.i('[Scheduler] Checking posts...');
 
     final toDelete = <int>[];
 
@@ -93,7 +94,7 @@ final class PostScheduler {
         final postID = post.value;
         toDelete.add(postID);
 
-        print('[Scheduler] Post with id $postID is ready to be posted');
+        l.i('[Scheduler] Post with id $postID is ready to be posted');
         _notifyMembers(postID: postID);
       }
     }
@@ -102,7 +103,7 @@ final class PostScheduler {
       _posts.removeWhere((_, value) => value == postID);
     }
 
-    print('[Scheduler] ${_posts.length} post(s) checked');
+    l.i('[Scheduler] ${_posts.length} post(s) checked');
   }
 
   /// Notifies all members of post with [postID] that it is time to play.
@@ -119,7 +120,7 @@ final class PostScheduler {
 
     for (final member in members) {
       final dm = await _bot.users.createDm(Snowflake(member));
-      print('[Scheduler] Notifying ${dm.recipient.username} about ${post.title}');
+      l.i('[Scheduler] Notifying ${dm.recipient.username} about ${post.title}');
 
       await dm.sendMessage(
         MessageBuilder(
@@ -131,7 +132,7 @@ final class PostScheduler {
       await Future<void>.delayed(const Duration(seconds: 1));
     }
 
-    print('[Scheduler] All members notified, scheduling deleting post with id $postID');
+    l.i('[Scheduler] All members notified, scheduling deleting post with id $postID');
     await _deleteLFGPostAfter(postID: postID);
   }
 
@@ -160,15 +161,15 @@ final class PostScheduler {
   }) {
     final post = _posts.entries.firstWhereOrNull((e) => e.value == postID);
     if (post == null) {
-      print('[Scheduler] Post with id $postID was not found in scheduler, maybe it was already posted or stale');
+      l.i('[Scheduler] Post with id $postID was not found in scheduler, maybe it was already posted or stale');
       return;
     }
     final value = _posts.remove(post.key);
 
     if (value != null) {
-      print('[Scheduler] Post with id $postID was removed from scheduler');
+      l.i('[Scheduler] Post with id $postID was removed from scheduler');
     } else {
-      print('[Scheduler] Post with id $postID was not found in scheduler');
+      l.i('[Scheduler] Post with id $postID was not found in scheduler');
     }
   }
 

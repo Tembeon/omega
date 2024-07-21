@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../../../../core/const/command_exceptions.dart';
+import '../../../../core/utils/interaction_answer.dart';
 import '../../../interactor/component_interceptor.dart';
 import '../../../interactor/interactor_component.dart';
 import '../../interceptors/role_list_interceptor.dart';
@@ -30,41 +30,30 @@ class JoinMessageComponent extends InteractorMessageComponent {
 
     final lfgManager = services.lfgManager;
 
-    try {
-      await lfgManager.addMemberTo(
-        event.interaction.message!,
-        event.interaction.member!,
-        rolePicker: () async {
-          final customID = 'role_picker_${event.interaction.member!.user!.id.value}';
-          final Completer<String?> pickedRole = Completer();
-          Services.i.interactor.subscribeToComponent(
-            customID: customID,
-            handler: (event) async {
-              final r = event.interaction.data.values;
-              pickedRole.complete(r?.first);
-            },
-          );
+    await lfgManager.addMemberTo(
+      event.interaction.message!,
+      event.interaction.member!,
+      rolePicker: () async {
+        final customID = 'role_picker_${event.interaction.member!.user!.id.value}_$messageID';
+        final Completer<String?> pickedRole = Completer();
+        Services.i.interactor.subscribeToComponent(
+          customID: customID,
+          handler: (event) async {
+            final r = event.interaction.data.values;
+            pickedRole.complete(r?.first);
 
-          return pickedRole.future;
-        },
-      );
-      await event.interaction.respond(MessageBuilder(content: 'Вы добавлены в LFG'), isEphemeral: true);
-    } on CommandException catch (e) {
-      await event.interaction.respond(MessageBuilder(content: e.toHumanMessage()), isEphemeral: true);
-      rethrow;
+            await event.interaction.respond(
+              MessageBuilder(content: 'Вы выбрали роль ${r?.first}'),
+              isEphemeral: true,
+            );
+          },
+        );
 
-    } on Object catch (e, st) {
-      await event.interaction.respond(
-        MessageBuilder(
-          content: 'Произошла неизвестная ошибка при добавлении вас в LFG\n'
-              'Метаданные: $e\n'
-              'Стек вызовов: $st',
-        ),
-        isEphemeral: true,
-      );
+        return pickedRole.future;
+      },
+    );
 
-      rethrow;
-    }
+    await event.interaction.answer(MessageBuilder(content: 'Вы добавлены в LFG'), isEphemeral: true);
   }
 }
 

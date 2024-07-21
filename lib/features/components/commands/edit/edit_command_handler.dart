@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:l/l.dart';
 
 import '../../../../core/utils/time_convert.dart';
 import '../../../interactor/interactor_component.dart';
@@ -44,7 +45,7 @@ class EditCommandHandler extends InteractorCommandComponent {
     }
 
     if (postData.author != event.interaction.member?.user?.id.value) {
-      print('User "${event.interaction.member?.user?.username}" tried to edit LFG of user "${postData.author}"');
+      l.i('User "${event.interaction.member?.user?.username}" tried to edit LFG of user "${postData.author}"');
 
       await event.interaction.respond(
         MessageBuilder(
@@ -121,7 +122,7 @@ class EditCommandHandler extends InteractorCommandComponent {
     required int timezone,
   }) async {
     // at this moment we can be sure that user is the author of the post
-    print('[EditHandler] Editing LFG message with id: $postId');
+    l.i('[EditHandler] Editing LFG message with id: $postId');
 
     String? newDescription;
     int? newUnixTime;
@@ -132,7 +133,7 @@ class EditCommandHandler extends InteractorCommandComponent {
       for (final component in components) {
         if (component is ActionRowComponent) save(component.components);
         if (component is TextInputComponent) {
-          print('Component: ${component.customId} => ${component.value}');
+          l.i('Component: ${component.customId} => ${component.value}');
           switch (component.customId) {
             case 'edit_description':
               newDescription = component.value;

@@ -1,8 +1,9 @@
 import 'package:nyxx/nyxx.dart';
 
-import '../../../core/utils/event_parsers.dart';
+import '../../../core/utils/interaction_answer.dart';
 import '../../../core/utils/services.dart';
 import '../../interactor/component_interceptor.dart';
+import '../buttons/role_picker/role_picker_component.dart';
 
 /// {@template RoleListInterceptor}
 ///
@@ -24,28 +25,20 @@ base class RoleListInterceptor extends ComponentMessageInterceptor {
     final activityData = await services.settings.getActivity(post.title);
     if (activityData.roles == null || activityData.roles!.isEmpty) return;
 
-    final customID = 'role_picker_${event.interaction.member!.user!.id.value}';
+    final members = await services.postsDatabase.getMembersForPost(event.interaction.message!.id.value);
+    final userID = event.interaction.member!.user!.id.value;
 
-    await event.interaction.respond(
-      MessageBuilder(
-        content: 'Выберите роль для участия:',
-        components: [
-          ActionRowBuilder(
-            components: [
-              SelectMenuBuilder.stringSelect(
-                customId: customID,
-                options: activityData.roles!
-                    .map(
-                      (e) => SelectMenuOptionBuilder(
-                        label: sanitize(e.role),
-                        value: e.role,
-                      ),
-                    )
-                    .toList(),
-              ),
-            ],
-          ),
-        ],
+    if (members.contains(userID)) {
+      return;
+    }
+
+    final customID = 'role_picker_${event.interaction.member!.user!.id.value}_${event.interaction.message!.id.value}';
+
+    await event.interaction.answer(
+      await RolePickerComponent.builder(
+        activityData: activityData,
+        customID: customID,
+        postID: event.interaction.message!.id.value,
       ),
       isEphemeral: true,
     );
