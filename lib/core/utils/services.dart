@@ -57,6 +57,7 @@ final class Services {
         plugins: [
           Logging(),
           CliIntegration(),
+          IgnoreExceptions(), // Ignore Discord exceptions. Exceptions from program still will cause crash.
         ],
       ),
     );

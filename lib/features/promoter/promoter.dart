@@ -59,7 +59,7 @@ class Promoter {
   Future<MessageBuilder> _createRandomMessage(LFGPostBuilder builder, String lfgMessageUrl) async {
     final messages = await _settings.getPromoteMessagesWithWeight();
     final message =
-        messages.isNotEmpty ? messages[Random().nextInt(messages.length)] : '{AUTHOR} собирает людей в {LFG_NAME}';
+        messages.isNotEmpty ? messages[Random().nextInt(messages.length)] : '{AUTHOR} собирает людей в {NAME}';
 
     final content = message
         .replaceAll('{AUTHOR}', '<@${builder.authorID}>')
