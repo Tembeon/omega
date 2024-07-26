@@ -144,7 +144,7 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
   Future<List<CommandOptionChoiceBuilder<String>>> _getActivityChoices(Settings settings) async {
     final activities = await settings.getActivities();
 
-    return activities.map((e) => CommandOptionChoiceBuilder<String>(name: e.name, value: e.name)).toList();
+    return activities.map((e) => CommandOptionChoiceBuilder<String>(name: sanitize(e.name), value: e.name)).toList();
   }
 
   @override
@@ -235,7 +235,7 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
 
   Future<List<CommandOptionChoiceBuilder<String>>?> _getAllRoles(Settings settings) async {
     final roles = await settings.getAllRoles();
-    return roles.map((e) => CommandOptionChoiceBuilder<String>(name: e, value: e)).toList();
+    return roles.map((e) => CommandOptionChoiceBuilder<String>(name: sanitize(e), value: e)).toList();
   }
 
   Future<void> _handleActivityRolesAdd(

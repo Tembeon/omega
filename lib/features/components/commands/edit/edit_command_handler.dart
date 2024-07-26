@@ -70,7 +70,6 @@ class EditCommandHandler extends InteractorCommandComponent {
                 customId: 'edit_description',
                 label: 'Описание',
                 placeholder: 'Введите новое описание',
-                maxLength: 100,
                 value: postData.description,
                 style: TextInputStyle.paragraph,
               ),
