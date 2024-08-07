@@ -5,6 +5,7 @@ import 'package:l/l.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/utils/database/tables/posts.dart';
+import '../../core/utils/services.dart';
 import '../lfg_manager/lfg_manager.dart';
 
 /// {@template PostScheduler}
@@ -116,20 +117,37 @@ final class PostScheduler {
     if (post == null) throw Exception('Cannot find post with id $postID');
 
     final members = await _database.getMembersForPost(postID);
-    final author = await _bot.users.get(Snowflake(post.author));
+    String? authorName;
+
+    try {
+      final authorMember = await _bot.guilds[Services.i.config.server].members.get(Snowflake(post.author));
+      authorName = authorMember.nick ?? authorMember.user?.globalName ?? authorMember.user?.username;
+    } on Object {
+      authorName = null;
+    }
+
+    if (authorName == null) {
+      final author = await _bot.users.get(Snowflake(post.author));
+      authorName = author.globalName ?? author.username;
+    }
 
     for (final member in members) {
-      final dm = await _bot.users.createDm(Snowflake(member));
-      l.i('[Scheduler] Notifying ${dm.recipient.username} about ${post.title}');
+      try {
+        final dm = await _bot.users.createDm(Snowflake(member));
+        l.i('[Scheduler] Notifying ${dm.recipient.username} about ${post.title}');
 
-      await dm.sendMessage(
-        MessageBuilder(
-          content: 'Время сбора для ${post.title} от ${author.globalName ?? author.username} наступило!',
-        ),
-      );
+        await dm.sendMessage(
+          MessageBuilder(
+            content: 'Время сбора для ${post.title} от $authorName наступило!',
+          ),
+        );
 
-      // wait 1 second to prevent rate limit
-      await Future<void>.delayed(const Duration(seconds: 1));
+        // wait 1 second to prevent rate limit
+        await Future<void>.delayed(const Duration(seconds: 1));
+      } on Object {
+        l.w('[Scheduler] User with id $member is not available for DM');
+        continue;
+      }
     }
 
     l.i('[Scheduler] All members notified, scheduling deleting post with id $postID');
