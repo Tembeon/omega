@@ -307,9 +307,10 @@ final class LFGManager implements ILFGManager {
     final members = List<String>.generate(membersIDS.length, (index) => '$index gen');
 
     final botCore = Services.i.bot;
+    final membersManager = botCore.guilds[Services.i.config.server].members;
     for (int index = 0; index < membersIDS.length; index++) {
-      final user = await botCore.users.fetch(Snowflake(membersIDS[index]));
-      members[index] = user.globalName ?? user.username;
+      final member = await membersManager.get(Snowflake(membersIDS[index]));
+      members[index] = member.nick ?? member.user!.globalName ?? member.user!.username;
     }
 
     final updated = await _lfgBuilder.update(
