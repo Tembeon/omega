@@ -75,6 +75,12 @@ If the channel is not specified, notifications will not be created.
 3. Add the following environment variables to the docker container:
     - `OMEGA_SERVER_ID` — ID of the server where the bot will operate.
     - `OMEGA_TOKEN` — Bot token.
+    - `POSTGRES_USER` — Database user (default `omega`).
+    - `POSTGRES_PASSWORD` — Database password (default `omega`).
+    - `POSTGRES_DB` — Database name (default `omega`).
+    - `POSTGRES_HOST` — Host of postgres (default `localhost`).
+    - `POSTGRES_PORT` — Port of postgres (default `5432`).
+    - `API_PORT` — Port for API server (default `8080`).
 4. Run the container.
 5. Now invite bot to the server and configure it using commands (remember about settings LFG channel, or /create command
    will be disabled).

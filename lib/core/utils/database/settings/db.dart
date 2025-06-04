@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
+import 'package:drift_postgres/drift_postgres.dart';
+import 'package:postgres/postgres.dart';
 
 import 'dao_activities.dart';
 import 'dao_guild_settings.dart';
@@ -37,7 +38,6 @@ class SettingsDatabase extends _$SettingsDatabase {
   @override
   MigrationStrategy get migration => MigrationStrategy(
         beforeOpen: (details) async {
-          await customStatement('PRAGMA foreign_keys = ON');
           if (details.wasCreated) await _setInitialData();
         },
       );
@@ -60,10 +60,21 @@ class SettingsDatabase extends _$SettingsDatabase {
   }
 }
 
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final file = File('data/db/settings.sqlite');
+PgDatabase _openConnection() {
+  final host = Platform.environment['POSTGRES_HOST'] ?? 'localhost';
+  final port = int.parse(Platform.environment['POSTGRES_PORT'] ?? '5432');
+  final user = Platform.environment['POSTGRES_USER'] ?? 'omega';
+  final password = Platform.environment['POSTGRES_PASSWORD'] ?? 'omega';
+  final db = Platform.environment['POSTGRES_DB'] ?? 'omega';
 
-    return NativeDatabase.createInBackground(file);
-  });
+  return PgDatabase(
+    endpoint: Endpoint(
+      host: host,
+      port: port,
+      database: db,
+      username: user,
+      password: password,
+    ),
+    settings: ConnectionSettings(sslMode: SslMode.disable),
+  );
 }

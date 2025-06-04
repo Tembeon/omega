@@ -6,6 +6,7 @@ import '../../features/lfg_manager/lfg_message_builder.dart';
 import '../../features/promoter/promoter.dart';
 import '../../features/scheduler/scheduler.dart';
 import '../../features/settings/settings.dart';
+import '../../api/api_server.dart';
 import 'config.dart';
 import 'database/settings/db.dart';
 import 'database/tables/posts.dart';
@@ -82,6 +83,9 @@ final class Services {
       settings: settings,
     );
 
+    services.apiServer = ApiServer(services: services);
+    await services.apiServer!.start();
+
     return _instance = services;
   }
 
@@ -103,4 +107,6 @@ final class Services {
   final NyxxGateway bot;
 
   final Settings settings;
+
+  ApiServer? apiServer;
 }

@@ -4,7 +4,8 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
+import 'package:drift_postgres/drift_postgres.dart';
+import 'package:postgres/postgres.dart';
 
 import '../../../const/command_exceptions.dart';
 import '../../../data/models/activity_data.dart';
@@ -31,7 +32,11 @@ class PostsTable extends Table {
   IntColumn get maxMembers => integer().check(maxMembers.isBiggerThan(const Constant(0)))();
 
   /// A DateTime column named `date`. This stores the start date of the post.
-  DateTimeColumn get date => dateTime().check(date.isBiggerThan(currentDateAndTime))();
+  /// Can be null if time is not set yet.
+  DateTimeColumn get date => dateTime().nullable()();
+
+  /// Whether post should stay after firing and reset time.
+  BoolColumn get keepPost => boolean().withDefault(const Constant(false))();
 
   /// A integer column named `timezone`. This stores the timezone of the post.
   IntColumn get timezone => integer()();
@@ -182,10 +187,21 @@ class PostsDatabase extends _$PostsDatabase {
   }
 }
 
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final file = File('data/db/posts.sqlite');
+PgDatabase _openConnection() {
+  final host = Platform.environment['POSTGRES_HOST'] ?? 'localhost';
+  final port = int.parse(Platform.environment['POSTGRES_PORT'] ?? '5432');
+  final user = Platform.environment['POSTGRES_USER'] ?? 'omega';
+  final password = Platform.environment['POSTGRES_PASSWORD'] ?? 'omega';
+  final db = Platform.environment['POSTGRES_DB'] ?? 'omega';
 
-    return NativeDatabase.createInBackground(file);
-  });
+  return PgDatabase(
+    endpoint: Endpoint(
+      host: host,
+      port: port,
+      database: db,
+      username: user,
+      password: password,
+    ),
+    settings: ConnectionSettings(sslMode: SslMode.disable),
+  );
 }

@@ -13,8 +13,8 @@ RUN dart compile exe bin/bot.dart -o bin/bot
 # Build final image with sqlite3 libs and the compiled bot binary
 FROM alpine:latest
 
-# Install the package with `libsqlite3.so`.
-RUN apk add --no-cache sqlite-dev
+# Install postgres and runtime dependencies
+RUN apk add --no-cache postgresql postgresql-client
 
 # TODO couldn't be bothered
 WORKDIR /app
@@ -22,5 +22,6 @@ COPY --from=build /runtime/ /
 COPY --from=build /app/bin/bot /app/bin/
 
 # Start server.
-CMD ["/app/bin/bot"]
+COPY docker-entrypoint.sh /app/
+CMD ["/app/docker-entrypoint.sh"]
 

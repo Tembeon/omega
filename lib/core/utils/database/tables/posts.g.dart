@@ -44,10 +44,18 @@ class $PostsTableTable extends PostsTable
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
   late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
-      'date', aliasedName, false,
-      check: () => date.isBiggerThan(currentDateAndTime),
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: true);
+      'date', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _keepPostMeta =
+      const VerificationMeta('keepPost');
+  @override
+  late final GeneratedColumn<bool> keepPost = GeneratedColumn<bool>(
+      'keep_post', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("keep_post" IN (0, 1))'),
+      defaultValue: const Constant(false));
   static const VerificationMeta _timezoneMeta =
       const VerificationMeta('timezone');
   @override
@@ -80,6 +88,7 @@ class $PostsTableTable extends PostsTable
         author,
         maxMembers,
         date,
+        keepPost,
         timezone,
         createdAt,
         isDeleted
@@ -133,8 +142,10 @@ class $PostsTableTable extends PostsTable
     if (data.containsKey('date')) {
       context.handle(
           _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
-    } else if (isInserting) {
-      context.missing(_dateMeta);
+    }
+    if (data.containsKey('keep_post')) {
+      context.handle(_keepPostMeta,
+          keepPost.isAcceptableOrUnknown(data['keep_post']!, _keepPostMeta));
     }
     if (data.containsKey('timezone')) {
       context.handle(_timezoneMeta,
@@ -170,7 +181,9 @@ class $PostsTableTable extends PostsTable
       maxMembers: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}max_members'])!,
       date: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}date']),
+      keepPost: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}keep_post'])!,
       timezone: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}timezone'])!,
       createdAt: attachedDatabase.typeMapping
@@ -203,7 +216,11 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
   final int maxMembers;
 
   /// A DateTime column named `date`. This stores the start date of the post.
-  final DateTime date;
+  /// Can be null if time is not set yet.
+  final DateTime? date;
+
+  /// Whether post should stay after firing and reset time.
+  final bool keepPost;
 
   /// A integer column named `timezone`. This stores the timezone of the post.
   final int timezone;
@@ -219,7 +236,8 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
       required this.description,
       required this.author,
       required this.maxMembers,
-      required this.date,
+      this.date,
+      required this.keepPost,
       required this.timezone,
       required this.createdAt,
       required this.isDeleted});
@@ -231,7 +249,10 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
     map['description'] = Variable<String>(description);
     map['author'] = Variable<int>(author);
     map['max_members'] = Variable<int>(maxMembers);
-    map['date'] = Variable<DateTime>(date);
+    if (!nullToAbsent || date != null) {
+      map['date'] = Variable<DateTime>(date);
+    }
+    map['keep_post'] = Variable<bool>(keepPost);
     map['timezone'] = Variable<int>(timezone);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['is_deleted'] = Variable<bool>(isDeleted);
@@ -245,7 +266,8 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
       description: Value(description),
       author: Value(author),
       maxMembers: Value(maxMembers),
-      date: Value(date),
+      date: date == null && nullToAbsent ? const Value.absent() : Value(date),
+      keepPost: Value(keepPost),
       timezone: Value(timezone),
       createdAt: Value(createdAt),
       isDeleted: Value(isDeleted),
@@ -261,7 +283,8 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
       description: serializer.fromJson<String>(json['description']),
       author: serializer.fromJson<int>(json['author']),
       maxMembers: serializer.fromJson<int>(json['maxMembers']),
-      date: serializer.fromJson<DateTime>(json['date']),
+      date: serializer.fromJson<DateTime?>(json['date']),
+      keepPost: serializer.fromJson<bool>(json['keepPost']),
       timezone: serializer.fromJson<int>(json['timezone']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
@@ -276,7 +299,8 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
       'description': serializer.toJson<String>(description),
       'author': serializer.toJson<int>(author),
       'maxMembers': serializer.toJson<int>(maxMembers),
-      'date': serializer.toJson<DateTime>(date),
+      'date': serializer.toJson<DateTime?>(date),
+      'keepPost': serializer.toJson<bool>(keepPost),
       'timezone': serializer.toJson<int>(timezone),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
@@ -289,7 +313,8 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
           String? description,
           int? author,
           int? maxMembers,
-          DateTime? date,
+          Value<DateTime?> date = const Value.absent(),
+          bool? keepPost,
           int? timezone,
           DateTime? createdAt,
           bool? isDeleted}) =>
@@ -299,7 +324,8 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
         description: description ?? this.description,
         author: author ?? this.author,
         maxMembers: maxMembers ?? this.maxMembers,
-        date: date ?? this.date,
+        date: date.present ? date.value : this.date,
+        keepPost: keepPost ?? this.keepPost,
         timezone: timezone ?? this.timezone,
         createdAt: createdAt ?? this.createdAt,
         isDeleted: isDeleted ?? this.isDeleted,
@@ -313,6 +339,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
           ..write('author: $author, ')
           ..write('maxMembers: $maxMembers, ')
           ..write('date: $date, ')
+          ..write('keepPost: $keepPost, ')
           ..write('timezone: $timezone, ')
           ..write('createdAt: $createdAt, ')
           ..write('isDeleted: $isDeleted')
@@ -322,7 +349,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
 
   @override
   int get hashCode => Object.hash(postMessageId, title, description, author,
-      maxMembers, date, timezone, createdAt, isDeleted);
+      maxMembers, date, keepPost, timezone, createdAt, isDeleted);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -333,6 +360,7 @@ class PostsTableData extends DataClass implements Insertable<PostsTableData> {
           other.author == this.author &&
           other.maxMembers == this.maxMembers &&
           other.date == this.date &&
+          other.keepPost == this.keepPost &&
           other.timezone == this.timezone &&
           other.createdAt == this.createdAt &&
           other.isDeleted == this.isDeleted);
@@ -344,7 +372,8 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
   final Value<String> description;
   final Value<int> author;
   final Value<int> maxMembers;
-  final Value<DateTime> date;
+  final Value<DateTime?> date;
+  final Value<bool> keepPost;
   final Value<int> timezone;
   final Value<DateTime> createdAt;
   final Value<bool> isDeleted;
@@ -356,6 +385,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     this.author = const Value.absent(),
     this.maxMembers = const Value.absent(),
     this.date = const Value.absent(),
+    this.keepPost = const Value.absent(),
     this.timezone = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
@@ -367,7 +397,8 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     required String description,
     required int author,
     required int maxMembers,
-    required DateTime date,
+    this.date = const Value.absent(),
+    this.keepPost = const Value.absent(),
     required int timezone,
     this.createdAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
@@ -377,7 +408,6 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
         description = Value(description),
         author = Value(author),
         maxMembers = Value(maxMembers),
-        date = Value(date),
         timezone = Value(timezone);
   static Insertable<PostsTableData> custom({
     Expression<int>? postMessageId,
@@ -386,6 +416,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     Expression<int>? author,
     Expression<int>? maxMembers,
     Expression<DateTime>? date,
+    Expression<bool>? keepPost,
     Expression<int>? timezone,
     Expression<DateTime>? createdAt,
     Expression<bool>? isDeleted,
@@ -398,6 +429,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
       if (author != null) 'author': author,
       if (maxMembers != null) 'max_members': maxMembers,
       if (date != null) 'date': date,
+      if (keepPost != null) 'keep_post': keepPost,
       if (timezone != null) 'timezone': timezone,
       if (createdAt != null) 'created_at': createdAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
@@ -411,7 +443,8 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
       Value<String>? description,
       Value<int>? author,
       Value<int>? maxMembers,
-      Value<DateTime>? date,
+      Value<DateTime?>? date,
+      Value<bool>? keepPost,
       Value<int>? timezone,
       Value<DateTime>? createdAt,
       Value<bool>? isDeleted,
@@ -423,6 +456,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
       author: author ?? this.author,
       maxMembers: maxMembers ?? this.maxMembers,
       date: date ?? this.date,
+      keepPost: keepPost ?? this.keepPost,
       timezone: timezone ?? this.timezone,
       createdAt: createdAt ?? this.createdAt,
       isDeleted: isDeleted ?? this.isDeleted,
@@ -451,6 +485,9 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
     }
+    if (keepPost.present) {
+      map['keep_post'] = Variable<bool>(keepPost.value);
+    }
     if (timezone.present) {
       map['timezone'] = Variable<int>(timezone.value);
     }
@@ -475,6 +512,7 @@ class PostsTableCompanion extends UpdateCompanion<PostsTableData> {
           ..write('author: $author, ')
           ..write('maxMembers: $maxMembers, ')
           ..write('date: $date, ')
+          ..write('keepPost: $keepPost, ')
           ..write('timezone: $timezone, ')
           ..write('createdAt: $createdAt, ')
           ..write('isDeleted: $isDeleted, ')
@@ -745,7 +783,8 @@ typedef $$PostsTableTableInsertCompanionBuilder = PostsTableCompanion Function({
   required String description,
   required int author,
   required int maxMembers,
-  required DateTime date,
+  Value<DateTime?> date,
+  Value<bool> keepPost,
   required int timezone,
   Value<DateTime> createdAt,
   Value<bool> isDeleted,
@@ -757,7 +796,8 @@ typedef $$PostsTableTableUpdateCompanionBuilder = PostsTableCompanion Function({
   Value<String> description,
   Value<int> author,
   Value<int> maxMembers,
-  Value<DateTime> date,
+  Value<DateTime?> date,
+  Value<bool> keepPost,
   Value<int> timezone,
   Value<DateTime> createdAt,
   Value<bool> isDeleted,
@@ -789,7 +829,8 @@ class $$PostsTableTableTableManager extends RootTableManager<
             Value<String> description = const Value.absent(),
             Value<int> author = const Value.absent(),
             Value<int> maxMembers = const Value.absent(),
-            Value<DateTime> date = const Value.absent(),
+            Value<DateTime?> date = const Value.absent(),
+            Value<bool> keepPost = const Value.absent(),
             Value<int> timezone = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<bool> isDeleted = const Value.absent(),
@@ -802,6 +843,7 @@ class $$PostsTableTableTableManager extends RootTableManager<
             author: author,
             maxMembers: maxMembers,
             date: date,
+            keepPost: keepPost,
             timezone: timezone,
             createdAt: createdAt,
             isDeleted: isDeleted,
@@ -813,7 +855,8 @@ class $$PostsTableTableTableManager extends RootTableManager<
             required String description,
             required int author,
             required int maxMembers,
-            required DateTime date,
+            Value<DateTime?> date = const Value.absent(),
+            Value<bool> keepPost = const Value.absent(),
             required int timezone,
             Value<DateTime> createdAt = const Value.absent(),
             Value<bool> isDeleted = const Value.absent(),
@@ -826,6 +869,7 @@ class $$PostsTableTableTableManager extends RootTableManager<
             author: author,
             maxMembers: maxMembers,
             date: date,
+            keepPost: keepPost,
             timezone: timezone,
             createdAt: createdAt,
             isDeleted: isDeleted,
@@ -876,6 +920,11 @@ class $$PostsTableTableFilterComposer
 
   ColumnFilters<DateTime> get date => $state.composableBuilder(
       column: $state.table.date,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get keepPost => $state.composableBuilder(
+      column: $state.table.keepPost,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -938,6 +987,11 @@ class $$PostsTableTableOrderingComposer
 
   ColumnOrderings<DateTime> get date => $state.composableBuilder(
       column: $state.table.date,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get keepPost => $state.composableBuilder(
+      column: $state.table.keepPost,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

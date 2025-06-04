@@ -57,13 +57,15 @@ final class PostScheduler {
     final now = DateTime.now();
     final posts = await _database.getAllPosts();
     for (final post in posts) {
+      final date = post.date;
+      if (date == null) continue;
       // skip post if difference between now and post time is more than 1 hour
-      if (now.difference(post.date).inHours > 1) {
+      if (now.difference(date).inHours > 1) {
         l.i('[Scheduler] Schedule post with id ${post.postMessageId} will be deleted because it is too old');
         await _deleteLFGPostAfter(postID: post.postMessageId, duration: Duration.zero);
       }
 
-      _posts[post.postMessageId] = post.date;
+      _posts[post.postMessageId] = date;
     }
   }
 
