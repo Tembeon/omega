@@ -1,4 +1,5 @@
 import '../../../../core/const/command_exceptions.dart';
+import '../../../../core/l10n/messages.dart';
 import '../../../interactor/interactor_component.dart';
 
 class LeaveMessageComponent extends InteractorMessageComponent {
@@ -22,15 +23,17 @@ class LeaveMessageComponent extends InteractorMessageComponent {
 
     try {
       await lfgManager.removeMemberFrom(event.interaction.message!, event.interaction.member!.user!);
-      await event.interaction.respond(MessageBuilder(content: 'Вы покинули LFG'), isEphemeral: true);
+      await event.interaction.respond(MessageBuilder(content: leaveComponentLeft), isEphemeral: true);
     } on CommandException catch (e) {
       await event.interaction.respond(MessageBuilder(content: e.toHumanMessage()), isEphemeral: true);
     } on Object catch (e, st) {
+      final stackText = st.toString();
+      final truncatedStack = stackText.length > 200 ? stackText.substring(0, 200) : stackText;
       await event.interaction.respond(
         MessageBuilder(
-          content: 'Произошла неизвестная ошибка при удалении вас из LFG\n'
-              'Метаданные: $e\n'
-              'Стек вызовов: ${st.toString().substring(0, 200)}',
+          content: '$leaveComponentUnknownErrorTitle\n'
+              '${generalMetadata(e.toString())}\n'
+              '${generalStackTrace(truncatedStack)}',
         ),
         isEphemeral: true,
       );

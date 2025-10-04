@@ -34,4 +34,4 @@ dev_dependencies:
   test: ^1.25.8
   build_runner: ^2.4.11
   drift_dev: ^2.18.0
-
+  intl_translation: ^0.20.1

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:l/l.dart';
 
 import '../../../../core/data/models/activity_data.dart';
+import '../../../../core/l10n/messages.dart';
 import '../../../../core/utils/event_parsers.dart';
 import '../../../interactor/component_interceptor.dart';
 import '../../../interactor/interactor_component.dart';
@@ -23,32 +24,32 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
     return ApplicationCommandBuilder(
       defaultMemberPermissions: Permissions.administrator,
       name: 'activity',
-      description: 'Настройки активностей',
+      description: activityCommandDescription,
       type: ApplicationCommandType.chatInput,
       options: [
         // add activity command
         CommandOptionBuilder.subCommand(
           name: 'add',
-          description: 'Добавить активность',
+          description: activityAddDescription,
           options: [
             CommandOptionBuilder.string(
               name: 'name',
-              description: 'Введите название активности',
+              description: commandOptionNameDescription,
               isRequired: true,
             ),
             CommandOptionBuilder.integer(
               name: 'members',
-              description: 'Введите максимальное количество участников',
+              description: promptEnterMaxMembers,
               isRequired: true,
             ),
             CommandOptionBuilder.string(
               name: 'banner',
-              description: 'Введите URL баннера',
+              description: promptEnterBannerUrl,
               isRequired: false,
             ),
             CommandOptionBuilder.attachment(
               name: 'banner_file',
-              description: 'Или загрузите баннер',
+              description: promptUploadBanner,
               isRequired: false,
             ),
           ],
@@ -56,11 +57,11 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
         // remove activity command
         CommandOptionBuilder.subCommand(
           name: 'remove',
-          description: 'Удалить активность',
+          description: activityRemoveDescription,
           options: [
             CommandOptionBuilder.string(
               name: 'name',
-              description: 'Введите название активности',
+              description: commandOptionNameDescription,
               choices: await _getActivityChoices(services.settings),
               isRequired: true,
             ),
@@ -68,15 +69,15 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
         ),
         CommandOptionBuilder.subCommandGroup(
           name: 'roles',
-          description: 'Управлять ролями активности',
+          description: activityRolesGroupDescription,
           options: [
             CommandOptionBuilder.subCommand(
               name: 'add',
-              description: 'Добавить роль в базу',
+              description: activityRolesAddDescription,
               options: [
                 CommandOptionBuilder.string(
                   name: 'role',
-                  description: 'Введите название роли (можно вставлять эмодзи)',
+                  description: promptEnterRoleNameWithEmoji,
                   isRequired: true,
                   maxLength: 100,
                   minLength: 1,
@@ -85,11 +86,11 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
             ),
             CommandOptionBuilder.subCommand(
               name: 'remove',
-              description: 'Убрать роль из базы',
+              description: activityRolesRemoveDescription,
               options: [
                 CommandOptionBuilder.string(
                   name: 'role',
-                  description: 'Введите название роли',
+                  description: promptEnterRoleName,
                   isRequired: true,
                   maxLength: 100,
                   minLength: 1,
@@ -99,11 +100,11 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
             ),
             CommandOptionBuilder.subCommand(
               name: 'connect',
-              description: 'Привязать роль к активности',
+              description: activityRolesConnectDescription,
               options: [
                 CommandOptionBuilder.string(
                   name: 'role',
-                  description: 'Введите название роли',
+                  description: promptEnterRoleName,
                   isRequired: true,
                   maxLength: 100,
                   minLength: 1,
@@ -111,13 +112,13 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
                 ),
                 CommandOptionBuilder.integer(
                   name: 'quantity',
-                  description: 'Сколько участников требуется для этой роли',
+                  description: promptEnterRoleQuantity,
                   isRequired: true,
                   minValue: 1,
                 ),
                 CommandOptionBuilder.string(
                   name: 'activity',
-                  description: 'Введите название активности',
+                  description: commandOptionNameDescription,
                   choices: await _getActivityChoices(services.settings),
                   isRequired: true,
                 ),
@@ -125,11 +126,11 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
             ),
             CommandOptionBuilder.subCommand(
               name: 'disconnect',
-              description: 'Отвязать роль от активности',
+              description: activityRolesDisconnectDescription,
               options: [
                 CommandOptionBuilder.string(
                   name: 'role',
-                  description: 'Введите название роли',
+                  description: promptEnterRoleName,
                   isRequired: true,
                   maxLength: 100,
                   minLength: 1,
@@ -137,7 +138,7 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
                 ),
                 CommandOptionBuilder.string(
                   name: 'activity',
-                  description: 'Введите название активности',
+                  description: commandOptionNameDescription,
                   choices: await _getActivityChoices(services.settings),
                   isRequired: true,
                   maxLength: 100,
@@ -186,8 +187,8 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
     unawaited(event.interaction.acknowledge(isEphemeral: false));
     String? bannerPath;
     final options = event.interaction.data.options!;
-    final activityName = findInOption<String>('name', options);
-    final maxMembers = findInOption<int>('members', options);
+    final activityName = findInOption<String>('name', options)!;
+    final maxMembers = findInOption<int>('members', options)!;
     final bannerUrl = findInOption<String>('banner', options);
     final bannerFileValue = findInOption<String>('banner_file', options);
     final bannerFile = bannerFileValue != null ? Snowflake(int.parse(bannerFileValue)) : null;
@@ -214,8 +215,8 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
     final setting = services.settings;
     await setting.addActivity(
       ActivityData(
-        name: activityName!,
-        maxMembers: maxMembers!,
+        name: activityName,
+        maxMembers: maxMembers,
         bannerUrl: bannerPath,
         roles: null,
         enabled: true,
@@ -223,7 +224,7 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
     );
 
     await event.interaction.respond(
-      MessageBuilder(content: 'Активность "$activityName" добавлена'),
+      MessageBuilder(content: activityAddedMessage(activityName)),
       isEphemeral: false,
     );
   }
@@ -232,13 +233,13 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
   ) async {
-    final activityName = findInOption<String>('name', event.interaction.data.options!);
+    final activityName = findInOption<String>('name', event.interaction.data.options!)!;
 
     final setting = services.settings;
-    await setting.removeActivity(activityName!);
+    await setting.removeActivity(activityName);
 
     await event.interaction.respond(
-      MessageBuilder(content: 'Активность "$activityName" удалена'),
+      MessageBuilder(content: activityRemovedMessage(activityName)),
       isEphemeral: false,
     );
   }
@@ -252,13 +253,13 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
   ) async {
-    final role = findInOption<String>('role', event.interaction.data.options!);
+    final role = findInOption<String>('role', event.interaction.data.options!)!;
 
     final setting = services.settings;
-    await setting.addRole(role!);
+    await setting.addRole(role);
 
     await event.interaction.respond(
-      MessageBuilder(content: 'Роль "$role" добавлена к базу данных'),
+      MessageBuilder(content: roleAddedToDatabaseMessage(role)),
       isEphemeral: true,
     );
   }
@@ -267,13 +268,13 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
   ) async {
-    final role = findInOption<String>('role', event.interaction.data.options!);
+    final role = findInOption<String>('role', event.interaction.data.options!)!;
 
     final setting = services.settings;
-    await setting.removeRole(role!);
+    await setting.removeRole(role);
 
     await event.interaction.respond(
-      MessageBuilder(content: 'Роль "$role" удалена из базы данных'),
+      MessageBuilder(content: roleRemovedFromDatabaseMessage(role)),
       isEphemeral: true,
     );
   }
@@ -282,15 +283,15 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
   ) async {
-    final role = findInOption<String>('role', event.interaction.data.options!);
-    final activity = findInOption<String>('activity', event.interaction.data.options!);
-    final quantity = findInOption<int>('quantity', event.interaction.data.options!);
+    final role = findInOption<String>('role', event.interaction.data.options!)!;
+    final activity = findInOption<String>('activity', event.interaction.data.options!)!;
+    final quantity = findInOption<int>('quantity', event.interaction.data.options!)!;
 
     final setting = services.settings;
-    await setting.addRoleToActivity(activity!, role!, quantity!);
+    await setting.addRoleToActivity(activity, role, quantity);
 
     await event.interaction.respond(
-      MessageBuilder(content: 'Роль "$role" привязана к активности "$activity"'),
+      MessageBuilder(content: roleConnectedToActivityMessage(role, activity)),
       isEphemeral: true,
     );
   }
@@ -299,14 +300,14 @@ class ActivityCommandsComponent extends InteractorCommandComponent {
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
   ) async {
-    final role = findInOption<String>('role', event.interaction.data.options!);
-    final activity = findInOption<String>('activity', event.interaction.data.options!);
+    final role = findInOption<String>('role', event.interaction.data.options!)!;
+    final activity = findInOption<String>('activity', event.interaction.data.options!)!;
 
     final setting = services.settings;
-    await setting.removeRoleFromActivity(activity!, role!);
+    await setting.removeRoleFromActivity(activity, role);
 
     await event.interaction.respond(
-      MessageBuilder(content: 'Роль "$role" отвязана от активности "$activity"'),
+      MessageBuilder(content: roleDisconnectedFromActivityMessage(role, activity)),
       isEphemeral: true,
     );
   }

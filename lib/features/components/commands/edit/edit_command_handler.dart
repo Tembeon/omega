@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:l/l.dart';
 
+import '../../../../core/l10n/messages.dart';
 import '../../../../core/utils/time_convert.dart';
 import '../../../interactor/interactor_component.dart';
 
@@ -10,7 +11,7 @@ class EditCommandHandler extends InteractorCommandComponent {
   @override
   Future<ApplicationCommandBuilder> build(Services services) async {
     return ApplicationCommandBuilder(
-      name: 'Редактировать LFG',
+      name: editCommandName,
       type: ApplicationCommandType.message,
     );
   }
@@ -27,7 +28,7 @@ class EditCommandHandler extends InteractorCommandComponent {
     // message and channel should never be null
     if (message == null || channel == null) {
       await event.interaction.respond(
-        MessageBuilder(content: 'Не удалось редактировать сообщение [NotFound]'),
+        MessageBuilder(content: editCommandMessageNotFound),
         isEphemeral: true,
       );
       return;
@@ -38,7 +39,7 @@ class EditCommandHandler extends InteractorCommandComponent {
 
     if (postData == null) {
       await event.interaction.respond(
-        MessageBuilder(content: 'Данное сообщение не содержит LFG [LFGNotFound]'),
+        MessageBuilder(content: selectedMessageIsNotLfg),
         isEphemeral: true,
       );
       return;
@@ -49,8 +50,7 @@ class EditCommandHandler extends InteractorCommandComponent {
 
       await event.interaction.respond(
         MessageBuilder(
-          content: 'Вы не можете редактировать это LFG, '
-              'т.к. не являетесь его автором [NotAuthor]',
+          content: editCommandNotAuthor,
         ),
         isEphemeral: true,
       );
@@ -62,14 +62,14 @@ class EditCommandHandler extends InteractorCommandComponent {
     await event.interaction.respondModal(
       ModalBuilder(
         customId: 'edit_modal_${postData.postMessageId}',
-        title: 'Редактирование LFG',
+        title: editCommandModalTitle,
         components: [
           ActionRowBuilder(
             components: [
               TextInputBuilder(
                 customId: 'edit_description',
-                label: 'Описание',
-                placeholder: 'Введите новое описание',
+                label: editCommandDescriptionLabel,
+                placeholder: editCommandDescriptionPlaceholder,
                 value: postData.description,
                 style: TextInputStyle.paragraph,
               ),
@@ -79,8 +79,8 @@ class EditCommandHandler extends InteractorCommandComponent {
             components: [
               TextInputBuilder(
                 customId: 'edit_date',
-                label: 'Дата начала',
-                placeholder: 'Введите новое время начала',
+                label: editCommandDateLabel,
+                placeholder: editCommandStartTimePlaceholder,
                 value: DateFormat('dd MM yyyy').format(postData.date.add(Duration(hours: postData.timezone)).toUtc()),
                 style: TextInputStyle.short,
               ),
@@ -90,8 +90,8 @@ class EditCommandHandler extends InteractorCommandComponent {
             components: [
               TextInputBuilder(
                 customId: 'edit_time',
-                label: 'Время начала',
-                placeholder: 'Введите новое время начала',
+                label: editCommandTimeLabel,
+                placeholder: editCommandStartTimePlaceholder,
                 value: DateFormat('HH mm').format(postData.date.add(Duration(hours: postData.timezone)).toUtc()),
                 style: TextInputStyle.short,
               ),
@@ -154,7 +154,7 @@ class EditCommandHandler extends InteractorCommandComponent {
 
     if (messageId == null || channel == null) {
       await modalEvent.interaction.respond(
-        MessageBuilder(content: 'Не удалось отредактировать сообщение [NotFound]'),
+        MessageBuilder(content: editCommandModalMessageNotFound),
         isEphemeral: true,
       );
       return;
@@ -166,7 +166,7 @@ class EditCommandHandler extends InteractorCommandComponent {
     await lfgManager.update(message, description: newDescription, unixTime: newUnixTime);
 
     await modalEvent.interaction.respond(
-      MessageBuilder(content: 'Редактирование завершено'),
+      MessageBuilder(content: editCommandCompleted),
       isEphemeral: true,
     );
   }

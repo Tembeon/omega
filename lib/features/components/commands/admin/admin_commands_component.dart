@@ -1,3 +1,4 @@
+import '../../../../core/l10n/messages.dart';
 import '../../../../core/utils/event_parsers.dart';
 import '../../../interactor/component_interceptor.dart';
 import '../../../interactor/interactor_component.dart';
@@ -21,17 +22,17 @@ class AdminCommandComponent extends InteractorCommandComponent {
     return ApplicationCommandBuilder(
       defaultMemberPermissions: Permissions.administrator,
       name: 'admin',
-      description: 'Команды администратора',
+      description: adminCommandDescription,
       type: ApplicationCommandType.chatInput,
       options: [
         // delete LFG command
         CommandOptionBuilder.subCommand(
           name: 'delete',
-          description: 'Удалить LFG',
+          description: adminDeleteSubcommandDescription,
           options: [
             CommandOptionBuilder.string(
               name: 'message_id',
-              description: 'ID сообщения для удаления',
+              description: adminDeleteMessageIdDescription,
               isRequired: true,
             ),
           ],
@@ -39,21 +40,21 @@ class AdminCommandComponent extends InteractorCommandComponent {
         // health command
         CommandOptionBuilder.subCommand(
           name: 'health',
-          description: 'Узнать состояние бота',
+          description: adminHealthDescription,
           options: [],
         ),
         // set commands
         CommandOptionBuilder.subCommandGroup(
           name: 'set',
-          description: 'Настройки бота',
+          description: adminSetGroupDescription,
           options: [
             CommandOptionBuilder.subCommand(
               name: 'lfg_channel',
-              description: 'Установить LFG канал',
+              description: adminSetLfgChannelDescription,
               options: [
                 CommandOptionBuilder.channel(
                   name: 'channel',
-                  description: 'канал',
+                  description: adminChannelOptionDescription,
                   channelTypes: [ChannelType.guildText],
                   isRequired: false,
                 ),
@@ -61,11 +62,11 @@ class AdminCommandComponent extends InteractorCommandComponent {
             ),
             CommandOptionBuilder.subCommand(
               name: 'promo_channel',
-              description: 'Установить канал для оповещений о LFG',
+              description: adminSetPromoChannelDescription,
               options: [
                 CommandOptionBuilder.channel(
                   name: 'channel',
-                  description: 'канал',
+                  description: adminChannelOptionDescription,
                   channelTypes: [ChannelType.guildText],
                   isRequired: false,
                 ),
@@ -75,20 +76,20 @@ class AdminCommandComponent extends InteractorCommandComponent {
         ),
         CommandOptionBuilder.subCommandGroup(
           name: 'promotes',
-          description: 'Настройки объявлений бота',
+          description: adminPromotesGroupDescription,
           options: [
             CommandOptionBuilder.subCommand(
               name: 'add',
-              description: 'Добавить новое сообщение',
+              description: adminPromotesAddDescription,
               options: [
                 CommandOptionBuilder.string(
                   name: 'message',
-                  description: 'Шаблоны: {AUTHOR}, {DESCRIPTION}, {DATE}, {MAX_MEMBERS}, {NAME}, {MESSAGE_URL}',
+                  description: adminPromotesTemplateHelp,
                   isRequired: true,
                 ),
                 CommandOptionBuilder.integer(
                   name: 'weight',
-                  description: 'Вес сообщения',
+                  description: adminPromotesWeightDescription,
                   isRequired: false,
                   minValue: 1,
                   maxValue: 10,
@@ -97,42 +98,42 @@ class AdminCommandComponent extends InteractorCommandComponent {
             ),
             CommandOptionBuilder.subCommand(
               name: 'remove',
-              description: 'Удалить сообщение по ID',
+              description: adminPromotesRemoveDescription,
               options: [
                 CommandOptionBuilder.integer(
                   name: 'id',
-                  description: 'ID сообщения',
+                  description: adminPromotesMessageIdDescription,
                 ),
               ],
             ),
             CommandOptionBuilder.subCommand(
               name: 'list',
-              description: 'Показать все сообщения',
+              description: adminPromotesListDescription,
               options: [],
             ),
           ],
         ),
         CommandOptionBuilder.subCommandGroup(
           name: 'bot',
-          description: 'Тут можно получить информацию о настройках бота',
+          description: adminBotGroupDescription,
           options: [
             CommandOptionBuilder.subCommand(
               name: 'channels',
-              description: 'Каналы, в которых бот работает',
+              description: adminBotChannelsDescription,
               options: [],
             ),
             CommandOptionBuilder.subCommand(
               name: 'roles',
-              description: 'Получить список ролей для активности',
+              description: adminBotRolesDescription,
               options: [
                 CommandOptionBuilder.string(
                   name: 'activity',
-                  description: 'Активность',
+                  description: adminActivityOptionDescription,
                   isRequired: true,
                 ),
                 CommandOptionBuilder.string(
                   name: 'role',
-                  description: 'role',
+                  description: adminRoleOptionDescription,
                   choices: await services.settings.getAllRoles().then(
                         (roles) => roles
                             .map(
@@ -188,22 +189,23 @@ class AdminCommandComponent extends InteractorCommandComponent {
     final scheduler = services.postScheduler;
 
     final response = StringBuffer()
-      ..writeln('**Stats:**')
-      ..writeln('Ping: ${now - timestamp}ms')
+      ..writeln(adminHealthStatsHeader)
+      ..writeln(adminHealthPing(now - timestamp))
       ..writeln()
-      ..writeln('**LFGs:**');
+      ..writeln(adminHealthLfgHeader);
 
     // If any exception was caught, then show it to user.
     try {
-      response.writeln('Scheduled: ${scheduler.getScheduledPostsCount()}');
+      response.writeln(adminHealthScheduledCount(scheduler.getScheduledPostsCount()));
     } on Object catch (e) {
-      response.writeln('Scheduler unavailable: $e');
+      response.writeln(adminHealthSchedulerUnavailable(e.toString()));
     }
 
     try {
-      response.writeln('Total: ${await database.getAllPostsCount()}');
+      final totalPosts = await database.getAllPostsCount();
+      response.writeln(adminHealthTotalCount(totalPosts ?? 0));
     } on Object catch (e) {
-      response.writeln('Database unavailable: $e');
+      response.writeln(adminHealthDatabaseUnavailable(e.toString()));
     }
 
     await event.interaction.respond(
@@ -231,7 +233,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
     // if post can't be found in database, then it's not LFG
     if (postData == null) {
       await event.interaction.respond(
-        MessageBuilder(content: 'Данное сообщение не содержит LFG [LFGNotFound]'),
+        MessageBuilder(content: selectedMessageIsNotLfg),
         isEphemeral: true,
       );
       return;
@@ -243,7 +245,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
 
     await event.interaction.respond(
       MessageBuilder(
-        content: 'LFG пользователя "$userName", с активностью "${postData.title}" удалено.',
+        content: adminDeleteSuccess(userName ?? commonUnknownUser, postData.title),
       ),
       isEphemeral: true,
     );
@@ -260,7 +262,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
     await settings.updateLFGChannel(channel?.value);
 
     await event.interaction.respond(
-      MessageBuilder(content: channel != null ? 'LFG канал установлен' : 'LFG канал удален'),
+      MessageBuilder(content: channel != null ? adminSetLfgChannelSet : adminSetLfgChannelCleared),
       isEphemeral: true,
     );
   }
@@ -277,7 +279,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
     await settings.updatePromotesChannel(channel?.value);
 
     await event.interaction.respond(
-      MessageBuilder(content: channel != null ? 'Канал уведомлений установлен' : 'Канал уведомлений удален'),
+      MessageBuilder(content: channel != null ? adminSetPromoChannelSet : adminSetPromoChannelCleared),
       isEphemeral: true,
     );
   }
@@ -287,14 +289,14 @@ class AdminCommandComponent extends InteractorCommandComponent {
     Services services,
   ) async {
     final message = findInOption<String>('message', event.interaction.data.options!);
-    final weight = findInOption<int>('вес', event.interaction.data.options!) ?? 1;
+    final weight = findInOption<int>('weight', event.interaction.data.options!) ?? 1;
     if (message == null) return;
 
     final settings = services.settings;
     await settings.addPromoteMessage(message, weight);
 
     await event.interaction.respond(
-      MessageBuilder(content: 'Сообщение добавлено'),
+      MessageBuilder(content: adminPromoteAdded),
       isEphemeral: true,
     );
   }
@@ -310,7 +312,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
     await settings.removePromoteMessage(id);
 
     await event.interaction.respond(
-      MessageBuilder(content: 'Сообщение удалено'),
+      MessageBuilder(content: adminPromoteRemoved),
       isEphemeral: true,
     );
   }
@@ -323,7 +325,7 @@ class AdminCommandComponent extends InteractorCommandComponent {
     final messages = await settings.getPromoteMessages();
 
     final response = StringBuffer()
-      ..writeln('**Сообщения:**')
+      ..writeln(adminPromoteListHeader)
       ..writeln();
 
     for (final message in messages.entries) {
@@ -345,10 +347,10 @@ class AdminCommandComponent extends InteractorCommandComponent {
     final promoChannel = await settings.getPromotesChannel();
 
     final StringBuffer response = StringBuffer()
-      ..write('LFG канал: ')
-      ..writeln(lfgChannel != null ? '<#$lfgChannel>' : 'Не установлен')
-      ..write('Канал уведомлений: ')
-      ..write(promoChannel != null ? '<#$promoChannel>' : 'Не установлен');
+      ..write(adminBotChannelPrefix)
+      ..writeln(lfgChannel != null ? '<#$lfgChannel>' : commonValueNotSet)
+      ..write(adminBotPromoChannelPrefix)
+      ..write(promoChannel != null ? '<#$promoChannel>' : commonValueNotSet);
 
     await event.interaction.respond(
       MessageBuilder(
@@ -362,16 +364,17 @@ class AdminCommandComponent extends InteractorCommandComponent {
     InteractionCreateEvent<ApplicationCommandInteraction> event,
     Services services,
   ) async {
-    final activityRaw = findInOption<String>('activity', event.interaction.data.options!);
-    final activity = int.parse(activityRaw!);
-    final role = findInOption<String>('role', event.interaction.data.options!);
-    if (role == null) return;
+    final activityRaw = findInOption<String>('activity', event.interaction.data.options!)!;
+    final activityId = int.parse(activityRaw);
+    final roleOption = findInOption<String>('role', event.interaction.data.options!);
+    if (roleOption == null) return;
+    final role = roleOption;
 
     final settings = services.settings;
-    final roles = await settings.getFreeRoleCount(id: activity, role: role);
+    final roles = await settings.getFreeRoleCount(id: activityId, role: role);
 
     await event.interaction.respond(
-      MessageBuilder(content: 'Активность "$activity" имеет $roles свободных ролей "$role"'),
+      MessageBuilder(content: adminRolesAvailability(activityRaw, roles, role)),
       isEphemeral: true,
     );
   }

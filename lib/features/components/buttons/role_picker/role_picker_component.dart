@@ -2,6 +2,7 @@ import 'package:l/l.dart';
 
 import '../../../../core/data/models/activity_data.dart';
 import '../../../../core/data/models/taken_roles.dart';
+import '../../../../core/l10n/messages.dart';
 import '../../../../core/utils/event_parsers.dart';
 import '../../../interactor/interactor_component.dart';
 
@@ -42,7 +43,7 @@ class RolePickerComponent {
         .toList();
 
     return MessageBuilder(
-      content: 'Выберите роль для участия:',
+      content: joinComponentPromptWithColon,
       components: [
         ActionRowBuilder(
           components: [

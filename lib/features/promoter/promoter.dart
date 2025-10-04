@@ -4,6 +4,7 @@ import 'package:l/l.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/const/command_exceptions.dart';
+import '../../core/l10n/messages.dart';
 import '../../core/utils/color_palette.dart';
 import '../lfg_manager/data/models/register_activity.dart';
 import '../settings/settings.dart';
@@ -41,8 +42,7 @@ class Promoter {
 
     if (channel.type != ChannelType.guildText) {
       throw CantRespondException(
-        'Not a promo channel.\n'
-        'ID: $promoChannel',
+        promoterChannelInvalid(promoChannel.toString()),
       );
     }
 
@@ -59,7 +59,7 @@ class Promoter {
   Future<MessageBuilder> _createRandomMessage(LFGPostBuilder builder, String lfgMessageUrl) async {
     final messages = await _settings.getPromoteMessagesWithWeight();
     final message =
-        messages.isNotEmpty ? messages[Random().nextInt(messages.length)] : '{AUTHOR} собирает людей в {NAME}';
+        messages.isNotEmpty ? messages[Random().nextInt(messages.length)] : promoterDefaultTemplate;
 
     final content = message
         .replaceAll('{AUTHOR}', '<@${builder.authorID}>')
@@ -78,7 +78,7 @@ class Promoter {
           fields: [
             for (int i = 0; i < splitMessage.length; i++)
               EmbedFieldBuilder(
-                name: i == 0 ? 'Новый сбор!' : '',
+                name: i == 0 ? promoterNewGatheringTitle : '',
                 value: splitMessage[i],
                 isInline: false,
               ),

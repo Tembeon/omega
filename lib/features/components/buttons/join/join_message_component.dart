@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../../../core/l10n/messages.dart';
 import '../../../../core/utils/interaction_answer.dart';
 import '../../../interactor/component_interceptor.dart';
 import '../../../interactor/interactor_component.dart';
@@ -40,10 +41,11 @@ class JoinMessageComponent extends InteractorMessageComponent {
           customID: customID,
           handler: (event) async {
             final r = event.interaction.data.values;
-            pickedRole.complete(r?.first);
+            final roleName = r?.first;
+            pickedRole.complete(roleName);
 
             await event.interaction.respond(
-              MessageBuilder(content: 'Вы выбрали роль ${r?.first}'),
+              MessageBuilder(content: joinComponentRolePicked(roleName ?? '')),
               isEphemeral: true,
             );
           },
@@ -53,7 +55,7 @@ class JoinMessageComponent extends InteractorMessageComponent {
       },
     );
 
-    await event.interaction.answer(MessageBuilder(content: 'Вы добавлены в LFG'), isEphemeral: true);
+    await event.interaction.answer(MessageBuilder(content: joinComponentJoined), isEphemeral: true);
   }
 }
 
@@ -65,7 +67,7 @@ Future<void> askToPickRole<T extends Interaction<Object?>>(
   if (interaction is MessageResponse) {
     await interaction.createFollowup(
       MessageBuilder(
-        content: 'Выберите роль для участия',
+        content: joinComponentPrompt,
         components: [
           ActionRowBuilder(
             components: [
@@ -73,15 +75,15 @@ Future<void> askToPickRole<T extends Interaction<Object?>>(
                 customId: customID,
                 options: [
                   SelectMenuOptionBuilder(
-                    label: 'Роль 1',
+                    label: joinComponentRoleExampleOne,
                     value: 'role1',
                   ),
                   SelectMenuOptionBuilder(
-                    label: 'Роль 2',
+                    label: joinComponentRoleExampleTwo,
                     value: 'role2',
                   ),
                   SelectMenuOptionBuilder(
-                    label: 'Роль 3',
+                    label: joinComponentRoleExampleThree,
                     value: 'role3',
                   ),
                 ],

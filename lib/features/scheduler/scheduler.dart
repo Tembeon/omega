@@ -5,6 +5,7 @@ import 'package:l/l.dart';
 import 'package:nyxx/nyxx.dart';
 
 import '../../core/utils/database/tables/posts.dart';
+import '../../core/l10n/messages.dart';
 import '../../core/utils/services.dart';
 import '../lfg_manager/lfg_manager.dart';
 
@@ -126,9 +127,12 @@ final class PostScheduler {
       authorName = null;
     }
 
+    late final String authorDisplayName;
     if (authorName == null) {
       final author = await _bot.users.get(Snowflake(post.author));
-      authorName = author.globalName ?? author.username;
+      authorDisplayName = author.globalName ?? author.username;
+    } else {
+      authorDisplayName = authorName;
     }
 
     for (final member in members) {
@@ -138,7 +142,7 @@ final class PostScheduler {
 
         await dm.sendMessage(
           MessageBuilder(
-            content: 'Время сбора для ${post.title} от $authorName наступило!',
+            content: schedulerPostStartNotification(post.title, authorDisplayName),
           ),
         );
 

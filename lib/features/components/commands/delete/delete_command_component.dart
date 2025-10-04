@@ -1,5 +1,6 @@
 import 'package:l/l.dart';
 
+import '../../../../core/l10n/messages.dart';
 import '../../../interactor/interactor_component.dart';
 
 class DeleteCommandComponent extends InteractorCommandComponent {
@@ -8,7 +9,7 @@ class DeleteCommandComponent extends InteractorCommandComponent {
   @override
   Future<ApplicationCommandBuilder> build(Services services) async {
     return ApplicationCommandBuilder(
-      name: 'Удалить LFG',
+      name: deleteCommandName,
       type: ApplicationCommandType.message,
     );
   }
@@ -25,7 +26,7 @@ class DeleteCommandComponent extends InteractorCommandComponent {
     // message and channel should never be null
     if (message == null || channel == null) {
       await event.interaction.respond(
-        MessageBuilder(content: 'Не удалось удалить сообщение [NotFound]'),
+        MessageBuilder(content: deleteCommandMessageNotFound),
         isEphemeral: true,
       );
       return;
@@ -37,7 +38,7 @@ class DeleteCommandComponent extends InteractorCommandComponent {
     // if post can't be found in database, then it's not LFG
     if (postData == null) {
       await event.interaction.respond(
-        MessageBuilder(content: 'Данное сообщение не содержит LFG [LFGNotFound]'),
+        MessageBuilder(content: selectedMessageIsNotLfg),
         isEphemeral: true,
       );
       return;
@@ -49,8 +50,7 @@ class DeleteCommandComponent extends InteractorCommandComponent {
 
       await event.interaction.respond(
         MessageBuilder(
-          content: 'Вы не можете удалить это LFG, '
-              'т.к. не являетесь его автором [NotAuthor]',
+          content: deleteCommandNotAuthor,
         ),
         isEphemeral: true,
       );
@@ -61,7 +61,7 @@ class DeleteCommandComponent extends InteractorCommandComponent {
     await lfgManager.delete(message.value);
 
     await event.interaction.respond(
-      MessageBuilder(content: 'Ваше LFG "${postData.title}" удалено.'),
+      MessageBuilder(content: deleteCommandSuccess(postData.title)),
       isEphemeral: true,
     );
   }

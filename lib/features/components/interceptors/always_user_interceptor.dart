@@ -1,4 +1,5 @@
 import '../../../core/const/command_exceptions.dart';
+import '../../../core/l10n/messages.dart';
 import '../../interactor/component_interceptor.dart';
 import '../../interactor/interactor_component.dart';
 
@@ -19,7 +20,7 @@ base class AlwaysMemberInterceptor extends ComponentInterceptor {
     final member = event.interaction.member;
 
     if (member == null) {
-      throw const CantRespondException('Не удалось определить пользователя');
+      throw CantRespondException(alwaysUserUnknownMember);
     }
   }
 }
@@ -48,7 +49,7 @@ base class PermissionUserInterceptor extends AlwaysMemberInterceptor {
     final hasPermission = member.permissions?.has(permission) ?? false;
 
     if (!hasPermission) {
-      throw const CantRespondException('У вас недостаточно прав для использования этой команды');
+      throw CantRespondException(alwaysUserPermissionError);
     }
   }
 }

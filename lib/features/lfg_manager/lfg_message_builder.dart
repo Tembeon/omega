@@ -4,6 +4,7 @@ import 'package:nyxx/nyxx.dart';
 
 import '../../core/const/command_exceptions.dart';
 import '../../core/data/models/taken_roles.dart';
+import '../../core/l10n/messages.dart';
 import '../../core/utils/color_palette.dart';
 import '../../core/utils/services.dart';
 import 'data/models/register_activity.dart';
@@ -19,7 +20,9 @@ base class LfgMessageBuilder {
     int? unixTime,
   }) async {
     final dbPost = await Services.i.postsDatabase.findPost(message.id.value);
-    if (dbPost == null) throw CantRespondException('LFG ${message.id.value} не найден');
+    if (dbPost == null) {
+      throw CantRespondException(lfgNotFoundMessage(message.id.value.toString()));
+    }
     final activityData = await Services.i.settings.getActivity(dbPost.title);
     // list of members : role
     // each list related to a role
@@ -137,12 +140,12 @@ base class LfgMessageBuilder {
           components: [
             ButtonBuilder(
               customId: 'join',
-              label: '➕  Присоединиться',
+              label: lfgJoinButtonLabel,
               style: ButtonStyle.success,
             ),
             ButtonBuilder(
               customId: 'leave',
-              label: '➖  Покинуть',
+              label: lfgLeaveButtonLabel,
               style: ButtonStyle.danger,
             ),
           ],
@@ -201,7 +204,7 @@ base class LfgMessageBuilder {
     }();
 
     return EmbedFieldBuilder(
-      name: 'Время сбора:',
+      name: lfgStartTimeLabel,
       value: value,
       isInline: false,
     );
@@ -233,7 +236,7 @@ base class LfgMessageBuilder {
     final (_, value) = origin == null ? (null, null) : _getFieldData(origin, 2);
 
     return EmbedFieldBuilder(
-      name: 'Участники (${membersCount ?? 1}/$maxMembers):',
+      name: lfgMembersLabel(membersCount ?? 1, maxMembers),
       value: members == null ? value! : members.join(', '),
       isInline: false,
     );

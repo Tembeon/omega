@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:l/l.dart';
 
 import '../../core/const/command_exceptions.dart';
+import '../../core/l10n/messages.dart';
 import '../../core/utils/interaction_answer.dart';
 import 'interactor_component.dart';
 
@@ -353,7 +354,7 @@ base mixin _Listener on _Registrar {
         if (matches.isEmpty) {
           l.d('$_tag Handler for interaction "${event.interaction.data.name}" not found');
           event.interaction.answer(
-            MessageBuilder(content: 'Я не знаю, как на это ответить :('),
+            MessageBuilder(content: interactorUnknownResponse),
             isEphemeral: true,
           );
           return;
@@ -366,7 +367,7 @@ base mixin _Listener on _Registrar {
               'doesn\'t match InteractorCommandComponent'
               '\nExpected: InteractorCommandComponent, got: ${registry.runtimeType}');
           event.interaction.answer(
-            MessageBuilder(content: 'Я не знаю, как на это ответить :('),
+            MessageBuilder(content: interactorUnknownResponse),
             isEphemeral: true,
           );
           return;
@@ -464,7 +465,7 @@ void _handleExecution(
     (error, stack) {
       final (errorMessage, useRethrow) = switch (error) {
         final CommandException exception => (exception.toHumanMessage(), false),
-        _ => ('Произошла ошибка при выполнении команды :(\n\n$error', true),
+        _ => (interactorCommandError(error.toString()), true),
       };
 
       errorAnswer(

@@ -1,5 +1,6 @@
 import 'package:l/l.dart';
 
+import '../../../../core/l10n/messages.dart';
 import '../../../../core/utils/event_parsers.dart';
 import '../../../../core/utils/time_convert.dart';
 import '../../../interactor/interactor_component.dart';
@@ -32,37 +33,37 @@ class CreateCommandComponent extends InteractorCommandComponent {
   Future<ApplicationCommandBuilder> build(Services services) async {
     return ApplicationCommandBuilder(
       name: 'create',
-      description: 'Создать активность',
+      description: createCommandDescription,
       type: ApplicationCommandType.chatInput,
       options: [
         CommandOptionBuilder.subCommand(
           name: 'activity',
-          description: 'Создать сбор на активность',
+          description: createCommandSubcommandDescription,
           options: [
             CommandOptionBuilder.string(
-              name: 'название',
-              description: 'Введите название активности',
+              name: commandOptionNameKey,
+              description: commandOptionNameDescription,
               choices: await _getActivityChoices(services.settings),
               isRequired: true,
             ),
             CommandOptionBuilder.string(
-              name: 'описание',
-              description: 'Введите описание активности',
+              name: commandOptionDescriptionKey,
+              description: commandOptionDescriptionDescription,
               isRequired: true,
             ),
             CommandOptionBuilder.string(
-              name: 'дата',
-              description: 'Введите дату начала активности [15 01 2023]',
+              name: commandOptionDateKey,
+              description: commandOptionDateDescription,
               isRequired: true,
             ),
             CommandOptionBuilder.string(
-              name: 'время',
-              description: 'Введите время начала активности [15 01]',
+              name: commandOptionTimeKey,
+              description: commandOptionTimeDescription,
               isRequired: true,
             ),
             CommandOptionBuilder.integer(
-              name: 'часовой_пояс',
-              description: 'Введите ваш текущий часовой пояс',
+              name: commandOptionTimezoneKey,
+              description: commandOptionTimezoneDescription,
               choices: await _getTimezoneChoices(services.settings),
               isRequired: true,
             ),
@@ -100,7 +101,7 @@ class CreateCommandComponent extends InteractorCommandComponent {
 
     if (channelLfg != event.interaction.channelId?.value) {
       return event.interaction.respond(
-        MessageBuilder(content: 'Команда доступна только в канале для поиска группы: <#$channelLfg>'),
+        MessageBuilder(content: createCommandChannelRestriction(channelLfg.toString())),
         isEphemeral: true,
       );
     }
@@ -121,11 +122,11 @@ class CreateCommandComponent extends InteractorCommandComponent {
     // All options for `/create` command are equal for all subcommands.
     final createOptions = event.interaction.data.options!.first.options!;
 
-    final name = createOptions.firstWhere((e) => e.name == 'название').value as String;
-    final description = createOptions.firstWhere((e) => e.name == 'описание').value as String;
-    final date = createOptions.firstWhere((e) => e.name == 'дата').value as String;
-    final time = createOptions.firstWhere((e) => e.name == 'время').value as String;
-    final timezone = createOptions.firstWhere((e) => e.name == 'часовой_пояс').value as int;
+    final name = createOptions.firstWhere((e) => e.name == commandOptionNameKey).value as String;
+    final description = createOptions.firstWhere((e) => e.name == commandOptionDescriptionKey).value as String;
+    final date = createOptions.firstWhere((e) => e.name == commandOptionDateKey).value as String;
+    final time = createOptions.firstWhere((e) => e.name == commandOptionTimeKey).value as String;
+    final timezone = createOptions.firstWhere((e) => e.name == commandOptionTimezoneKey).value as int;
 
     final activity = await services.settings.getActivity(name);
 

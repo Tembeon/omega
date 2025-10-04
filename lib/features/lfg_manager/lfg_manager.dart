@@ -8,6 +8,7 @@ import 'package:sqlite3/sqlite3.dart';
 
 import '../../core/const/command_exceptions.dart';
 import '../../core/data/models/taken_roles.dart';
+import '../../core/l10n/messages.dart';
 import '../../core/utils/database/tables/posts.dart';
 import '../../core/utils/services.dart';
 import '../components/buttons/role_picker/role_picker_component.dart';
@@ -95,7 +96,7 @@ final class LFGManager implements ILFGManager {
           if (!selectedRole.isCompleted) {
             selectedRole.completeError(
               TimeoutException(
-                'Превышено время ожидания выбора роли',
+                rolePickerTimeoutMessage,
               ),
             );
           }
@@ -106,7 +107,7 @@ final class LFGManager implements ILFGManager {
           selectedRole.complete(role);
 
           await interaction.interaction.respond(
-            MessageBuilder(content: 'Выбрана роль: $role'),
+            MessageBuilder(content: selectedRoleConfirmation(role)),
             isEphemeral: true,
           );
         },
@@ -184,19 +185,16 @@ final class LFGManager implements ILFGManager {
   @override
   Future<void> delete(int id) async {
     final post = await _database.findPost(id);
-    if (post == null) throw CantRespondException('LFG $id не найден');
+    if (post == null) throw CantRespondException(lfgNotFoundMessage(id.toString()));
 
     final bot = Services.i.bot;
     final settings = Services.i.settings;
     final lfgChannel = await settings.getLFGChannel();
-    if (lfgChannel == null) throw const CantRespondException('Канал LFG не настроен');
+    if (lfgChannel == null) throw CantRespondException(lfgChannelNotConfigured);
 
     final channel = await bot.channels.fetch(Snowflake(lfgChannel));
     if (channel.type != ChannelType.guildText) {
-      throw CantRespondException(
-        'Канал LFG не найден или настроен неправильно\n'
-        'ID: $lfgChannel',
-      );
+      throw CantRespondException(lfgChannelInvalid(lfgChannel.toString()));
     }
 
     l.i('[LFGManager] Deleting post with id $id from database');
@@ -216,7 +214,7 @@ final class LFGManager implements ILFGManager {
     final int? unixTime,
   }) async {
     final post = await _database.findPost(message.id.value);
-    if (post == null) throw CantRespondException('LFG ${message.id.value} не найден');
+    if (post == null) throw CantRespondException(lfgNotFoundMessage(message.id.value.toString()));
 
     await _database.updatePost(
       post.postMessageId,
@@ -251,7 +249,7 @@ final class LFGManager implements ILFGManager {
   }) async {
     // for first, check if post exists
     final post = await _database.findPost(message.id.value);
-    if (post == null) throw CantRespondException('LFG ${message.id.value} не найден');
+    if (post == null) throw CantRespondException(lfgNotFoundMessage(message.id.value.toString()));
 
     // check if max members is reached
     final membersIDS = await _database.getMembersForPost(message.id.value);
@@ -266,7 +264,7 @@ final class LFGManager implements ILFGManager {
     final activityOrigin = await Services.i.settings.getActivity(post.title);
     if (activityOrigin.roles != null) {
       final role = await rolePicker?.call();
-      if (role == null) throw const CantRespondException('Роль не выбрана');
+      if (role == null) throw CantRespondException(roleNotPickedMessage);
       await _database.addMember(message.id.value, user.id.value, role: role);
     } else {
       await _database.addMember(message.id.value, user.id.value);
@@ -295,7 +293,7 @@ final class LFGManager implements ILFGManager {
   Future<void> removeMemberFrom(Message message, User user) async {
     // for first, check if post exists
     final post = await _database.findPost(message.id.value);
-    if (post == null) throw CantRespondException('LFG ${message.id.value} не найден');
+    if (post == null) throw CantRespondException(lfgNotFoundMessage(message.id.value.toString()));
 
     // check if user is LFG creator. Creator cannot leave their own LFG
     if (post.author == user.id.value) throw const CreatorCannotLeaveException();

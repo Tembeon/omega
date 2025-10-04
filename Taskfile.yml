@@ -17,3 +17,13 @@ tasks:
       - sh: "[ {{.CLI_ARGS}} != '' ]"
         msg: "Locale input expected: 'task arb:import -- <LOCALE>'"
     silent: true
+
+  l10n:sync:
+    desc: Extracts messages and regenerates all locale outputs.
+    cmds:
+      - dart run tool/l10n.dart sync
+
+  l10n:verify:
+    desc: Checks that all locale files contain the same keys.
+    cmds:
+      - dart run tool/l10n.dart verify
