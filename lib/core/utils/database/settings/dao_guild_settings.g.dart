@@ -4,9 +4,7 @@ part of 'dao_guild_settings.dart';
 
 // ignore_for_file: type=lint
 mixin _$GuildSettingsDaoMixin on DatabaseAccessor<SettingsDatabase> {
-  $KeyedSettingsTableTable get keyedSettingsTable =>
-      attachedDatabase.keyedSettingsTable;
+  $KeyedSettingsTableTable get keyedSettingsTable => attachedDatabase.keyedSettingsTable;
   $TimezonesTableTable get timezonesTable => attachedDatabase.timezonesTable;
-  $PromoteMessagesTableTable get promoteMessagesTable =>
-      attachedDatabase.promoteMessagesTable;
+  $PromoteMessagesTableTable get promoteMessagesTable => attachedDatabase.promoteMessagesTable;
 }

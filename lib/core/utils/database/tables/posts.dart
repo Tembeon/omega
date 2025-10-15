@@ -89,7 +89,6 @@ class PostsDatabase extends _$PostsDatabase {
   Future<PostsTableData?> findPost(int id) =>
       (select(postsTable)..where((post) => post.postMessageId.equals(id))).getSingleOrNull();
 
-
   /// Adds a new member to a LFG.
   ///
   /// Checks if the LFG is full, if it is, it throws an error.

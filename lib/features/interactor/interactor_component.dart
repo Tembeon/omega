@@ -55,8 +55,8 @@ abstract class InteractorComponent<T extends Interaction<Object?>> {
   Future<bool> enabledWhen(Services services) => Future.value(true);
 
   Set<ComponentInterceptor> get interceptors => {
-    const AlwaysMemberInterceptor(),
-  };
+        const AlwaysMemberInterceptor(),
+      };
 }
 
 /// Base class for all interactor command components.

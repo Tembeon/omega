@@ -11,16 +11,14 @@ class $KeyedSettingsTableTable extends KeyedSettingsTable
   $KeyedSettingsTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _keyMeta = const VerificationMeta('key');
   @override
-  late final GeneratedColumn<String> key = GeneratedColumn<String>(
-      'key', aliasedName, false,
+  late final GeneratedColumn<String> key = GeneratedColumn<String>('key', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   static const VerificationMeta _valueMeta = const VerificationMeta('value');
   @override
-  late final GeneratedColumn<String> value = GeneratedColumn<String>(
-      'value', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumn<String> value =
+      GeneratedColumn<String>('value', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [key, value];
   @override
@@ -29,20 +27,16 @@ class $KeyedSettingsTableTable extends KeyedSettingsTable
   String get actualTableName => $name;
   static const String $name = 'keyed_settings_table';
   @override
-  VerificationContext validateIntegrity(
-      Insertable<KeyedSettingsTableData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<KeyedSettingsTableData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('key')) {
-      context.handle(
-          _keyMeta, key.isAcceptableOrUnknown(data['key']!, _keyMeta));
+      context.handle(_keyMeta, key.isAcceptableOrUnknown(data['key']!, _keyMeta));
     } else if (isInserting) {
       context.missing(_keyMeta);
     }
     if (data.containsKey('value')) {
-      context.handle(
-          _valueMeta, value.isAcceptableOrUnknown(data['value']!, _valueMeta));
+      context.handle(_valueMeta, value.isAcceptableOrUnknown(data['value']!, _valueMeta));
     } else if (isInserting) {
       context.missing(_valueMeta);
     }
@@ -55,10 +49,8 @@ class $KeyedSettingsTableTable extends KeyedSettingsTable
   KeyedSettingsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return KeyedSettingsTableData(
-      key: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}key'])!,
-      value: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}value'])!,
+      key: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}key'])!,
+      value: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}value'])!,
     );
   }
 
@@ -68,8 +60,7 @@ class $KeyedSettingsTableTable extends KeyedSettingsTable
   }
 }
 
-class KeyedSettingsTableData extends DataClass
-    implements Insertable<KeyedSettingsTableData> {
+class KeyedSettingsTableData extends DataClass implements Insertable<KeyedSettingsTableData> {
   /// A text column named `key`. This stores the key of the setting.
   ///
   /// Example: `lfg_channel`, `promotes_channel`
@@ -95,8 +86,7 @@ class KeyedSettingsTableData extends DataClass
     );
   }
 
-  factory KeyedSettingsTableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory KeyedSettingsTableData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return KeyedSettingsTableData(
       key: serializer.fromJson<String>(json['key']),
@@ -112,8 +102,7 @@ class KeyedSettingsTableData extends DataClass
     };
   }
 
-  KeyedSettingsTableData copyWith({String? key, String? value}) =>
-      KeyedSettingsTableData(
+  KeyedSettingsTableData copyWith({String? key, String? value}) => KeyedSettingsTableData(
         key: key ?? this.key,
         value: value ?? this.value,
       );
@@ -130,14 +119,10 @@ class KeyedSettingsTableData extends DataClass
   int get hashCode => Object.hash(key, value);
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is KeyedSettingsTableData &&
-          other.key == this.key &&
-          other.value == this.value);
+      identical(this, other) || (other is KeyedSettingsTableData && other.key == this.key && other.value == this.value);
 }
 
-class KeyedSettingsTableCompanion
-    extends UpdateCompanion<KeyedSettingsTableData> {
+class KeyedSettingsTableCompanion extends UpdateCompanion<KeyedSettingsTableData> {
   final Value<String> key;
   final Value<String> value;
   final Value<int> rowid;
@@ -164,8 +149,7 @@ class KeyedSettingsTableCompanion
     });
   }
 
-  KeyedSettingsTableCompanion copyWith(
-      {Value<String>? key, Value<String>? value, Value<int>? rowid}) {
+  KeyedSettingsTableCompanion copyWith({Value<String>? key, Value<String>? value, Value<int>? rowid}) {
     return KeyedSettingsTableCompanion(
       key: key ?? this.key,
       value: value ?? this.value,
@@ -199,24 +183,21 @@ class KeyedSettingsTableCompanion
   }
 }
 
-class $TimezonesTableTable extends TimezonesTable
-    with TableInfo<$TimezonesTableTable, TimezonesTableData> {
+class $TimezonesTableTable extends TimezonesTable with TableInfo<$TimezonesTableTable, TimezonesTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $TimezonesTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
+  late final GeneratedColumn<String> name = GeneratedColumn<String>('name', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   static const VerificationMeta _offsetMeta = const VerificationMeta('offset');
   @override
-  late final GeneratedColumn<int> offset = GeneratedColumn<int>(
-      'offset', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+  late final GeneratedColumn<int> offset =
+      GeneratedColumn<int>('offset', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [name, offset];
   @override
@@ -225,19 +206,16 @@ class $TimezonesTableTable extends TimezonesTable
   String get actualTableName => $name;
   static const String $name = 'timezones_table';
   @override
-  VerificationContext validateIntegrity(Insertable<TimezonesTableData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<TimezonesTableData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('name')) {
-      context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+      context.handle(_nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
     if (data.containsKey('offset')) {
-      context.handle(_offsetMeta,
-          offset.isAcceptableOrUnknown(data['offset']!, _offsetMeta));
+      context.handle(_offsetMeta, offset.isAcceptableOrUnknown(data['offset']!, _offsetMeta));
     } else if (isInserting) {
       context.missing(_offsetMeta);
     }
@@ -250,10 +228,8 @@ class $TimezonesTableTable extends TimezonesTable
   TimezonesTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return TimezonesTableData(
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      offset: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}offset'])!,
+      name: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      offset: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}offset'])!,
     );
   }
 
@@ -263,8 +239,7 @@ class $TimezonesTableTable extends TimezonesTable
   }
 }
 
-class TimezonesTableData extends DataClass
-    implements Insertable<TimezonesTableData> {
+class TimezonesTableData extends DataClass implements Insertable<TimezonesTableData> {
   /// A text column named `name`. This stores the name of the timezone.
   ///
   /// Example: `MSK`, `UTC`, `GMT+3`
@@ -290,8 +265,7 @@ class TimezonesTableData extends DataClass
     );
   }
 
-  factory TimezonesTableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory TimezonesTableData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return TimezonesTableData(
       name: serializer.fromJson<String>(json['name']),
@@ -307,8 +281,7 @@ class TimezonesTableData extends DataClass
     };
   }
 
-  TimezonesTableData copyWith({String? name, int? offset}) =>
-      TimezonesTableData(
+  TimezonesTableData copyWith({String? name, int? offset}) => TimezonesTableData(
         name: name ?? this.name,
         offset: offset ?? this.offset,
       );
@@ -325,10 +298,7 @@ class TimezonesTableData extends DataClass
   int get hashCode => Object.hash(name, offset);
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is TimezonesTableData &&
-          other.name == this.name &&
-          other.offset == this.offset);
+      identical(this, other) || (other is TimezonesTableData && other.name == this.name && other.offset == this.offset);
 }
 
 class TimezonesTableCompanion extends UpdateCompanion<TimezonesTableData> {
@@ -358,8 +328,7 @@ class TimezonesTableCompanion extends UpdateCompanion<TimezonesTableData> {
     });
   }
 
-  TimezonesTableCompanion copyWith(
-      {Value<String>? name, Value<int>? offset, Value<int>? rowid}) {
+  TimezonesTableCompanion copyWith({Value<String>? name, Value<int>? offset, Value<int>? rowid}) {
     return TimezonesTableCompanion(
       name: name ?? this.name,
       offset: offset ?? this.offset,
@@ -393,42 +362,31 @@ class TimezonesTableCompanion extends UpdateCompanion<TimezonesTableData> {
   }
 }
 
-class $ActivitiesTableTable extends ActivitiesTable
-    with TableInfo<$ActivitiesTableTable, ActivitiesTableData> {
+class $ActivitiesTableTable extends ActivitiesTable with TableInfo<$ActivitiesTableTable, ActivitiesTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $ActivitiesTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
+  late final GeneratedColumn<String> name = GeneratedColumn<String>('name', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
-  static const VerificationMeta _maxMembersMeta =
-      const VerificationMeta('maxMembers');
+  static const VerificationMeta _maxMembersMeta = const VerificationMeta('maxMembers');
   @override
-  late final GeneratedColumn<int> maxMembers = GeneratedColumn<int>(
-      'max_members', aliasedName, false,
-      check: () => maxMembers.isBiggerThan(const Constant(1)),
-      type: DriftSqlType.int,
-      requiredDuringInsert: true);
-  static const VerificationMeta _bannerUrlMeta =
-      const VerificationMeta('bannerUrl');
+  late final GeneratedColumn<int> maxMembers = GeneratedColumn<int>('max_members', aliasedName, false,
+      check: () => maxMembers.isBiggerThan(const Constant(1)), type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _bannerUrlMeta = const VerificationMeta('bannerUrl');
   @override
-  late final GeneratedColumn<String> bannerUrl = GeneratedColumn<String>(
-      'banner_url', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _enabledMeta =
-      const VerificationMeta('enabled');
+  late final GeneratedColumn<String> bannerUrl =
+      GeneratedColumn<String>('banner_url', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _enabledMeta = const VerificationMeta('enabled');
   @override
-  late final GeneratedColumn<bool> enabled = GeneratedColumn<bool>(
-      'enabled', aliasedName, false,
+  late final GeneratedColumn<bool> enabled = GeneratedColumn<bool>('enabled', aliasedName, false,
       type: DriftSqlType.bool,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("enabled" IN (0, 1))'),
+      defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("enabled" IN (0, 1))'),
       defaultValue: const Constant(true));
   @override
   List<GeneratedColumn> get $columns => [name, maxMembers, bannerUrl, enabled];
@@ -438,32 +396,24 @@ class $ActivitiesTableTable extends ActivitiesTable
   String get actualTableName => $name;
   static const String $name = 'activities_table';
   @override
-  VerificationContext validateIntegrity(
-      Insertable<ActivitiesTableData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<ActivitiesTableData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('name')) {
-      context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+      context.handle(_nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
     if (data.containsKey('max_members')) {
-      context.handle(
-          _maxMembersMeta,
-          maxMembers.isAcceptableOrUnknown(
-              data['max_members']!, _maxMembersMeta));
+      context.handle(_maxMembersMeta, maxMembers.isAcceptableOrUnknown(data['max_members']!, _maxMembersMeta));
     } else if (isInserting) {
       context.missing(_maxMembersMeta);
     }
     if (data.containsKey('banner_url')) {
-      context.handle(_bannerUrlMeta,
-          bannerUrl.isAcceptableOrUnknown(data['banner_url']!, _bannerUrlMeta));
+      context.handle(_bannerUrlMeta, bannerUrl.isAcceptableOrUnknown(data['banner_url']!, _bannerUrlMeta));
     }
     if (data.containsKey('enabled')) {
-      context.handle(_enabledMeta,
-          enabled.isAcceptableOrUnknown(data['enabled']!, _enabledMeta));
+      context.handle(_enabledMeta, enabled.isAcceptableOrUnknown(data['enabled']!, _enabledMeta));
     }
     return context;
   }
@@ -474,14 +424,10 @@ class $ActivitiesTableTable extends ActivitiesTable
   ActivitiesTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return ActivitiesTableData(
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      maxMembers: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}max_members'])!,
-      bannerUrl: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}banner_url']),
-      enabled: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}enabled'])!,
+      name: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      maxMembers: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}max_members'])!,
+      bannerUrl: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}banner_url']),
+      enabled: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}enabled'])!,
     );
   }
 
@@ -491,8 +437,7 @@ class $ActivitiesTableTable extends ActivitiesTable
   }
 }
 
-class ActivitiesTableData extends DataClass
-    implements Insertable<ActivitiesTableData> {
+class ActivitiesTableData extends DataClass implements Insertable<ActivitiesTableData> {
   /// Visible name of the activity. Should be unique.
   final String name;
 
@@ -504,11 +449,7 @@ class ActivitiesTableData extends DataClass
 
   /// Whether the activity is enabled or not.
   final bool enabled;
-  const ActivitiesTableData(
-      {required this.name,
-      required this.maxMembers,
-      this.bannerUrl,
-      required this.enabled});
+  const ActivitiesTableData({required this.name, required this.maxMembers, this.bannerUrl, required this.enabled});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -525,15 +466,12 @@ class ActivitiesTableData extends DataClass
     return ActivitiesTableCompanion(
       name: Value(name),
       maxMembers: Value(maxMembers),
-      bannerUrl: bannerUrl == null && nullToAbsent
-          ? const Value.absent()
-          : Value(bannerUrl),
+      bannerUrl: bannerUrl == null && nullToAbsent ? const Value.absent() : Value(bannerUrl),
       enabled: Value(enabled),
     );
   }
 
-  factory ActivitiesTableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory ActivitiesTableData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ActivitiesTableData(
       name: serializer.fromJson<String>(json['name']),
@@ -554,10 +492,7 @@ class ActivitiesTableData extends DataClass
   }
 
   ActivitiesTableData copyWith(
-          {String? name,
-          int? maxMembers,
-          Value<String?> bannerUrl = const Value.absent(),
-          bool? enabled}) =>
+          {String? name, int? maxMembers, Value<String?> bannerUrl = const Value.absent(), bool? enabled}) =>
       ActivitiesTableData(
         name: name ?? this.name,
         maxMembers: maxMembers ?? this.maxMembers,
@@ -673,16 +608,14 @@ class ActivitiesTableCompanion extends UpdateCompanion<ActivitiesTableData> {
   }
 }
 
-class $RolesTableTable extends RolesTable
-    with TableInfo<$RolesTableTable, RolesTableData> {
+class $RolesTableTable extends RolesTable with TableInfo<$RolesTableTable, RolesTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $RolesTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
+  late final GeneratedColumn<String> name = GeneratedColumn<String>('name', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
@@ -694,13 +627,11 @@ class $RolesTableTable extends RolesTable
   String get actualTableName => $name;
   static const String $name = 'roles_table';
   @override
-  VerificationContext validateIntegrity(Insertable<RolesTableData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<RolesTableData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('name')) {
-      context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+      context.handle(_nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
@@ -713,8 +644,7 @@ class $RolesTableTable extends RolesTable
   RolesTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return RolesTableData(
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      name: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}name'])!,
     );
   }
 
@@ -741,8 +671,7 @@ class RolesTableData extends DataClass implements Insertable<RolesTableData> {
     );
   }
 
-  factory RolesTableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory RolesTableData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return RolesTableData(
       name: serializer.fromJson<String>(json['name']),
@@ -770,9 +699,7 @@ class RolesTableData extends DataClass implements Insertable<RolesTableData> {
   @override
   int get hashCode => name.hashCode;
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is RolesTableData && other.name == this.name);
+  bool operator ==(Object other) => identical(this, other) || (other is RolesTableData && other.name == this.name);
 }
 
 class RolesTableCompanion extends UpdateCompanion<RolesTableData> {
@@ -831,31 +758,22 @@ class $ActivitiesRolesTableTable extends ActivitiesRolesTable
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $ActivitiesRolesTableTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _activityMeta =
-      const VerificationMeta('activity');
+  static const VerificationMeta _activityMeta = const VerificationMeta('activity');
   @override
-  late final GeneratedColumn<String> activity = GeneratedColumn<String>(
-      'activity', aliasedName, false,
+  late final GeneratedColumn<String> activity = GeneratedColumn<String>('activity', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES activities_table (name) ON DELETE CASCADE'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways('REFERENCES activities_table (name) ON DELETE CASCADE'));
   static const VerificationMeta _roleMeta = const VerificationMeta('role');
   @override
-  late final GeneratedColumn<String> role = GeneratedColumn<String>(
-      'role', aliasedName, false,
+  late final GeneratedColumn<String> role = GeneratedColumn<String>('role', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES roles_table (name) ON DELETE CASCADE'));
-  static const VerificationMeta _quantityMeta =
-      const VerificationMeta('quantity');
+      defaultConstraints: GeneratedColumn.constraintIsAlways('REFERENCES roles_table (name) ON DELETE CASCADE'));
+  static const VerificationMeta _quantityMeta = const VerificationMeta('quantity');
   @override
-  late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
-      'quantity', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(1));
+  late final GeneratedColumn<int> quantity = GeneratedColumn<int>('quantity', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: false, defaultValue: const Constant(1));
   @override
   List<GeneratedColumn> get $columns => [activity, role, quantity];
   @override
@@ -864,26 +782,21 @@ class $ActivitiesRolesTableTable extends ActivitiesRolesTable
   String get actualTableName => $name;
   static const String $name = 'activities_roles_table';
   @override
-  VerificationContext validateIntegrity(
-      Insertable<ActivitiesRolesTableData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<ActivitiesRolesTableData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('activity')) {
-      context.handle(_activityMeta,
-          activity.isAcceptableOrUnknown(data['activity']!, _activityMeta));
+      context.handle(_activityMeta, activity.isAcceptableOrUnknown(data['activity']!, _activityMeta));
     } else if (isInserting) {
       context.missing(_activityMeta);
     }
     if (data.containsKey('role')) {
-      context.handle(
-          _roleMeta, role.isAcceptableOrUnknown(data['role']!, _roleMeta));
+      context.handle(_roleMeta, role.isAcceptableOrUnknown(data['role']!, _roleMeta));
     } else if (isInserting) {
       context.missing(_roleMeta);
     }
     if (data.containsKey('quantity')) {
-      context.handle(_quantityMeta,
-          quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta));
+      context.handle(_quantityMeta, quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta));
     }
     return context;
   }
@@ -891,16 +804,12 @@ class $ActivitiesRolesTableTable extends ActivitiesRolesTable
   @override
   Set<GeneratedColumn> get $primaryKey => const {};
   @override
-  ActivitiesRolesTableData map(Map<String, dynamic> data,
-      {String? tablePrefix}) {
+  ActivitiesRolesTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return ActivitiesRolesTableData(
-      activity: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}activity'])!,
-      role: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}role'])!,
-      quantity: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}quantity'])!,
+      activity: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}activity'])!,
+      role: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}role'])!,
+      quantity: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}quantity'])!,
     );
   }
 
@@ -910,8 +819,7 @@ class $ActivitiesRolesTableTable extends ActivitiesRolesTable
   }
 }
 
-class ActivitiesRolesTableData extends DataClass
-    implements Insertable<ActivitiesRolesTableData> {
+class ActivitiesRolesTableData extends DataClass implements Insertable<ActivitiesRolesTableData> {
   /// Name of the activity that the role is assigned to.
   final String activity;
 
@@ -920,8 +828,7 @@ class ActivitiesRolesTableData extends DataClass
 
   /// How much of this role needs to be assigned to the activity.
   final int quantity;
-  const ActivitiesRolesTableData(
-      {required this.activity, required this.role, required this.quantity});
+  const ActivitiesRolesTableData({required this.activity, required this.role, required this.quantity});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -939,8 +846,7 @@ class ActivitiesRolesTableData extends DataClass
     );
   }
 
-  factory ActivitiesRolesTableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory ActivitiesRolesTableData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ActivitiesRolesTableData(
       activity: serializer.fromJson<String>(json['activity']),
@@ -958,9 +864,7 @@ class ActivitiesRolesTableData extends DataClass
     };
   }
 
-  ActivitiesRolesTableData copyWith(
-          {String? activity, String? role, int? quantity}) =>
-      ActivitiesRolesTableData(
+  ActivitiesRolesTableData copyWith({String? activity, String? role, int? quantity}) => ActivitiesRolesTableData(
         activity: activity ?? this.activity,
         role: role ?? this.role,
         quantity: quantity ?? this.quantity,
@@ -986,8 +890,7 @@ class ActivitiesRolesTableData extends DataClass
           other.quantity == this.quantity);
 }
 
-class ActivitiesRolesTableCompanion
-    extends UpdateCompanion<ActivitiesRolesTableData> {
+class ActivitiesRolesTableCompanion extends UpdateCompanion<ActivitiesRolesTableData> {
   final Value<String> activity;
   final Value<String> role;
   final Value<int> quantity;
@@ -1020,10 +923,7 @@ class ActivitiesRolesTableCompanion
   }
 
   ActivitiesRolesTableCompanion copyWith(
-      {Value<String>? activity,
-      Value<String>? role,
-      Value<int>? quantity,
-      Value<int>? rowid}) {
+      {Value<String>? activity, Value<String>? role, Value<int>? quantity, Value<int>? rowid}) {
     return ActivitiesRolesTableCompanion(
       activity: activity ?? this.activity,
       role: role ?? this.role,
@@ -1070,24 +970,19 @@ class $PromoteMessagesTableTable extends PromoteMessagesTable
   $PromoteMessagesTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
+  late final GeneratedColumn<int> id = GeneratedColumn<int>('id', aliasedName, false,
       hasAutoIncrement: true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _messageMeta =
-      const VerificationMeta('message');
+      defaultConstraints: GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _messageMeta = const VerificationMeta('message');
   @override
-  late final GeneratedColumn<String> message = GeneratedColumn<String>(
-      'message', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumn<String> message =
+      GeneratedColumn<String>('message', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _weightMeta = const VerificationMeta('weight');
   @override
-  late final GeneratedColumn<int> weight = GeneratedColumn<int>(
-      'weight', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+  late final GeneratedColumn<int> weight =
+      GeneratedColumn<int>('weight', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [id, message, weight];
   @override
@@ -1096,23 +991,19 @@ class $PromoteMessagesTableTable extends PromoteMessagesTable
   String get actualTableName => $name;
   static const String $name = 'promote_messages_table';
   @override
-  VerificationContext validateIntegrity(
-      Insertable<PromoteMessagesTableData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<PromoteMessagesTableData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('message')) {
-      context.handle(_messageMeta,
-          message.isAcceptableOrUnknown(data['message']!, _messageMeta));
+      context.handle(_messageMeta, message.isAcceptableOrUnknown(data['message']!, _messageMeta));
     } else if (isInserting) {
       context.missing(_messageMeta);
     }
     if (data.containsKey('weight')) {
-      context.handle(_weightMeta,
-          weight.isAcceptableOrUnknown(data['weight']!, _weightMeta));
+      context.handle(_weightMeta, weight.isAcceptableOrUnknown(data['weight']!, _weightMeta));
     } else if (isInserting) {
       context.missing(_weightMeta);
     }
@@ -1122,16 +1013,12 @@ class $PromoteMessagesTableTable extends PromoteMessagesTable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  PromoteMessagesTableData map(Map<String, dynamic> data,
-      {String? tablePrefix}) {
+  PromoteMessagesTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PromoteMessagesTableData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      message: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}message'])!,
-      weight: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}weight'])!,
+      id: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      message: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}message'])!,
+      weight: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}weight'])!,
     );
   }
 
@@ -1141,13 +1028,11 @@ class $PromoteMessagesTableTable extends PromoteMessagesTable
   }
 }
 
-class PromoteMessagesTableData extends DataClass
-    implements Insertable<PromoteMessagesTableData> {
+class PromoteMessagesTableData extends DataClass implements Insertable<PromoteMessagesTableData> {
   final int id;
   final String message;
   final int weight;
-  const PromoteMessagesTableData(
-      {required this.id, required this.message, required this.weight});
+  const PromoteMessagesTableData({required this.id, required this.message, required this.weight});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1165,8 +1050,7 @@ class PromoteMessagesTableData extends DataClass
     );
   }
 
-  factory PromoteMessagesTableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory PromoteMessagesTableData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PromoteMessagesTableData(
       id: serializer.fromJson<int>(json['id']),
@@ -1184,8 +1068,7 @@ class PromoteMessagesTableData extends DataClass
     };
   }
 
-  PromoteMessagesTableData copyWith({int? id, String? message, int? weight}) =>
-      PromoteMessagesTableData(
+  PromoteMessagesTableData copyWith({int? id, String? message, int? weight}) => PromoteMessagesTableData(
         id: id ?? this.id,
         message: message ?? this.message,
         weight: weight ?? this.weight,
@@ -1211,8 +1094,7 @@ class PromoteMessagesTableData extends DataClass
           other.weight == this.weight);
 }
 
-class PromoteMessagesTableCompanion
-    extends UpdateCompanion<PromoteMessagesTableData> {
+class PromoteMessagesTableCompanion extends UpdateCompanion<PromoteMessagesTableData> {
   final Value<int> id;
   final Value<String> message;
   final Value<int> weight;
@@ -1239,8 +1121,7 @@ class PromoteMessagesTableCompanion
     });
   }
 
-  PromoteMessagesTableCompanion copyWith(
-      {Value<int>? id, Value<String>? message, Value<int>? weight}) {
+  PromoteMessagesTableCompanion copyWith({Value<int>? id, Value<String>? message, Value<int>? weight}) {
     return PromoteMessagesTableCompanion(
       id: id ?? this.id,
       message: message ?? this.message,
@@ -1277,45 +1158,30 @@ class PromoteMessagesTableCompanion
 abstract class _$SettingsDatabase extends GeneratedDatabase {
   _$SettingsDatabase(QueryExecutor e) : super(e);
   _$SettingsDatabaseManager get managers => _$SettingsDatabaseManager(this);
-  late final $KeyedSettingsTableTable keyedSettingsTable =
-      $KeyedSettingsTableTable(this);
+  late final $KeyedSettingsTableTable keyedSettingsTable = $KeyedSettingsTableTable(this);
   late final $TimezonesTableTable timezonesTable = $TimezonesTableTable(this);
-  late final $ActivitiesTableTable activitiesTable =
-      $ActivitiesTableTable(this);
+  late final $ActivitiesTableTable activitiesTable = $ActivitiesTableTable(this);
   late final $RolesTableTable rolesTable = $RolesTableTable(this);
-  late final $ActivitiesRolesTableTable activitiesRolesTable =
-      $ActivitiesRolesTableTable(this);
-  late final $PromoteMessagesTableTable promoteMessagesTable =
-      $PromoteMessagesTableTable(this);
-  late final ActivitiesDao activitiesDao =
-      ActivitiesDao(this as SettingsDatabase);
-  late final GuildSettingsDao guildSettingsDao =
-      GuildSettingsDao(this as SettingsDatabase);
+  late final $ActivitiesRolesTableTable activitiesRolesTable = $ActivitiesRolesTableTable(this);
+  late final $PromoteMessagesTableTable promoteMessagesTable = $PromoteMessagesTableTable(this);
+  late final ActivitiesDao activitiesDao = ActivitiesDao(this as SettingsDatabase);
+  late final GuildSettingsDao guildSettingsDao = GuildSettingsDao(this as SettingsDatabase);
   @override
-  Iterable<TableInfo<Table, Object?>> get allTables =>
-      allSchemaEntities.whereType<TableInfo<Table, Object?>>();
+  Iterable<TableInfo<Table, Object?>> get allTables => allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [
-        keyedSettingsTable,
-        timezonesTable,
-        activitiesTable,
-        rolesTable,
-        activitiesRolesTable,
-        promoteMessagesTable
-      ];
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [keyedSettingsTable, timezonesTable, activitiesTable, rolesTable, activitiesRolesTable, promoteMessagesTable];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
         [
           WritePropagation(
-            on: TableUpdateQuery.onTableName('activities_table',
-                limitUpdateKind: UpdateKind.delete),
+            on: TableUpdateQuery.onTableName('activities_table', limitUpdateKind: UpdateKind.delete),
             result: [
               TableUpdate('activities_roles_table', kind: UpdateKind.delete),
             ],
           ),
           WritePropagation(
-            on: TableUpdateQuery.onTableName('roles_table',
-                limitUpdateKind: UpdateKind.delete),
+            on: TableUpdateQuery.onTableName('roles_table', limitUpdateKind: UpdateKind.delete),
             result: [
               TableUpdate('activities_roles_table', kind: UpdateKind.delete),
             ],
@@ -1324,14 +1190,12 @@ abstract class _$SettingsDatabase extends GeneratedDatabase {
       );
 }
 
-typedef $$KeyedSettingsTableTableInsertCompanionBuilder
-    = KeyedSettingsTableCompanion Function({
+typedef $$KeyedSettingsTableTableInsertCompanionBuilder = KeyedSettingsTableCompanion Function({
   required String key,
   required String value,
   Value<int> rowid,
 });
-typedef $$KeyedSettingsTableTableUpdateCompanionBuilder
-    = KeyedSettingsTableCompanion Function({
+typedef $$KeyedSettingsTableTableUpdateCompanionBuilder = KeyedSettingsTableCompanion Function({
   Value<String> key,
   Value<String> value,
   Value<int> rowid,
@@ -1346,17 +1210,13 @@ class $$KeyedSettingsTableTableTableManager extends RootTableManager<
     $$KeyedSettingsTableTableProcessedTableManager,
     $$KeyedSettingsTableTableInsertCompanionBuilder,
     $$KeyedSettingsTableTableUpdateCompanionBuilder> {
-  $$KeyedSettingsTableTableTableManager(
-      _$SettingsDatabase db, $KeyedSettingsTableTable table)
+  $$KeyedSettingsTableTableTableManager(_$SettingsDatabase db, $KeyedSettingsTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$KeyedSettingsTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer: $$KeyedSettingsTableTableOrderingComposer(
-              ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$KeyedSettingsTableTableProcessedTableManager(p),
+          filteringComposer: $$KeyedSettingsTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$KeyedSettingsTableTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$KeyedSettingsTableTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<String> key = const Value.absent(),
             Value<String> value = const Value.absent(),
@@ -1380,55 +1240,43 @@ class $$KeyedSettingsTableTableTableManager extends RootTableManager<
         ));
 }
 
-class $$KeyedSettingsTableTableProcessedTableManager
-    extends ProcessedTableManager<
-        _$SettingsDatabase,
-        $KeyedSettingsTableTable,
-        KeyedSettingsTableData,
-        $$KeyedSettingsTableTableFilterComposer,
-        $$KeyedSettingsTableTableOrderingComposer,
-        $$KeyedSettingsTableTableProcessedTableManager,
-        $$KeyedSettingsTableTableInsertCompanionBuilder,
-        $$KeyedSettingsTableTableUpdateCompanionBuilder> {
+class $$KeyedSettingsTableTableProcessedTableManager extends ProcessedTableManager<
+    _$SettingsDatabase,
+    $KeyedSettingsTableTable,
+    KeyedSettingsTableData,
+    $$KeyedSettingsTableTableFilterComposer,
+    $$KeyedSettingsTableTableOrderingComposer,
+    $$KeyedSettingsTableTableProcessedTableManager,
+    $$KeyedSettingsTableTableInsertCompanionBuilder,
+    $$KeyedSettingsTableTableUpdateCompanionBuilder> {
   $$KeyedSettingsTableTableProcessedTableManager(super.$state);
 }
 
-class $$KeyedSettingsTableTableFilterComposer
-    extends FilterComposer<_$SettingsDatabase, $KeyedSettingsTableTable> {
+class $$KeyedSettingsTableTableFilterComposer extends FilterComposer<_$SettingsDatabase, $KeyedSettingsTableTable> {
   $$KeyedSettingsTableTableFilterComposer(super.$state);
   ColumnFilters<String> get key => $state.composableBuilder(
-      column: $state.table.key,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      column: $state.table.key, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<String> get value => $state.composableBuilder(
-      column: $state.table.value,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      column: $state.table.value, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $$KeyedSettingsTableTableOrderingComposer
-    extends OrderingComposer<_$SettingsDatabase, $KeyedSettingsTableTable> {
+class $$KeyedSettingsTableTableOrderingComposer extends OrderingComposer<_$SettingsDatabase, $KeyedSettingsTableTable> {
   $$KeyedSettingsTableTableOrderingComposer(super.$state);
   ColumnOrderings<String> get key => $state.composableBuilder(
-      column: $state.table.key,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      column: $state.table.key, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<String> get value => $state.composableBuilder(
       column: $state.table.value,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$TimezonesTableTableInsertCompanionBuilder = TimezonesTableCompanion
-    Function({
+typedef $$TimezonesTableTableInsertCompanionBuilder = TimezonesTableCompanion Function({
   required String name,
   required int offset,
   Value<int> rowid,
 });
-typedef $$TimezonesTableTableUpdateCompanionBuilder = TimezonesTableCompanion
-    Function({
+typedef $$TimezonesTableTableUpdateCompanionBuilder = TimezonesTableCompanion Function({
   Value<String> name,
   Value<int> offset,
   Value<int> rowid,
@@ -1443,17 +1291,13 @@ class $$TimezonesTableTableTableManager extends RootTableManager<
     $$TimezonesTableTableProcessedTableManager,
     $$TimezonesTableTableInsertCompanionBuilder,
     $$TimezonesTableTableUpdateCompanionBuilder> {
-  $$TimezonesTableTableTableManager(
-      _$SettingsDatabase db, $TimezonesTableTable table)
+  $$TimezonesTableTableTableManager(_$SettingsDatabase db, $TimezonesTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$TimezonesTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$TimezonesTableTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$TimezonesTableTableProcessedTableManager(p),
+          filteringComposer: $$TimezonesTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$TimezonesTableTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$TimezonesTableTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<String> name = const Value.absent(),
             Value<int> offset = const Value.absent(),
@@ -1489,44 +1333,35 @@ class $$TimezonesTableTableProcessedTableManager extends ProcessedTableManager<
   $$TimezonesTableTableProcessedTableManager(super.$state);
 }
 
-class $$TimezonesTableTableFilterComposer
-    extends FilterComposer<_$SettingsDatabase, $TimezonesTableTable> {
+class $$TimezonesTableTableFilterComposer extends FilterComposer<_$SettingsDatabase, $TimezonesTableTable> {
   $$TimezonesTableTableFilterComposer(super.$state);
   ColumnFilters<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      column: $state.table.name, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<int> get offset => $state.composableBuilder(
       column: $state.table.offset,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $$TimezonesTableTableOrderingComposer
-    extends OrderingComposer<_$SettingsDatabase, $TimezonesTableTable> {
+class $$TimezonesTableTableOrderingComposer extends OrderingComposer<_$SettingsDatabase, $TimezonesTableTable> {
   $$TimezonesTableTableOrderingComposer(super.$state);
   ColumnOrderings<String> get name => $state.composableBuilder(
       column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<int> get offset => $state.composableBuilder(
       column: $state.table.offset,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$ActivitiesTableTableInsertCompanionBuilder = ActivitiesTableCompanion
-    Function({
+typedef $$ActivitiesTableTableInsertCompanionBuilder = ActivitiesTableCompanion Function({
   required String name,
   required int maxMembers,
   Value<String?> bannerUrl,
   Value<bool> enabled,
   Value<int> rowid,
 });
-typedef $$ActivitiesTableTableUpdateCompanionBuilder = ActivitiesTableCompanion
-    Function({
+typedef $$ActivitiesTableTableUpdateCompanionBuilder = ActivitiesTableCompanion Function({
   Value<String> name,
   Value<int> maxMembers,
   Value<String?> bannerUrl,
@@ -1543,17 +1378,13 @@ class $$ActivitiesTableTableTableManager extends RootTableManager<
     $$ActivitiesTableTableProcessedTableManager,
     $$ActivitiesTableTableInsertCompanionBuilder,
     $$ActivitiesTableTableUpdateCompanionBuilder> {
-  $$ActivitiesTableTableTableManager(
-      _$SettingsDatabase db, $ActivitiesTableTable table)
+  $$ActivitiesTableTableTableManager(_$SettingsDatabase db, $ActivitiesTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$ActivitiesTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$ActivitiesTableTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$ActivitiesTableTableProcessedTableManager(p),
+          filteringComposer: $$ActivitiesTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$ActivitiesTableTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$ActivitiesTableTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<String> name = const Value.absent(),
             Value<int> maxMembers = const Value.absent(),
@@ -1597,70 +1428,52 @@ class $$ActivitiesTableTableProcessedTableManager extends ProcessedTableManager<
   $$ActivitiesTableTableProcessedTableManager(super.$state);
 }
 
-class $$ActivitiesTableTableFilterComposer
-    extends FilterComposer<_$SettingsDatabase, $ActivitiesTableTable> {
+class $$ActivitiesTableTableFilterComposer extends FilterComposer<_$SettingsDatabase, $ActivitiesTableTable> {
   $$ActivitiesTableTableFilterComposer(super.$state);
   ColumnFilters<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      column: $state.table.name, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<int> get maxMembers => $state.composableBuilder(
       column: $state.table.maxMembers,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<String> get bannerUrl => $state.composableBuilder(
       column: $state.table.bannerUrl,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<bool> get enabled => $state.composableBuilder(
       column: $state.table.enabled,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ComposableFilter activitiesRolesTableRefs(
-      ComposableFilter Function($$ActivitiesRolesTableTableFilterComposer f)
-          f) {
-    final $$ActivitiesRolesTableTableFilterComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.name,
-            referencedTable: $state.db.activitiesRolesTable,
-            getReferencedColumn: (t) => t.activity,
-            builder: (joinBuilder, parentComposers) =>
-                $$ActivitiesRolesTableTableFilterComposer(ComposerState(
-                    $state.db,
-                    $state.db.activitiesRolesTable,
-                    joinBuilder,
-                    parentComposers)));
+  ComposableFilter activitiesRolesTableRefs(ComposableFilter Function($$ActivitiesRolesTableTableFilterComposer f) f) {
+    final $$ActivitiesRolesTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.name,
+        referencedTable: $state.db.activitiesRolesTable,
+        getReferencedColumn: (t) => t.activity,
+        builder: (joinBuilder, parentComposers) => $$ActivitiesRolesTableTableFilterComposer(
+            ComposerState($state.db, $state.db.activitiesRolesTable, joinBuilder, parentComposers)));
     return f(composer);
   }
 }
 
-class $$ActivitiesTableTableOrderingComposer
-    extends OrderingComposer<_$SettingsDatabase, $ActivitiesTableTable> {
+class $$ActivitiesTableTableOrderingComposer extends OrderingComposer<_$SettingsDatabase, $ActivitiesTableTable> {
   $$ActivitiesTableTableOrderingComposer(super.$state);
   ColumnOrderings<String> get name => $state.composableBuilder(
       column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<int> get maxMembers => $state.composableBuilder(
       column: $state.table.maxMembers,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<String> get bannerUrl => $state.composableBuilder(
       column: $state.table.bannerUrl,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<bool> get enabled => $state.composableBuilder(
       column: $state.table.enabled,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $$RolesTableTableInsertCompanionBuilder = RolesTableCompanion Function({
@@ -1685,12 +1498,9 @@ class $$RolesTableTableTableManager extends RootTableManager<
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$RolesTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$RolesTableTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$RolesTableTableProcessedTableManager(p),
+          filteringComposer: $$RolesTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$RolesTableTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$RolesTableTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<String> name = const Value.absent(),
             Value<int> rowid = const Value.absent(),
@@ -1722,51 +1532,37 @@ class $$RolesTableTableProcessedTableManager extends ProcessedTableManager<
   $$RolesTableTableProcessedTableManager(super.$state);
 }
 
-class $$RolesTableTableFilterComposer
-    extends FilterComposer<_$SettingsDatabase, $RolesTableTable> {
+class $$RolesTableTableFilterComposer extends FilterComposer<_$SettingsDatabase, $RolesTableTable> {
   $$RolesTableTableFilterComposer(super.$state);
   ColumnFilters<String> get name => $state.composableBuilder(
-      column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      column: $state.table.name, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ComposableFilter activitiesRolesTableRefs(
-      ComposableFilter Function($$ActivitiesRolesTableTableFilterComposer f)
-          f) {
-    final $$ActivitiesRolesTableTableFilterComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.name,
-            referencedTable: $state.db.activitiesRolesTable,
-            getReferencedColumn: (t) => t.role,
-            builder: (joinBuilder, parentComposers) =>
-                $$ActivitiesRolesTableTableFilterComposer(ComposerState(
-                    $state.db,
-                    $state.db.activitiesRolesTable,
-                    joinBuilder,
-                    parentComposers)));
+  ComposableFilter activitiesRolesTableRefs(ComposableFilter Function($$ActivitiesRolesTableTableFilterComposer f) f) {
+    final $$ActivitiesRolesTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.name,
+        referencedTable: $state.db.activitiesRolesTable,
+        getReferencedColumn: (t) => t.role,
+        builder: (joinBuilder, parentComposers) => $$ActivitiesRolesTableTableFilterComposer(
+            ComposerState($state.db, $state.db.activitiesRolesTable, joinBuilder, parentComposers)));
     return f(composer);
   }
 }
 
-class $$RolesTableTableOrderingComposer
-    extends OrderingComposer<_$SettingsDatabase, $RolesTableTable> {
+class $$RolesTableTableOrderingComposer extends OrderingComposer<_$SettingsDatabase, $RolesTableTable> {
   $$RolesTableTableOrderingComposer(super.$state);
   ColumnOrderings<String> get name => $state.composableBuilder(
       column: $state.table.name,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$ActivitiesRolesTableTableInsertCompanionBuilder
-    = ActivitiesRolesTableCompanion Function({
+typedef $$ActivitiesRolesTableTableInsertCompanionBuilder = ActivitiesRolesTableCompanion Function({
   required String activity,
   required String role,
   Value<int> quantity,
   Value<int> rowid,
 });
-typedef $$ActivitiesRolesTableTableUpdateCompanionBuilder
-    = ActivitiesRolesTableCompanion Function({
+typedef $$ActivitiesRolesTableTableUpdateCompanionBuilder = ActivitiesRolesTableCompanion Function({
   Value<String> activity,
   Value<String> role,
   Value<int> quantity,
@@ -1782,17 +1578,13 @@ class $$ActivitiesRolesTableTableTableManager extends RootTableManager<
     $$ActivitiesRolesTableTableProcessedTableManager,
     $$ActivitiesRolesTableTableInsertCompanionBuilder,
     $$ActivitiesRolesTableTableUpdateCompanionBuilder> {
-  $$ActivitiesRolesTableTableTableManager(
-      _$SettingsDatabase db, $ActivitiesRolesTableTable table)
+  $$ActivitiesRolesTableTableTableManager(_$SettingsDatabase db, $ActivitiesRolesTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer: $$ActivitiesRolesTableTableFilterComposer(
-              ComposerState(db, table)),
-          orderingComposer: $$ActivitiesRolesTableTableOrderingComposer(
-              ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$ActivitiesRolesTableTableProcessedTableManager(p),
+          filteringComposer: $$ActivitiesRolesTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$ActivitiesRolesTableTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$ActivitiesRolesTableTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<String> activity = const Value.absent(),
             Value<String> role = const Value.absent(),
@@ -1820,37 +1612,32 @@ class $$ActivitiesRolesTableTableTableManager extends RootTableManager<
         ));
 }
 
-class $$ActivitiesRolesTableTableProcessedTableManager
-    extends ProcessedTableManager<
-        _$SettingsDatabase,
-        $ActivitiesRolesTableTable,
-        ActivitiesRolesTableData,
-        $$ActivitiesRolesTableTableFilterComposer,
-        $$ActivitiesRolesTableTableOrderingComposer,
-        $$ActivitiesRolesTableTableProcessedTableManager,
-        $$ActivitiesRolesTableTableInsertCompanionBuilder,
-        $$ActivitiesRolesTableTableUpdateCompanionBuilder> {
+class $$ActivitiesRolesTableTableProcessedTableManager extends ProcessedTableManager<
+    _$SettingsDatabase,
+    $ActivitiesRolesTableTable,
+    ActivitiesRolesTableData,
+    $$ActivitiesRolesTableTableFilterComposer,
+    $$ActivitiesRolesTableTableOrderingComposer,
+    $$ActivitiesRolesTableTableProcessedTableManager,
+    $$ActivitiesRolesTableTableInsertCompanionBuilder,
+    $$ActivitiesRolesTableTableUpdateCompanionBuilder> {
   $$ActivitiesRolesTableTableProcessedTableManager(super.$state);
 }
 
-class $$ActivitiesRolesTableTableFilterComposer
-    extends FilterComposer<_$SettingsDatabase, $ActivitiesRolesTableTable> {
+class $$ActivitiesRolesTableTableFilterComposer extends FilterComposer<_$SettingsDatabase, $ActivitiesRolesTableTable> {
   $$ActivitiesRolesTableTableFilterComposer(super.$state);
   ColumnFilters<int> get quantity => $state.composableBuilder(
       column: $state.table.quantity,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   $$ActivitiesTableTableFilterComposer get activity {
-    final $$ActivitiesTableTableFilterComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.activity,
-            referencedTable: $state.db.activitiesTable,
-            getReferencedColumn: (t) => t.name,
-            builder: (joinBuilder, parentComposers) =>
-                $$ActivitiesTableTableFilterComposer(ComposerState($state.db,
-                    $state.db.activitiesTable, joinBuilder, parentComposers)));
+    final $$ActivitiesTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.activity,
+        referencedTable: $state.db.activitiesTable,
+        getReferencedColumn: (t) => t.name,
+        builder: (joinBuilder, parentComposers) => $$ActivitiesTableTableFilterComposer(
+            ComposerState($state.db, $state.db.activitiesTable, joinBuilder, parentComposers)));
     return composer;
   }
 
@@ -1860,9 +1647,8 @@ class $$ActivitiesRolesTableTableFilterComposer
         getCurrentColumn: (t) => t.role,
         referencedTable: $state.db.rolesTable,
         getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder, parentComposers) =>
-            $$RolesTableTableFilterComposer(ComposerState($state.db,
-                $state.db.rolesTable, joinBuilder, parentComposers)));
+        builder: (joinBuilder, parentComposers) => $$RolesTableTableFilterComposer(
+            ComposerState($state.db, $state.db.rolesTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
@@ -1872,19 +1658,16 @@ class $$ActivitiesRolesTableTableOrderingComposer
   $$ActivitiesRolesTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get quantity => $state.composableBuilder(
       column: $state.table.quantity,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   $$ActivitiesTableTableOrderingComposer get activity {
-    final $$ActivitiesTableTableOrderingComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.activity,
-            referencedTable: $state.db.activitiesTable,
-            getReferencedColumn: (t) => t.name,
-            builder: (joinBuilder, parentComposers) =>
-                $$ActivitiesTableTableOrderingComposer(ComposerState($state.db,
-                    $state.db.activitiesTable, joinBuilder, parentComposers)));
+    final $$ActivitiesTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.activity,
+        referencedTable: $state.db.activitiesTable,
+        getReferencedColumn: (t) => t.name,
+        builder: (joinBuilder, parentComposers) => $$ActivitiesTableTableOrderingComposer(
+            ComposerState($state.db, $state.db.activitiesTable, joinBuilder, parentComposers)));
     return composer;
   }
 
@@ -1894,21 +1677,18 @@ class $$ActivitiesRolesTableTableOrderingComposer
         getCurrentColumn: (t) => t.role,
         referencedTable: $state.db.rolesTable,
         getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder, parentComposers) =>
-            $$RolesTableTableOrderingComposer(ComposerState($state.db,
-                $state.db.rolesTable, joinBuilder, parentComposers)));
+        builder: (joinBuilder, parentComposers) => $$RolesTableTableOrderingComposer(
+            ComposerState($state.db, $state.db.rolesTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
 
-typedef $$PromoteMessagesTableTableInsertCompanionBuilder
-    = PromoteMessagesTableCompanion Function({
+typedef $$PromoteMessagesTableTableInsertCompanionBuilder = PromoteMessagesTableCompanion Function({
   Value<int> id,
   required String message,
   required int weight,
 });
-typedef $$PromoteMessagesTableTableUpdateCompanionBuilder
-    = PromoteMessagesTableCompanion Function({
+typedef $$PromoteMessagesTableTableUpdateCompanionBuilder = PromoteMessagesTableCompanion Function({
   Value<int> id,
   Value<String> message,
   Value<int> weight,
@@ -1923,17 +1703,13 @@ class $$PromoteMessagesTableTableTableManager extends RootTableManager<
     $$PromoteMessagesTableTableProcessedTableManager,
     $$PromoteMessagesTableTableInsertCompanionBuilder,
     $$PromoteMessagesTableTableUpdateCompanionBuilder> {
-  $$PromoteMessagesTableTableTableManager(
-      _$SettingsDatabase db, $PromoteMessagesTableTable table)
+  $$PromoteMessagesTableTableTableManager(_$SettingsDatabase db, $PromoteMessagesTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer: $$PromoteMessagesTableTableFilterComposer(
-              ComposerState(db, table)),
-          orderingComposer: $$PromoteMessagesTableTableOrderingComposer(
-              ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$PromoteMessagesTableTableProcessedTableManager(p),
+          filteringComposer: $$PromoteMessagesTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$PromoteMessagesTableTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$PromoteMessagesTableTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
             Value<String> message = const Value.absent(),
@@ -1957,55 +1733,45 @@ class $$PromoteMessagesTableTableTableManager extends RootTableManager<
         ));
 }
 
-class $$PromoteMessagesTableTableProcessedTableManager
-    extends ProcessedTableManager<
-        _$SettingsDatabase,
-        $PromoteMessagesTableTable,
-        PromoteMessagesTableData,
-        $$PromoteMessagesTableTableFilterComposer,
-        $$PromoteMessagesTableTableOrderingComposer,
-        $$PromoteMessagesTableTableProcessedTableManager,
-        $$PromoteMessagesTableTableInsertCompanionBuilder,
-        $$PromoteMessagesTableTableUpdateCompanionBuilder> {
+class $$PromoteMessagesTableTableProcessedTableManager extends ProcessedTableManager<
+    _$SettingsDatabase,
+    $PromoteMessagesTableTable,
+    PromoteMessagesTableData,
+    $$PromoteMessagesTableTableFilterComposer,
+    $$PromoteMessagesTableTableOrderingComposer,
+    $$PromoteMessagesTableTableProcessedTableManager,
+    $$PromoteMessagesTableTableInsertCompanionBuilder,
+    $$PromoteMessagesTableTableUpdateCompanionBuilder> {
   $$PromoteMessagesTableTableProcessedTableManager(super.$state);
 }
 
-class $$PromoteMessagesTableTableFilterComposer
-    extends FilterComposer<_$SettingsDatabase, $PromoteMessagesTableTable> {
+class $$PromoteMessagesTableTableFilterComposer extends FilterComposer<_$SettingsDatabase, $PromoteMessagesTableTable> {
   $$PromoteMessagesTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      column: $state.table.id, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<String> get message => $state.composableBuilder(
       column: $state.table.message,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<int> get weight => $state.composableBuilder(
       column: $state.table.weight,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$PromoteMessagesTableTableOrderingComposer
     extends OrderingComposer<_$SettingsDatabase, $PromoteMessagesTableTable> {
   $$PromoteMessagesTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      column: $state.table.id, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<String> get message => $state.composableBuilder(
       column: $state.table.message,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<int> get weight => $state.composableBuilder(
       column: $state.table.weight,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 class _$SettingsDatabaseManager {
@@ -2013,12 +1779,10 @@ class _$SettingsDatabaseManager {
   _$SettingsDatabaseManager(this._db);
   $$KeyedSettingsTableTableTableManager get keyedSettingsTable =>
       $$KeyedSettingsTableTableTableManager(_db, _db.keyedSettingsTable);
-  $$TimezonesTableTableTableManager get timezonesTable =>
-      $$TimezonesTableTableTableManager(_db, _db.timezonesTable);
+  $$TimezonesTableTableTableManager get timezonesTable => $$TimezonesTableTableTableManager(_db, _db.timezonesTable);
   $$ActivitiesTableTableTableManager get activitiesTable =>
       $$ActivitiesTableTableTableManager(_db, _db.activitiesTable);
-  $$RolesTableTableTableManager get rolesTable =>
-      $$RolesTableTableTableManager(_db, _db.rolesTable);
+  $$RolesTableTableTableManager get rolesTable => $$RolesTableTableTableManager(_db, _db.rolesTable);
   $$ActivitiesRolesTableTableTableManager get activitiesRolesTable =>
       $$ActivitiesRolesTableTableTableManager(_db, _db.activitiesRolesTable);
   $$PromoteMessagesTableTableTableManager get promoteMessagesTable =>

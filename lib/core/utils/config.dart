@@ -14,6 +14,7 @@ final class Config {
   const Config({
     required this.token,
     required this.serverId,
+    this.locale,
   });
 
   /// Creates a new [Config] instance from environment variables.
@@ -25,6 +26,7 @@ final class Config {
     return Config(
       token: _read('OMEGA_TOKEN', env),
       serverId: int.parse(_read('OMEGA_SERVER_ID', env)),
+      locale: env['OMEGA_LOCALE']?.trim(),
     );
   }
 
@@ -51,4 +53,19 @@ final class Config {
 
   /// {@macro Config.ServerId}
   Snowflake get server => Snowflake(serverId);
+
+  /// Preferred locale loaded from `OMEGA_LOCALE` if provided.
+  final String? locale;
+
+  /// Returns a copy of this config overriding provided fields.
+  Config copyWith({
+    String? token,
+    int? serverId,
+    String? locale,
+  }) =>
+      Config(
+        token: token ?? this.token,
+        serverId: serverId ?? this.serverId,
+        locale: locale ?? this.locale,
+      );
 }

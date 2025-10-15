@@ -1,7 +1,6 @@
 import 'package:nyxx/nyxx.dart';
 
 extension InteractionAnswer<T> on MessageResponse<T> {
-
   /// Answers to the interaction with the provided [builder].
   ///
   /// If the response was already sent, creates a followup message. \

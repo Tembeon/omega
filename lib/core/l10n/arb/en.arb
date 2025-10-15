@@ -1,79 +1,78 @@
 {
-  "@@locale": "ru",
-  "@@last_modified": "2025-10-04T17:25:21.162402",
-  "commandOptionNameKey": "название",
+  "@@locale": "en",
+  "commandOptionNameKey": "name",
   "@commandOptionNameKey": {
     "description": "Slash command option name for activity title.",
     "type": "text",
     "placeholders": {}
   },
-  "commandOptionNameDescription": "Введите название активности",
+  "commandOptionNameDescription": "Enter the activity name",
   "@commandOptionNameDescription": {
     "description": "Prompt shown when user has to provide an activity title.",
     "type": "text",
     "placeholders": {}
   },
-  "commandOptionDescriptionKey": "описание",
+  "commandOptionDescriptionKey": "description",
   "@commandOptionDescriptionKey": {
     "description": "Slash command option name for activity description.",
     "type": "text",
     "placeholders": {}
   },
-  "commandOptionDescriptionDescription": "Введите описание активности",
+  "commandOptionDescriptionDescription": "Enter the activity description",
   "@commandOptionDescriptionDescription": {
     "description": "Prompt shown when user has to provide an activity description.",
     "type": "text",
     "placeholders": {}
   },
-  "commandOptionDateKey": "дата",
+  "commandOptionDateKey": "date",
   "@commandOptionDateKey": {
     "description": "Slash command option name for activity date.",
     "type": "text",
     "placeholders": {}
   },
-  "commandOptionDateDescription": "Введите дату начала активности [15 01 2023]",
+  "commandOptionDateDescription": "Enter the activity start date [15 01 2023]",
   "@commandOptionDateDescription": {
     "description": "Prompt shown when user has to provide an activity start date.",
     "type": "text",
     "placeholders": {}
   },
-  "commandOptionTimeKey": "время",
+  "commandOptionTimeKey": "time",
   "@commandOptionTimeKey": {
     "description": "Slash command option name for activity time.",
     "type": "text",
     "placeholders": {}
   },
-  "commandOptionTimeDescription": "Введите время начала активности [15 01]",
+  "commandOptionTimeDescription": "Enter the activity start time [15 01]",
   "@commandOptionTimeDescription": {
     "description": "Prompt shown when user has to provide an activity start time.",
     "type": "text",
     "placeholders": {}
   },
-  "commandOptionTimezoneKey": "часовой_пояс",
+  "commandOptionTimezoneKey": "timezone",
   "@commandOptionTimezoneKey": {
     "description": "Slash command option name for activity timezone offset.",
     "type": "text",
     "placeholders": {}
   },
-  "commandOptionTimezoneDescription": "Введите ваш текущий часовой пояс",
+  "commandOptionTimezoneDescription": "Enter your current timezone offset",
   "@commandOptionTimezoneDescription": {
     "description": "Prompt shown when user has to provide their timezone offset.",
     "type": "text",
     "placeholders": {}
   },
-  "createCommandDescription": "Создать активность",
+  "createCommandDescription": "Create an activity",
   "@createCommandDescription": {
     "description": "Top-level command description for creating activities.",
     "type": "text",
     "placeholders": {}
   },
-  "createCommandSubcommandDescription": "Создать сбор на активность",
+  "createCommandSubcommandDescription": "Create an LFG for an activity",
   "@createCommandSubcommandDescription": {
     "description": "Description for the subcommand that creates an LFG for an activity.",
     "type": "text",
     "placeholders": {}
   },
-  "createCommandChannelRestriction": "Команда доступна только в канале для поиска группы: <#{channelId}>",
+  "createCommandChannelRestriction": "This command is only available in the LFG channel: <#{channelId}>",
   "@createCommandChannelRestriction": {
     "description": "Error shown when the create command is used outside the LFG channel.",
     "type": "text",
@@ -83,103 +82,103 @@
       }
     }
   },
-  "createCommandDefaultDescription": "Создать рейд",
+  "createCommandDefaultDescription": "Create a raid",
   "@createCommandDefaultDescription": {
     "description": "Fallback description for the create raid command.",
     "type": "text",
     "placeholders": {}
   },
-  "editCommandName": "Редактировать LFG",
+  "editCommandName": "Edit LFG",
   "@editCommandName": {
     "description": "Context command title used to edit an existing LFG message.",
     "type": "text",
     "placeholders": {}
   },
-  "editCommandMessageNotFound": "Не удалось редактировать сообщение [NotFound]",
+  "editCommandMessageNotFound": "Failed to edit the message [NotFound]",
   "@editCommandMessageNotFound": {
     "description": "Error shown when the target message cannot be fetched during edit.",
     "type": "text",
     "placeholders": {}
   },
-  "selectedMessageIsNotLfg": "Данное сообщение не содержит LFG [LFGNotFound]",
+  "selectedMessageIsNotLfg": "The selected message is not an LFG [LFGNotFound]",
   "@selectedMessageIsNotLfg": {
     "description": "Error shown when the selected message is not an LFG post.",
     "type": "text",
     "placeholders": {}
   },
-  "editCommandNotAuthor": "Вы не можете редактировать это LFG, т.к. не являетесь его автором [NotAuthor]",
+  "editCommandNotAuthor": "You cannot edit this LFG because you are not its author [NotAuthor]",
   "@editCommandNotAuthor": {
     "description": "Error shown when a user tries to edit an LFG they did not create.",
     "type": "text",
     "placeholders": {}
   },
-  "editCommandModalTitle": "Редактирование LFG",
+  "editCommandModalTitle": "Edit LFG",
   "@editCommandModalTitle": {
     "description": "Title for the modal that edits an LFG post.",
     "type": "text",
     "placeholders": {}
   },
-  "editCommandDescriptionLabel": "Описание",
+  "editCommandDescriptionLabel": "Description",
   "@editCommandDescriptionLabel": {
     "description": "Label for the description field in the edit modal.",
     "type": "text",
     "placeholders": {}
   },
-  "editCommandDescriptionPlaceholder": "Введите новое описание",
+  "editCommandDescriptionPlaceholder": "Enter a new description",
   "@editCommandDescriptionPlaceholder": {
     "description": "Placeholder shown for the description field in the edit modal.",
     "type": "text",
     "placeholders": {}
   },
-  "editCommandDateLabel": "Дата начала",
+  "editCommandDateLabel": "Start date",
   "@editCommandDateLabel": {
     "description": "Label for the date input in the edit modal.",
     "type": "text",
     "placeholders": {}
   },
-  "editCommandStartTimePlaceholder": "Введите новое время начала",
+  "editCommandStartTimePlaceholder": "Enter a new start time",
   "@editCommandStartTimePlaceholder": {
     "description": "Placeholder shown for date/time fields when editing an LFG.",
     "type": "text",
     "placeholders": {}
   },
-  "editCommandTimeLabel": "Время начала",
+  "editCommandTimeLabel": "Start time",
   "@editCommandTimeLabel": {
     "description": "Label for the time input in the edit modal.",
     "type": "text",
     "placeholders": {}
   },
-  "editCommandModalMessageNotFound": "Не удалось отредактировать сообщение [NotFound]",
+  "editCommandModalMessageNotFound": "Failed to edit the message [NotFound]",
   "@editCommandModalMessageNotFound": {
     "description": "Error shown when the message disappears before modal submission.",
     "type": "text",
     "placeholders": {}
   },
-  "editCommandCompleted": "Редактирование завершено",
+  "editCommandCompleted": "Edit complete",
   "@editCommandCompleted": {
     "description": "Confirmation shown after an LFG message has been edited.",
     "type": "text",
     "placeholders": {}
   },
-  "deleteCommandName": "Удалить LFG",
+  "deleteCommandName": "Delete LFG",
   "@deleteCommandName": {
     "description": "Context command title used to delete an existing LFG message.",
     "type": "text",
     "placeholders": {}
   },
-  "deleteCommandMessageNotFound": "Не удалось удалить сообщение [NotFound]",
+  "deleteCommandMessageNotFound": "Failed to delete the message [NotFound]",
   "@deleteCommandMessageNotFound": {
     "description": "Error shown when the bot cannot access a message during deletion.",
     "type": "text",
     "placeholders": {}
   },
-  "deleteCommandNotAuthor": "Вы не можете удалить это LFG, т.к. не являетесь его автором [NotAuthor]",
+  "deleteCommandNotAuthor": "You cannot delete this LFG because you are not its author [NotAuthor]",
   "@deleteCommandNotAuthor": {
     "description": "Error shown when a user tries to delete an LFG they did not create.",
     "type": "text",
     "placeholders": {}
   },
-  "deleteCommandSuccess": "Ваше LFG \"{title}\" удалено.",
+  "deleteCommandSuccess": "Your LFG \"{title}\" has been deleted.",
   "@deleteCommandSuccess": {
     "description": "Confirmation shown when a user deletes their LFG post.",
     "type": "text",
@@ -189,175 +188,169 @@
       }
     }
   },
-  "adminCommandDescription": "Команды администратора",
+  "adminCommandDescription": "Admin commands",
   "@adminCommandDescription": {
     "description": "Description for the /admin command root.",
     "type": "text",
     "placeholders": {}
   },
-  "adminDeleteSubcommandDescription": "Удалить LFG",
+  "adminDeleteSubcommandDescription": "Delete LFG",
   "@adminDeleteSubcommandDescription": {
     "description": "Description for the subcommand that removes an LFG post.",
     "type": "text",
     "placeholders": {}
   },
-  "adminDeleteMessageIdDescription": "ID сообщения для удаления",
+  "adminDeleteMessageIdDescription": "Message ID to delete",
   "@adminDeleteMessageIdDescription": {
     "description": "Description for the message id parameter in delete subcommand.",
     "type": "text",
     "placeholders": {}
   },
-  "adminHealthDescription": "Узнать состояние бота",
+  "adminHealthDescription": "Check bot status",
   "@adminHealthDescription": {
     "description": "Description for the admin health subcommand.",
     "type": "text",
     "placeholders": {}
   },
-  "adminSetGroupDescription": "Настройки бота",
+  "adminSetGroupDescription": "Bot settings",
   "@adminSetGroupDescription": {
     "description": "Description for the admin set subcommand group.",
     "type": "text",
     "placeholders": {}
   },
-  "adminSetLfgChannelDescription": "Установить LFG канал",
+  "adminSetLfgChannelDescription": "Set the LFG channel",
   "@adminSetLfgChannelDescription": {
     "description": "Description for configuring the LFG channel.",
     "type": "text",
     "placeholders": {}
   },
-  "adminSetPromoChannelDescription": "Установить канал для оповещений о LFG",
+  "adminSetPromoChannelDescription": "Set the announcement channel",
   "@adminSetPromoChannelDescription": {
     "description": "Description for configuring the promo channel.",
     "type": "text",
     "placeholders": {}
   },
-  "adminPromotesGroupDescription": "Настройки объявлений бота",
+  "adminPromotesGroupDescription": "Announcement settings",
   "@adminPromotesGroupDescription": {
     "description": "Description for the promotes subcommand group.",
     "type": "text",
     "placeholders": {}
   },
-  "adminPromotesAddDescription": "Добавить новое сообщение",
+  "adminPromotesAddDescription": "Add a new message",
   "@adminPromotesAddDescription": {
     "description": "Description for adding a new promote message.",
     "type": "text",
     "placeholders": {}
   },
-  "adminPromotesTemplateHelp": "Шаблоны: {AUTHOR}, {DESCRIPTION}, {DATE}, {MAX_MEMBERS}, {NAME}, {MESSAGE_URL}",
+  "adminPromotesTemplateHelp": "Templates: {AUTHOR}, {DESCRIPTION}, {DATE}, {MAX_MEMBERS}, {NAME}, {MESSAGE_URL}",
   "@adminPromotesTemplateHelp": {
     "description": "Help text listing supported promote message templates.",
     "type": "text",
     "placeholders": {}
   },
-  "adminPromotesWeightDescription": "Вес сообщения",
+  "adminPromotesWeightDescription": "Message weight",
   "@adminPromotesWeightDescription": {
     "description": "Description for the promote message weight option.",
     "type": "text",
     "placeholders": {}
   },
-  "adminPromotesRemoveDescription": "Удалить сообщение по ID",
+  "adminPromotesRemoveDescription": "Delete message by ID",
   "@adminPromotesRemoveDescription": {
     "description": "Description for removing a promote message by id.",
     "type": "text",
     "placeholders": {}
   },
-  "adminPromotesMessageIdDescription": "ID сообщения",
+  "adminPromotesMessageIdDescription": "Message ID",
   "@adminPromotesMessageIdDescription": {
     "description": "Description for the promote message id option.",
     "type": "text",
     "placeholders": {}
   },
-  "adminPromotesListDescription": "Показать все сообщения",
+  "adminPromotesListDescription": "List all messages",
   "@adminPromotesListDescription": {
     "description": "Description for listing promote messages.",
     "type": "text",
     "placeholders": {}
   },
-  "adminBotGroupDescription": "Тут можно получить информацию о настройках бота",
+  "adminBotGroupDescription": "View current bot configuration",
   "@adminBotGroupDescription": {
     "description": "Description for the admin bot information subcommand group.",
     "type": "text",
     "placeholders": {}
   },
-  "adminBotChannelsDescription": "Каналы, в которых бот работает",
+  "adminBotChannelsDescription": "Channels where the bot works",
   "@adminBotChannelsDescription": {
     "description": "Description for listing working channels.",
     "type": "text",
     "placeholders": {}
   },
-  "adminBotRolesDescription": "Получить список ролей для активности",
+  "adminBotRolesDescription": "Get the list of roles for an activity",
   "@adminBotRolesDescription": {
     "description": "Description for retrieving available roles per activity.",
     "type": "text",
     "placeholders": {}
   },
-  "adminActivityOptionDescription": "Активность",
+  "adminActivityOptionDescription": "Activity",
   "@adminActivityOptionDescription": {
     "description": "Description for the activity option in admin commands.",
     "type": "text",
     "placeholders": {}
   },
-  "adminSetLfgChannelSet": "LFG канал установлен",
+  "adminChannelOptionDescription": "channel",
+  "@adminChannelOptionDescription": {
+    "description": "Description for the channel selection option.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminRoleOptionDescription": "Role",
+  "@adminRoleOptionDescription": {
+    "description": "Description for the role selection option.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminSetLfgChannelSet": "LFG channel set",
   "@adminSetLfgChannelSet": {
     "description": "Confirmation shown after setting the LFG channel.",
     "type": "text",
     "placeholders": {}
   },
-  "adminSetLfgChannelCleared": "LFG канал удален",
+  "adminSetLfgChannelCleared": "LFG channel cleared",
   "@adminSetLfgChannelCleared": {
     "description": "Confirmation shown after clearing the LFG channel.",
     "type": "text",
     "placeholders": {}
   },
-  "adminSetPromoChannelSet": "Канал уведомлений установлен",
+  "adminSetPromoChannelSet": "Announcement channel set",
   "@adminSetPromoChannelSet": {
     "description": "Confirmation shown after setting the promo channel.",
     "type": "text",
     "placeholders": {}
   },
-  "adminSetPromoChannelCleared": "Канал уведомлений удален",
+  "adminSetPromoChannelCleared": "Announcement channel cleared",
   "@adminSetPromoChannelCleared": {
     "description": "Confirmation shown after clearing the promo channel.",
     "type": "text",
     "placeholders": {}
   },
-  "adminPromoteAdded": "Сообщение добавлено",
+  "adminPromoteAdded": "Message added",
   "@adminPromoteAdded": {
     "description": "Confirmation shown after a promote message is added.",
     "type": "text",
     "placeholders": {}
   },
-  "adminPromoteRemoved": "Сообщение удалено",
+  "adminPromoteRemoved": "Message removed",
   "@adminPromoteRemoved": {
     "description": "Confirmation shown after a promote message is removed.",
     "type": "text",
     "placeholders": {}
   },
-  "adminPromoteListHeader": "**Сообщения:**",
+  "adminPromoteListHeader": "**Messages:**",
   "@adminPromoteListHeader": {
     "description": "Header displayed before listing promote messages.",
     "type": "text",
     "placeholders": {}
   },
-  "adminBotChannelPrefix": "LFG канал: ",
-  "@adminBotChannelPrefix": {
-    "description": "Prefix used when showing the configured LFG channel.",
-    "type": "text",
-    "placeholders": {}
-  },
-  "adminBotPromoChannelPrefix": "Канал уведомлений: ",
-  "@adminBotPromoChannelPrefix": {
-    "description": "Prefix used when showing the configured promo channel.",
-    "type": "text",
-    "placeholders": {}
-  },
-  "commonValueNotSet": "Не установлен",
-  "@commonValueNotSet": {
-    "description": "Label used when a configuration value is missing.",
-    "type": "text",
-    "placeholders": {}
-  },
-  "adminRolesAvailability": "Активность \"{activity}\" имеет {freeSlots} свободных ролей \"{role}\"",
+  "adminRolesAvailability": "Activity \"{activity}\" has {freeSlots} free \"{role}\" roles",
   "@adminRolesAvailability": {
     "description": "Message showing how many free roles remain for an activity.",
     "type": "text",
@@ -373,19 +366,25 @@
       }
     }
   },
-  "adminChannelOptionDescription": "канал",
-  "@adminChannelOptionDescription": {
-    "description": "Description for the channel selection option.",
+  "adminBotChannelPrefix": "LFG channel: ",
+  "@adminBotChannelPrefix": {
+    "description": "Prefix used when showing the configured LFG channel.",
     "type": "text",
     "placeholders": {}
   },
-  "adminRoleOptionDescription": "Роль",
-  "@adminRoleOptionDescription": {
-    "description": "Description for the role selection option.",
+  "adminBotPromoChannelPrefix": "Announcement channel: ",
+  "@adminBotPromoChannelPrefix": {
+    "description": "Prefix used when showing the configured promo channel.",
     "type": "text",
     "placeholders": {}
   },
-  "adminDeleteSuccess": "LFG пользователя \"{userName}\", с активностью \"{activityTitle}\" удалено.",
+  "commonValueNotSet": "Not set",
+  "@commonValueNotSet": {
+    "description": "Label used when a configuration value is missing.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminDeleteSuccess": "LFG from user \"{userName}\" with activity \"{activityTitle}\" has been deleted.",
   "@adminDeleteSuccess": {
     "description": "Confirmation shown after an admin deletes someone else's LFG.",
     "type": "text",
@@ -398,97 +397,97 @@
       }
     }
   },
-  "commonUnknownUser": "неизвестен",
+  "commonUnknownUser": "unknown",
   "@commonUnknownUser": {
     "description": "Fallback label when user information is missing.",
     "type": "text",
     "placeholders": {}
   },
-  "activityCommandDescription": "Настройки активностей",
+  "activityCommandDescription": "Activity settings",
   "@activityCommandDescription": {
     "description": "Description for the /activity command root.",
     "type": "text",
     "placeholders": {}
   },
-  "activityAddDescription": "Добавить активность",
+  "activityAddDescription": "Add an activity",
   "@activityAddDescription": {
     "description": "Description for subcommand that adds a new activity.",
     "type": "text",
     "placeholders": {}
   },
-  "promptEnterMaxMembers": "Введите максимальное количество участников",
+  "promptEnterMaxMembers": "Enter the maximum number of participants",
   "@promptEnterMaxMembers": {
     "description": "Prompt asking for the maximum members of an activity.",
     "type": "text",
     "placeholders": {}
   },
-  "promptEnterBannerUrl": "Введите URL баннера",
+  "promptEnterBannerUrl": "Enter the banner URL",
   "@promptEnterBannerUrl": {
     "description": "Prompt asking for the external banner URL.",
     "type": "text",
     "placeholders": {}
   },
-  "promptUploadBanner": "Или загрузите баннер",
+  "promptUploadBanner": "Or upload a banner",
   "@promptUploadBanner": {
     "description": "Prompt suggesting to upload a banner file.",
     "type": "text",
     "placeholders": {}
   },
-  "activityRemoveDescription": "Удалить активность",
+  "activityRemoveDescription": "Remove an activity",
   "@activityRemoveDescription": {
     "description": "Description for subcommand that removes an activity.",
     "type": "text",
     "placeholders": {}
   },
-  "activityRolesGroupDescription": "Управлять ролями активности",
+  "activityRolesGroupDescription": "Manage activity roles",
   "@activityRolesGroupDescription": {
     "description": "Description for the activity roles subcommand group.",
     "type": "text",
     "placeholders": {}
   },
-  "activityRolesAddDescription": "Добавить роль в базу",
+  "activityRolesAddDescription": "Add a role to the pool",
   "@activityRolesAddDescription": {
     "description": "Description for the subcommand adding a role to the pool.",
     "type": "text",
     "placeholders": {}
   },
-  "promptEnterRoleNameWithEmoji": "Введите название роли (можно вставлять эмодзи)",
+  "promptEnterRoleNameWithEmoji": "Enter a role name (emoji allowed)",
   "@promptEnterRoleNameWithEmoji": {
     "description": "Prompt asking for a role name with emoji support.",
     "type": "text",
     "placeholders": {}
   },
-  "activityRolesRemoveDescription": "Убрать роль из базы",
+  "activityRolesRemoveDescription": "Remove a role from the pool",
   "@activityRolesRemoveDescription": {
     "description": "Description for subcommand removing a role from the pool.",
     "type": "text",
     "placeholders": {}
   },
-  "promptEnterRoleName": "Введите название роли",
+  "promptEnterRoleName": "Enter the role name",
   "@promptEnterRoleName": {
     "description": "Prompt asking for a role name.",
     "type": "text",
     "placeholders": {}
   },
-  "activityRolesConnectDescription": "Привязать роль к активности",
+  "activityRolesConnectDescription": "Assign a role to an activity",
   "@activityRolesConnectDescription": {
     "description": "Description for subcommand linking a role to an activity.",
     "type": "text",
     "placeholders": {}
   },
-  "promptEnterRoleQuantity": "Сколько участников требуется для этой роли",
+  "promptEnterRoleQuantity": "How many members are required for this role",
   "@promptEnterRoleQuantity": {
     "description": "Prompt asking how many members are needed for the role.",
     "type": "text",
     "placeholders": {}
   },
-  "activityRolesDisconnectDescription": "Отвязать роль от активности",
+  "activityRolesDisconnectDescription": "Detach a role from an activity",
   "@activityRolesDisconnectDescription": {
     "description": "Description for subcommand unlinking a role from an activity.",
     "type": "text",
     "placeholders": {}
   },
-  "activityAddedMessage": "Активность \"{activityName}\" добавлена",
+  "activityAddedMessage": "Activity \"{activityName}\" added",
   "@activityAddedMessage": {
     "description": "Confirmation shown after adding an activity.",
     "type": "text",
@@ -498,7 +497,7 @@
       }
     }
   },
-  "activityRemovedMessage": "Активность \"{activityName}\" удалена",
+  "activityRemovedMessage": "Activity \"{activityName}\" removed",
   "@activityRemovedMessage": {
     "description": "Confirmation shown after removing an activity.",
     "type": "text",
@@ -508,7 +507,7 @@
       }
     }
   },
-  "roleAddedToDatabaseMessage": "Роль \"{roleName}\" добавлена к базу данных",
+  "roleAddedToDatabaseMessage": "Role \"{roleName}\" added to the database",
   "@roleAddedToDatabaseMessage": {
     "description": "Confirmation shown after adding a role to the pool.",
     "type": "text",
@@ -518,7 +517,7 @@
       }
     }
   },
-  "roleRemovedFromDatabaseMessage": "Роль \"{roleName}\" удалена из базы данных",
+  "roleRemovedFromDatabaseMessage": "Role \"{roleName}\" removed from the database",
   "@roleRemovedFromDatabaseMessage": {
     "description": "Confirmation shown after removing a role from the pool.",
     "type": "text",
@@ -528,7 +527,7 @@
       }
     }
   },
-  "roleConnectedToActivityMessage": "Роль \"{roleName}\" привязана к активности \"{activityName}\"",
+  "roleConnectedToActivityMessage": "Role \"{roleName}\" linked to activity \"{activityName}\"",
   "@roleConnectedToActivityMessage": {
     "description": "Confirmation shown after assigning a role to an activity.",
     "type": "text",
@@ -541,7 +540,7 @@
       }
     }
   },
-  "roleDisconnectedFromActivityMessage": "Роль \"{roleName}\" отвязана от активности \"{activityName}\"",
+  "roleDisconnectedFromActivityMessage": "Role \"{roleName}\" detached from activity \"{activityName}\"",
   "@roleDisconnectedFromActivityMessage": {
     "description": "Confirmation shown after removing a role from an activity.",
     "type": "text",
@@ -554,7 +553,7 @@
       }
     }
   },
-  "promoterChannelInvalid": "Канал для объявлений настроен неверно.\nID: {channelId}",
+  "promoterChannelInvalid": "Announcement channel is misconfigured.\nID: {channelId}",
   "@promoterChannelInvalid": {
     "description": "Error when the configured promo channel is not a guild text channel.",
     "type": "text",
@@ -564,25 +563,25 @@
       }
     }
   },
-  "promoterDefaultTemplate": "{AUTHOR} собирает людей в {NAME}",
+  "promoterDefaultTemplate": "{AUTHOR} is gathering people for {NAME}",
   "@promoterDefaultTemplate": {
     "description": "Fallback promote message template.",
     "type": "text",
     "placeholders": {}
   },
-  "promoterNewGatheringTitle": "Новый сбор!",
+  "promoterNewGatheringTitle": "New gathering!",
   "@promoterNewGatheringTitle": {
     "description": "Title for the first line of the promote embed.",
     "type": "text",
     "placeholders": {}
   },
-  "interactorUnknownResponse": "Я не знаю, как на это ответить :(",
+  "interactorUnknownResponse": "I don't know how to respond to that :(",
   "@interactorUnknownResponse": {
     "description": "Fallback response when no handler is available.",
     "type": "text",
     "placeholders": {}
   },
-  "interactorCommandError": "Произошла ошибка при выполнении команды :(\n\n{error}",
+  "interactorCommandError": "An error occurred while executing the command :(\n\n{error}",
   "@interactorCommandError": {
     "description": "Error message shown when a command handler throws.",
     "type": "text",
@@ -592,13 +591,13 @@
       }
     }
   },
-  "rolePickerTimeoutMessage": "Превышено время ожидания выбора роли",
+  "rolePickerTimeoutMessage": "Role selection timed out",
   "@rolePickerTimeoutMessage": {
     "description": "Error shown when a member fails to pick a role in time.",
     "type": "text",
     "placeholders": {}
   },
-  "selectedRoleConfirmation": "Выбрана роль: {role}",
+  "selectedRoleConfirmation": "Role chosen: {role}",
   "@selectedRoleConfirmation": {
     "description": "Confirmation shown after a member selects a role.",
     "type": "text",
@@ -608,7 +607,7 @@
       }
     }
   },
-  "lfgNotFoundMessage": "LFG {id} не найден",
+  "lfgNotFoundMessage": "LFG {id} not found",
   "@lfgNotFoundMessage": {
     "description": "Error when an LFG post with the provided id does not exist.",
     "type": "text",
@@ -618,13 +617,13 @@
       }
     }
   },
-  "lfgChannelNotConfigured": "Канал LFG не настроен",
+  "lfgChannelNotConfigured": "LFG channel is not configured",
   "@lfgChannelNotConfigured": {
     "description": "Error when the LFG channel is missing from configuration.",
     "type": "text",
     "placeholders": {}
   },
-  "lfgChannelInvalid": "Канал LFG не найден или настроен неправильно\nID: {channelId}",
+  "lfgChannelInvalid": "LFG channel not found or misconfigured\nID: {channelId}",
   "@lfgChannelInvalid": {
     "description": "Error when the configured LFG channel is invalid.",
     "type": "text",
@@ -634,19 +633,19 @@
       }
     }
   },
-  "roleNotPickedMessage": "Роль не выбрана",
+  "roleNotPickedMessage": "No role was selected",
   "@roleNotPickedMessage": {
     "description": "Error when a member fails to select a role.",
     "type": "text",
     "placeholders": {}
   },
-  "lfgStartTimeLabel": "Время сбора:",
+  "lfgStartTimeLabel": "Start time:",
   "@lfgStartTimeLabel": {
     "description": "Label for the start time of an LFG embed.",
     "type": "text",
     "placeholders": {}
   },
-  "lfgMembersLabel": "Участники ({current}/{max}):",
+  "lfgMembersLabel": "Members ({current}/{max}):",
   "@lfgMembersLabel": {
     "description": "Label showing participants count in an LFG embed.",
     "type": "text",
@@ -659,19 +658,19 @@
       }
     }
   },
-  "lfgJoinButtonLabel": "➕  Присоединиться",
+  "lfgJoinButtonLabel": "➕  Join",
   "@lfgJoinButtonLabel": {
     "description": "Label for the join button under an LFG message.",
     "type": "text",
     "placeholders": {}
   },
-  "lfgLeaveButtonLabel": "➖  Покинуть",
+  "lfgLeaveButtonLabel": "➖  Leave",
   "@lfgLeaveButtonLabel": {
     "description": "Label for the leave button under an LFG message.",
     "type": "text",
     "placeholders": {}
   },
-  "schedulerPostStartNotification": "Время сбора для {title} от {authorName} наступило!",
+  "schedulerPostStartNotification": "It's time for {title} created by {authorName}!",
   "@schedulerPostStartNotification": {
     "description": "Notification sent when an LFG start time is reached.",
     "type": "text",
@@ -684,7 +683,7 @@
       }
     }
   },
-  "joinComponentRolePicked": "Вы выбрали роль {role}",
+  "joinComponentRolePicked": "You chose role {role}",
   "@joinComponentRolePicked": {
     "description": "Confirmation sent after a member picks a role from the role picker.",
     "type": "text",
@@ -694,55 +693,55 @@
       }
     }
   },
-  "joinComponentJoined": "Вы добавлены в LFG",
+  "joinComponentJoined": "You joined the LFG",
   "@joinComponentJoined": {
     "description": "Confirmation shown after joining an LFG.",
     "type": "text",
     "placeholders": {}
   },
-  "joinComponentPrompt": "Выберите роль для участия",
+  "joinComponentPrompt": "Pick a role to participate",
   "@joinComponentPrompt": {
     "description": "Prompt suggesting to pick a role.",
     "type": "text",
     "placeholders": {}
   },
-  "joinComponentPromptWithColon": "Выберите роль для участия:",
+  "joinComponentPromptWithColon": "Pick a role to participate:",
   "@joinComponentPromptWithColon": {
     "description": "Prompt with colon when rendering a select menu.",
     "type": "text",
     "placeholders": {}
   },
-  "joinComponentRoleExampleOne": "Роль 1",
+  "joinComponentRoleExampleOne": "Role 1",
   "@joinComponentRoleExampleOne": {
     "description": "Placeholder label for the first example role.",
     "type": "text",
     "placeholders": {}
   },
-  "joinComponentRoleExampleTwo": "Роль 2",
+  "joinComponentRoleExampleTwo": "Role 2",
   "@joinComponentRoleExampleTwo": {
     "description": "Placeholder label for the second example role.",
     "type": "text",
     "placeholders": {}
   },
-  "joinComponentRoleExampleThree": "Роль 3",
+  "joinComponentRoleExampleThree": "Role 3",
   "@joinComponentRoleExampleThree": {
     "description": "Placeholder label for the third example role.",
     "type": "text",
     "placeholders": {}
   },
-  "leaveComponentLeft": "Вы покинули LFG",
+  "leaveComponentLeft": "You left the LFG",
   "@leaveComponentLeft": {
     "description": "Confirmation shown after leaving an LFG.",
     "type": "text",
     "placeholders": {}
   },
-  "leaveComponentUnknownErrorTitle": "Произошла неизвестная ошибка при удалении вас из LFG",
+  "leaveComponentUnknownErrorTitle": "An unexpected error occurred while removing you from the LFG",
   "@leaveComponentUnknownErrorTitle": {
     "description": "Header for an unexpected error during leave flow.",
     "type": "text",
     "placeholders": {}
   },
-  "generalMetadata": "Метаданные: {metadata}",
+  "generalMetadata": "Metadata: {metadata}",
   "@generalMetadata": {
     "description": "Line prefixing additional error metadata.",
     "type": "text",
@@ -752,7 +751,7 @@
       }
     }
   },
-  "generalStackTrace": "Стек вызовов: {stack}",
+  "generalStackTrace": "Stack trace: {stack}",
   "@generalStackTrace": {
     "description": "Line prefixing stack trace information.",
     "type": "text",
@@ -762,37 +761,37 @@
       }
     }
   },
-  "tooManyPlayersMessage": "Невозможно присоединиться к сбору, так как он уже заполнен.",
+  "tooManyPlayersMessage": "You cannot join because the group is already full.",
   "@tooManyPlayersMessage": {
     "description": "Error when an activity is full.",
     "type": "text",
     "placeholders": {}
   },
-  "creatorCannotLeaveMessage": "Невозможно покинуть сбор, так как вы являетесь его создателем. Если вы хотите удалить сбор, нажмите ПКМ по сообщению, выберите \"Приложения\", затем \"Удалить LFG\".",
+  "creatorCannotLeaveMessage": "You cannot leave because you created this group. Right-click the message, open \"Apps\", then pick \"Delete LFG\" if you want to remove it.",
   "@creatorCannotLeaveMessage": {
     "description": "Error when creator attempts to leave their own gathering.",
     "type": "text",
     "placeholders": {}
   },
-  "alreadyJoinedMessage": "Вы уже присоединились к этому сбору.",
+  "alreadyJoinedMessage": "You already joined this group.",
   "@alreadyJoinedMessage": {
     "description": "Error when trying to join an activity twice.",
     "type": "text",
     "placeholders": {}
   },
-  "notJoinedMessage": "Невозможно покинуть сбор, в котором вы не участвуете.",
+  "notJoinedMessage": "You cannot leave a group you are not in.",
   "@notJoinedMessage": {
     "description": "Error when trying to leave an activity you are not part of.",
     "type": "text",
     "placeholders": {}
   },
-  "notCreatorMessage": "Невозможно выполнить команду, так как вы не являетесь создателем сбора.",
+  "notCreatorMessage": "You cannot run this command because you are not the creator of the group.",
   "@notCreatorMessage": {
     "description": "Error when a non-creator tries to modify an LFG.",
     "type": "text",
     "placeholders": {}
   },
-  "cantRespondError": "Невозможно выполнить команду.\nПричина: {reason}\nПопробуйте ещё раз или обратитесь к администрации сервера.",
+  "cantRespondError": "Cannot complete the command.\nReason: {reason}\nTry again or contact the server administrators.",
   "@cantRespondError": {
     "description": "Generic message wrapping the reason why a command cannot be executed.",
     "type": "text",
@@ -824,7 +823,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "adminHealthScheduledCount": "Scheduled: {count}",
+  "adminHealthScheduledCount":"Scheduled: {count}",
   "@adminHealthScheduledCount": {
     "description": "Shows how many LFG posts are scheduled.",
     "type": "text",
@@ -864,13 +863,13 @@
       }
     }
   },
-  "alwaysUserPermissionError": "У вас недостаточно прав для использования этой команды",
+  "alwaysUserPermissionError": "You do not have permission to use this command",
   "@alwaysUserPermissionError": {
     "description": "Error shown when a user without permissions tries to run an admin command.",
     "type": "text",
     "placeholders": {}
   },
-  "alwaysUserUnknownMember": "Не удалось определить пользователя",
+  "alwaysUserUnknownMember": "Could not identify the user",
   "@alwaysUserUnknownMember": {
     "description": "Error when the interaction has no associated guild member.",
     "type": "text",

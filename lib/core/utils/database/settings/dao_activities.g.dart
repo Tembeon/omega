@@ -6,6 +6,5 @@ part of 'dao_activities.dart';
 mixin _$ActivitiesDaoMixin on DatabaseAccessor<SettingsDatabase> {
   $ActivitiesTableTable get activitiesTable => attachedDatabase.activitiesTable;
   $RolesTableTable get rolesTable => attachedDatabase.rolesTable;
-  $ActivitiesRolesTableTable get activitiesRolesTable =>
-      attachedDatabase.activitiesRolesTable;
+  $ActivitiesRolesTableTable get activitiesRolesTable => attachedDatabase.activitiesRolesTable;
 }
