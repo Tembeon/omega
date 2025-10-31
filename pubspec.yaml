@@ -10,28 +10,32 @@ environment:
 dependencies:
 
   # bot core
-  nyxx: ^6.3.1
+  nyxx: ^6.7.0
+  nyxx_commands: ^6.0.5
+  nyxx_extensions: ^4.4.0
 
   # platform
-  path: ^1.9.0
-  io: ^1.0.4
+  path: ^1.9.1
+  io: ^1.0.5
 
   # database
   drift: ^2.18.0
   sqlite3: ^2.4.4
 
   # utils
-  l: ^4.0.2
-  meta: ^1.15.0
+  l: ^5.0.1
+  meta: ^1.16.0
   collection: ^1.19.0
 
   # localization
-  intl: ^0.19.0
-#  intl_translation: ^0.19.0
+  intl: ^0.18.1
 
 dev_dependencies:
-  lints: ^4.0.0
+  lints: ^6.0.0
   test: ^1.25.8
   build_runner: ^2.4.11
-  drift_dev: ^2.18.0
-  intl_translation: ^0.20.1
+  drift_dev: 2.18.0
+  intl_translation: ^0.18.0
+
+dependency_overrides:
+  dart_style: 2.2.5

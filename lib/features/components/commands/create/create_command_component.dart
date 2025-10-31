@@ -100,10 +100,11 @@ class CreateCommandComponent extends InteractorCommandComponent {
     }
 
     if (channelLfg != event.interaction.channelId?.value) {
-      return event.interaction.respond(
-        MessageBuilder(content: createCommandChannelRestriction(channelLfg.toString())),
-        isEphemeral: true,
+      await event.interaction.respond(
+        MessageBuilder(flags: MessageFlags.ephemeral, content: createCommandChannelRestriction(channelLfg.toString())),
       );
+
+      return;
     }
 
     // in this handle in doesn't matter which type of activity was received,

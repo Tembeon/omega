@@ -37,7 +37,7 @@ void main(List<String> arguments) => l.capture<void>(
         handlePrint: true,
         printColors: true,
         outputInRelease: true,
-        messageFormatting: (message, logLevel, dateTime) => '[${dateTime.toIso8601String()}] $message',
+        messageFormatting: (log) => '[${log.timestamp.toIso8601String()}] ${log.message}',
       ),
     );
 
