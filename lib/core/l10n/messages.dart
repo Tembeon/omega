@@ -250,7 +250,7 @@ String get adminPromotesAddDescription => Intl.message(
     );
 
 String get adminPromotesTemplateHelp => Intl.message(
-      'Шаблоны: {AUTHOR}, {DESCRIPTION}, {DATE}, {MAX_MEMBERS}, {NAME}, {MESSAGE_URL}',
+      'Шаблоны: AUTHOR, DESCRIPTION, DATE, MAX_MEMBERS, NAME, MESSAGE_URL',
       name: 'adminPromotesTemplateHelp',
       desc: 'Help text listing supported promote message templates.',
     );
@@ -277,6 +277,66 @@ String get adminPromotesListDescription => Intl.message(
       'Показать все сообщения',
       name: 'adminPromotesListDescription',
       desc: 'Description for listing promote messages.',
+    );
+
+String get adminPromotesRoleSetDescription => Intl.message(
+      'Установить роль для упоминания',
+      name: 'adminPromotesRoleSetDescription',
+      desc: 'Description for setting a role mention in promo messages.',
+    );
+
+String get adminPromotesRoleViewDescription => Intl.message(
+      'Показать текущую роль',
+      name: 'adminPromotesRoleViewDescription',
+      desc: 'Description for viewing current promo mention role.',
+    );
+
+String get adminPromotesRoleClearDescription => Intl.message(
+      'Очистить роль',
+      name: 'adminPromotesRoleClearDescription',
+      desc: 'Description for removing the promo mention role.',
+    );
+
+String get adminPromotesRoleOptionDescription => Intl.message(
+      'Роль для пинга',
+      name: 'adminPromotesRoleOptionDescription',
+      desc: 'Description for the role option in promo commands.',
+    );
+
+String get adminPromotesRoleActivityOptionDescription => Intl.message(
+      'Активность',
+      name: 'adminPromotesRoleActivityOptionDescription',
+      desc: 'Description for the activity option in promo role commands.',
+    );
+
+String get adminTimezonesGroupDescription => Intl.message(
+      'Управление таймзонами',
+      name: 'adminTimezonesGroupDescription',
+      desc: 'Description for the timezone management subcommand group.',
+    );
+
+String get adminTimezonesAddDescription => Intl.message(
+      'Добавить новую таймзону',
+      name: 'adminTimezonesAddDescription',
+      desc: 'Description for adding a new timezone.',
+    );
+
+String get adminTimezonesRemoveDescription => Intl.message(
+      'Удалить таймзону',
+      name: 'adminTimezonesRemoveDescription',
+      desc: 'Description for removing a timezone.',
+    );
+
+String get adminTimezoneNameDescription => Intl.message(
+      'Название таймзоны',
+      name: 'adminTimezoneNameDescription',
+      desc: 'Description for the timezone name option.',
+    );
+
+String get adminTimezoneOffsetDescription => Intl.message(
+      'Смещение относительно UTC (часы)',
+      name: 'adminTimezoneOffsetDescription',
+      desc: 'Description for the timezone offset option.',
     );
 
 String get adminBotGroupDescription => Intl.message(
@@ -337,6 +397,95 @@ String get adminPromoteRemoved => Intl.message(
       'Сообщение удалено',
       name: 'adminPromoteRemoved',
       desc: 'Confirmation shown after a promote message is removed.',
+    );
+
+String adminPromotesRoleSet(String activity, String roleMention) => Intl.message(
+      'Для активности "$activity": роль $roleMention будет оповещена в промо сообщениях.',
+      name: 'adminPromotesRoleSet',
+      args: [activity, roleMention],
+      desc: 'Confirmation shown after setting promo mention role.',
+      examples: const {
+        'activity': 'Рейд',
+        'roleMention': '@Raiders',
+      },
+    );
+
+String adminPromotesRoleCleared(String activity) => Intl.message(
+      'Для активности "$activity" роль для промо сообщений удалена.',
+      name: 'adminPromotesRoleCleared',
+      args: [activity],
+      desc: 'Confirmation shown after clearing promo mention role.',
+      examples: const {
+        'activity': 'Рейд',
+      },
+    );
+
+String adminPromotesRoleCurrent(String activity, String roleMention) => Intl.message(
+      'Текущая роль для пинга активности "$activity": $roleMention',
+      name: 'adminPromotesRoleCurrent',
+      args: [activity, roleMention],
+      desc: 'Message showing the current promo mention role.',
+      examples: const {
+        'activity': 'Рейд',
+        'roleMention': '@Raiders',
+      },
+    );
+
+String adminPromotesRoleNotSet(String activity) => Intl.message(
+      'Для активности "$activity" роль для промо сообщений не установлена.',
+      name: 'adminPromotesRoleNotSet',
+      args: [activity],
+      desc: 'Message shown when promo mention role is missing.',
+      examples: const {
+        'activity': 'Рейд',
+      },
+    );
+
+String get adminTimezoneInvalidName => Intl.message(
+      'Введите корректное название таймзоны.',
+      name: 'adminTimezoneInvalidName',
+      desc: 'Shown when timezone name is empty.',
+    );
+
+String adminTimezoneAdded(String name, String offset) => Intl.message(
+      'Таймзона "$name" со смещением $offset добавлена.',
+      name: 'adminTimezoneAdded',
+      args: [name, offset],
+      desc: 'Confirmation shown after adding a timezone.',
+      examples: const {
+        'name': 'MSK',
+        'offset': '+3',
+      },
+    );
+
+String adminTimezoneAlreadyExists(String name) => Intl.message(
+      'Таймзона "$name" уже существует.',
+      name: 'adminTimezoneAlreadyExists',
+      args: [name],
+      desc: 'Error shown when timezone with the name already exists.',
+      examples: const {
+        'name': 'MSK',
+      },
+    );
+
+String adminTimezoneRemoved(String name) => Intl.message(
+      'Таймзона "$name" удалена.',
+      name: 'adminTimezoneRemoved',
+      args: [name],
+      desc: 'Confirmation shown after removing a timezone.',
+      examples: const {
+        'name': 'MSK',
+      },
+    );
+
+String adminTimezoneNotFound(String name) => Intl.message(
+      'Таймзона "$name" не найдена.',
+      name: 'adminTimezoneNotFound',
+      args: [name],
+      desc: 'Error shown when timezone is missing.',
+      examples: const {
+        'name': 'MSK',
+      },
     );
 
 String get adminPromoteListHeader => Intl.message(
@@ -546,10 +695,15 @@ String promoterChannelInvalid(String channelId) => Intl.message(
       examples: const {'channelId': '123456789012345678'},
     );
 
-String get promoterDefaultTemplate => Intl.message(
-      '{AUTHOR} собирает людей в {NAME}',
+String promoterDefaultTemplate(String authorMention, String activityName) => Intl.message(
+      '$authorMention собирает людей в $activityName',
       name: 'promoterDefaultTemplate',
+      args: [authorMention, activityName],
       desc: 'Fallback promote message template.',
+      examples: const {
+        'authorMention': '@User',
+        'activityName': 'Рейд',
+      },
     );
 
 String get promoterNewGatheringTitle => Intl.message(

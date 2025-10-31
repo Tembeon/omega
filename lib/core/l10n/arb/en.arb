@@ -242,7 +242,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "adminPromotesTemplateHelp": "Templates: {AUTHOR}, {DESCRIPTION}, {DATE}, {MAX_MEMBERS}, {NAME}, {MESSAGE_URL}",
+  "adminPromotesTemplateHelp": "Templates: {{AUTHOR}}, {{DESCRIPTION}}, {{DATE}}, {{MAX_MEMBERS}}, {{NAME}}, {{MESSAGE_URL}}",
   "@adminPromotesTemplateHelp": {
     "description": "Help text listing supported promote message templates.",
     "type": "text",
@@ -269,6 +269,66 @@
   "adminPromotesListDescription": "List all messages",
   "@adminPromotesListDescription": {
     "description": "Description for listing promote messages.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminPromotesRoleSetDescription": "Set a role to mention",
+  "@adminPromotesRoleSetDescription": {
+    "description": "Description for setting a role mention in promo messages.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminPromotesRoleViewDescription": "Show current role",
+  "@adminPromotesRoleViewDescription": {
+    "description": "Description for viewing current promo mention role.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminPromotesRoleClearDescription": "Clear the role",
+  "@adminPromotesRoleClearDescription": {
+    "description": "Description for removing the promo mention role.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminPromotesRoleOptionDescription": "Role to ping",
+  "@adminPromotesRoleOptionDescription": {
+    "description": "Description for the role option in promo commands.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminPromotesRoleActivityOptionDescription": "Activity",
+  "@adminPromotesRoleActivityOptionDescription": {
+    "description": "Description for the activity option in promo role commands.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminTimezonesGroupDescription": "Manage available timezones",
+  "@adminTimezonesGroupDescription": {
+    "description": "Description for the timezone management subcommand group.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminTimezonesAddDescription": "Add a new timezone",
+  "@adminTimezonesAddDescription": {
+    "description": "Description for adding a new timezone.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminTimezonesRemoveDescription": "Remove a timezone",
+  "@adminTimezonesRemoveDescription": {
+    "description": "Description for removing a timezone.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminTimezoneNameDescription": "Timezone name",
+  "@adminTimezoneNameDescription": {
+    "description": "Description for the timezone name option.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminTimezoneOffsetDescription": "Offset relative to UTC (hours)",
+  "@adminTimezoneOffsetDescription": {
+    "description": "Description for the timezone offset option.",
     "type": "text",
     "placeholders": {}
   },
@@ -343,6 +403,101 @@
     "description": "Confirmation shown after a promote message is removed.",
     "type": "text",
     "placeholders": {}
+  },
+  "adminPromotesRoleSet": "For activity \"{activity}\": role {roleMention} will be mentioned in promo messages.",
+  "@adminPromotesRoleSet": {
+    "description": "Confirmation shown after setting promo mention role.",
+    "type": "text",
+    "placeholders": {
+      "activity": {
+        "example": "Raid"
+      },
+      "roleMention": {
+        "example": "@Raiders"
+      }
+    }
+  },
+  "adminPromotesRoleCleared": "Promo mention role cleared for activity \"{activity}\".",
+  "@adminPromotesRoleCleared": {
+    "description": "Confirmation shown after clearing promo mention role.",
+    "type": "text",
+    "placeholders": {
+      "activity": {
+        "example": "Raid"
+      }
+    }
+  },
+  "adminPromotesRoleCurrent": "Current promo role for \"{activity}\": {roleMention}",
+  "@adminPromotesRoleCurrent": {
+    "description": "Message showing the current promo mention role.",
+    "type": "text",
+    "placeholders": {
+      "activity": {
+        "example": "Raid"
+      },
+      "roleMention": {
+        "example": "@Raiders"
+      }
+    }
+  },
+  "adminPromotesRoleNotSet": "Promo mention role is not set for activity \"{activity}\".",
+  "@adminPromotesRoleNotSet": {
+    "description": "Message shown when promo mention role is missing.",
+    "type": "text",
+    "placeholders": {
+      "activity": {
+        "example": "Raid"
+      }
+    }
+  },
+  "adminTimezoneInvalidName": "Provide a valid timezone name.",
+  "@adminTimezoneInvalidName": {
+    "description": "Shown when timezone name is empty.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminTimezoneAdded": "Timezone \"{name}\" with offset {offset} added.",
+  "@adminTimezoneAdded": {
+    "description": "Confirmation shown after adding a timezone.",
+    "type": "text",
+    "placeholders": {
+      "name": {
+        "example": "MSK"
+      },
+      "offset": {
+        "example": "+3"
+      }
+    }
+  },
+  "adminTimezoneAlreadyExists": "Timezone \"{name}\" already exists.",
+  "@adminTimezoneAlreadyExists": {
+    "description": "Error shown when timezone with the name already exists.",
+    "type": "text",
+    "placeholders": {
+      "name": {
+        "example": "MSK"
+      }
+    }
+  },
+  "adminTimezoneRemoved": "Timezone \"{name}\" removed.",
+  "@adminTimezoneRemoved": {
+    "description": "Confirmation shown after removing a timezone.",
+    "type": "text",
+    "placeholders": {
+      "name": {
+        "example": "MSK"
+      }
+    }
+  },
+  "adminTimezoneNotFound": "Timezone \"{name}\" not found.",
+  "@adminTimezoneNotFound": {
+    "description": "Error shown when timezone is missing.",
+    "type": "text",
+    "placeholders": {
+      "name": {
+        "example": "MSK"
+      }
+    }
   },
   "adminPromoteListHeader": "**Messages:**",
   "@adminPromoteListHeader": {
@@ -563,11 +718,18 @@
       }
     }
   },
-  "promoterDefaultTemplate": "{AUTHOR} is gathering people for {NAME}",
+  "promoterDefaultTemplate": "{authorMention} is gathering people for {activityName}",
   "@promoterDefaultTemplate": {
     "description": "Fallback promote message template.",
     "type": "text",
-    "placeholders": {}
+    "placeholders": {
+      "authorMention": {
+        "example": "@User"
+      },
+      "activityName": {
+        "example": "Raid"
+      }
+    }
   },
   "promoterNewGatheringTitle": "New gathering!",
   "@promoterNewGatheringTitle": {

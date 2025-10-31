@@ -1,6 +1,6 @@
 {
   "@@locale": "ru",
-  "@@last_modified": "2025-10-04T17:25:21.162402",
+  "@@last_modified": "2025-10-31T23:33:09.920593",
   "commandOptionNameKey": "название",
   "@commandOptionNameKey": {
     "description": "Slash command option name for activity title.",
@@ -243,7 +243,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "adminPromotesTemplateHelp": "Шаблоны: {AUTHOR}, {DESCRIPTION}, {DATE}, {MAX_MEMBERS}, {NAME}, {MESSAGE_URL}",
+  "adminPromotesTemplateHelp": "Шаблоны: AUTHOR, DESCRIPTION, DATE, MAX_MEMBERS, NAME, MESSAGE_URL",
   "@adminPromotesTemplateHelp": {
     "description": "Help text listing supported promote message templates.",
     "type": "text",
@@ -270,6 +270,66 @@
   "adminPromotesListDescription": "Показать все сообщения",
   "@adminPromotesListDescription": {
     "description": "Description for listing promote messages.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminPromotesRoleSetDescription": "Установить роль для упоминания",
+  "@adminPromotesRoleSetDescription": {
+    "description": "Description for setting a role mention in promo messages.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminPromotesRoleViewDescription": "Показать текущую роль",
+  "@adminPromotesRoleViewDescription": {
+    "description": "Description for viewing current promo mention role.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminPromotesRoleClearDescription": "Очистить роль",
+  "@adminPromotesRoleClearDescription": {
+    "description": "Description for removing the promo mention role.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminPromotesRoleOptionDescription": "Роль для пинга",
+  "@adminPromotesRoleOptionDescription": {
+    "description": "Description for the role option in promo commands.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminPromotesRoleActivityOptionDescription": "Активность",
+  "@adminPromotesRoleActivityOptionDescription": {
+    "description": "Description for the activity option in promo role commands.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminTimezonesGroupDescription": "Управление таймзонами",
+  "@adminTimezonesGroupDescription": {
+    "description": "Description for the timezone management subcommand group.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminTimezonesAddDescription": "Добавить новую таймзону",
+  "@adminTimezonesAddDescription": {
+    "description": "Description for adding a new timezone.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminTimezonesRemoveDescription": "Удалить таймзону",
+  "@adminTimezonesRemoveDescription": {
+    "description": "Description for removing a timezone.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminTimezoneNameDescription": "Название таймзоны",
+  "@adminTimezoneNameDescription": {
+    "description": "Description for the timezone name option.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminTimezoneOffsetDescription": "Смещение относительно UTC (часы)",
+  "@adminTimezoneOffsetDescription": {
+    "description": "Description for the timezone offset option.",
     "type": "text",
     "placeholders": {}
   },
@@ -332,6 +392,101 @@
     "description": "Confirmation shown after a promote message is removed.",
     "type": "text",
     "placeholders": {}
+  },
+  "adminPromotesRoleSet": "Для активности \"{activity}\": роль {roleMention} будет оповещена в промо сообщениях.",
+  "@adminPromotesRoleSet": {
+    "description": "Confirmation shown after setting promo mention role.",
+    "type": "text",
+    "placeholders": {
+      "activity": {
+        "example": "Рейд"
+      },
+      "roleMention": {
+        "example": "@Raiders"
+      }
+    }
+  },
+  "adminPromotesRoleCleared": "Для активности \"{activity}\" роль для промо сообщений удалена.",
+  "@adminPromotesRoleCleared": {
+    "description": "Confirmation shown after clearing promo mention role.",
+    "type": "text",
+    "placeholders": {
+      "activity": {
+        "example": "Рейд"
+      }
+    }
+  },
+  "adminPromotesRoleCurrent": "Текущая роль для пинга активности \"{activity}\": {roleMention}",
+  "@adminPromotesRoleCurrent": {
+    "description": "Message showing the current promo mention role.",
+    "type": "text",
+    "placeholders": {
+      "activity": {
+        "example": "Рейд"
+      },
+      "roleMention": {
+        "example": "@Raiders"
+      }
+    }
+  },
+  "adminPromotesRoleNotSet": "Для активности \"{activity}\" роль для промо сообщений не установлена.",
+  "@adminPromotesRoleNotSet": {
+    "description": "Message shown when promo mention role is missing.",
+    "type": "text",
+    "placeholders": {
+      "activity": {
+        "example": "Рейд"
+      }
+    }
+  },
+  "adminTimezoneInvalidName": "Введите корректное название таймзоны.",
+  "@adminTimezoneInvalidName": {
+    "description": "Shown when timezone name is empty.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "adminTimezoneAdded": "Таймзона \"{name}\" со смещением {offset} добавлена.",
+  "@adminTimezoneAdded": {
+    "description": "Confirmation shown after adding a timezone.",
+    "type": "text",
+    "placeholders": {
+      "name": {
+        "example": "MSK"
+      },
+      "offset": {
+        "example": "+3"
+      }
+    }
+  },
+  "adminTimezoneAlreadyExists": "Таймзона \"{name}\" уже существует.",
+  "@adminTimezoneAlreadyExists": {
+    "description": "Error shown when timezone with the name already exists.",
+    "type": "text",
+    "placeholders": {
+      "name": {
+        "example": "MSK"
+      }
+    }
+  },
+  "adminTimezoneRemoved": "Таймзона \"{name}\" удалена.",
+  "@adminTimezoneRemoved": {
+    "description": "Confirmation shown after removing a timezone.",
+    "type": "text",
+    "placeholders": {
+      "name": {
+        "example": "MSK"
+      }
+    }
+  },
+  "adminTimezoneNotFound": "Таймзона \"{name}\" не найдена.",
+  "@adminTimezoneNotFound": {
+    "description": "Error shown when timezone is missing.",
+    "type": "text",
+    "placeholders": {
+      "name": {
+        "example": "MSK"
+      }
+    }
   },
   "adminPromoteListHeader": "**Сообщения:**",
   "@adminPromoteListHeader": {
@@ -564,11 +719,18 @@
       }
     }
   },
-  "promoterDefaultTemplate": "{AUTHOR} собирает людей в {NAME}",
+  "promoterDefaultTemplate": "{authorMention} собирает людей в {activityName}",
   "@promoterDefaultTemplate": {
     "description": "Fallback promote message template.",
     "type": "text",
-    "placeholders": {}
+    "placeholders": {
+      "authorMention": {
+        "example": "@User"
+      },
+      "activityName": {
+        "example": "Рейд"
+      }
+    }
   },
   "promoterNewGatheringTitle": "Новый сбор!",
   "@promoterNewGatheringTitle": {
