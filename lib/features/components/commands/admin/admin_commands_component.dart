@@ -2,6 +2,7 @@ import '../../../../core/l10n/messages.dart';
 import '../../../../core/utils/event_parsers.dart';
 import '../../../interactor/component_interceptor.dart';
 import '../../../interactor/interactor_component.dart';
+import '../../../settings/settings.dart';
 import '../../interceptors/always_user_interceptor.dart';
 
 /// {@template AdminCommandComponent}
@@ -111,6 +112,82 @@ class AdminCommandComponent extends InteractorCommandComponent {
               description: adminPromotesListDescription,
               options: [],
             ),
+            CommandOptionBuilder.subCommand(
+              name: 'role_set',
+              description: adminPromotesRoleSetDescription,
+              options: [
+                CommandOptionBuilder.string(
+                  name: 'activity',
+                  description: adminPromotesRoleActivityOptionDescription,
+                  choices: await _getActivityChoices(services.settings),
+                  isRequired: true,
+                ),
+                CommandOptionBuilder.role(
+                  name: 'role',
+                  description: adminPromotesRoleOptionDescription,
+                  isRequired: true,
+                ),
+              ],
+            ),
+            CommandOptionBuilder.subCommand(
+              name: 'role_view',
+              description: adminPromotesRoleViewDescription,
+              options: [
+                CommandOptionBuilder.string(
+                  name: 'activity',
+                  description: adminPromotesRoleActivityOptionDescription,
+                  choices: await _getActivityChoices(services.settings),
+                  isRequired: true,
+                ),
+              ],
+            ),
+            CommandOptionBuilder.subCommand(
+              name: 'role_clear',
+              description: adminPromotesRoleClearDescription,
+              options: [
+                CommandOptionBuilder.string(
+                  name: 'activity',
+                  description: adminPromotesRoleActivityOptionDescription,
+                  choices: await _getActivityChoices(services.settings),
+                  isRequired: true,
+                ),
+              ],
+            ),
+          ],
+        ),
+        CommandOptionBuilder.subCommandGroup(
+          name: 'timezones',
+          description: adminTimezonesGroupDescription,
+          options: [
+            CommandOptionBuilder.subCommand(
+              name: 'add',
+              description: adminTimezonesAddDescription,
+              options: [
+                CommandOptionBuilder.string(
+                  name: 'name',
+                  description: adminTimezoneNameDescription,
+                  isRequired: true,
+                ),
+                CommandOptionBuilder.integer(
+                  name: 'offset',
+                  description: adminTimezoneOffsetDescription,
+                  isRequired: true,
+                  minValue: -12,
+                  maxValue: 14,
+                ),
+              ],
+            ),
+            CommandOptionBuilder.subCommand(
+              name: 'remove',
+              description: adminTimezonesRemoveDescription,
+              options: [
+                CommandOptionBuilder.string(
+                  name: 'name',
+                  description: adminTimezoneNameDescription,
+                  isRequired: true,
+                ),
+              ],
+            ),
           ],
         ),
         CommandOptionBuilder.subCommandGroup(
@@ -171,6 +248,11 @@ class AdminCommandComponent extends InteractorCommandComponent {
         'admin promotes add' => _addPromoteMessageHandler(event, services),
         'admin promotes remove' => _removePromoteMessageHandler(event, services),
         'admin promotes list' => _listPromoteMessageHandler(event, services),
+        'admin promotes role_set' => _setPromoteRoleHandler(event, services),
+        'admin promotes role_view' => _viewPromoteRoleHandler(event, services),
+        'admin promotes role_clear' => _clearPromoteRoleHandler(event, services),
+        'admin timezones add' => _addTimezoneHandler(event, services),
+        'admin timezones remove' => _removeTimezoneHandler(event, services),
         'admin bot channels' => _botChannelsHandler(event, services),
         'admin bot roles' => _rolesHandler(event, services),
         _ => throw UnsupportedError('Unsupported command: $commandName'),
@@ -334,6 +416,140 @@ class AdminCommandComponent extends InteractorCommandComponent {
 
     await event.interaction.respond(
       MessageBuilder(content: response.toString()),
+      isEphemeral: true,
+    );
+  }
+
+  Future<List<CommandOptionChoiceBuilder<String>>?> _getActivityChoices(Settings settings) async {
+    final activities = await settings.getActivitiesNames();
+    if (activities.isEmpty) return null;
+
+    return activities
+        .map(
+          (activity) => CommandOptionChoiceBuilder<String>(
+            name: sanitize(activity),
+            value: activity,
+          ),
+        )
+        .toList(growable: false);
+  }
+
+  Future<void> _setPromoteRoleHandler(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final activity = findInOption<String>('activity', event.interaction.data.options!);
+    final roleValue = findInOption<String>('role', event.interaction.data.options!);
+    if (roleValue == null || activity == null) return;
+
+    final role = Snowflake(int.parse(roleValue));
+    final settings = services.settings;
+
+    await settings.updatePromotesRole(activity, role.value);
+    final roleMention = '<@&${role.value}>';
+
+    await event.interaction.respond(
+      MessageBuilder(content: adminPromotesRoleSet(activity, roleMention)),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _viewPromoteRoleHandler(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final settings = services.settings;
+    final activity = findInOption<String>('activity', event.interaction.data.options!);
+    if (activity == null) return;
+    final roleId = await settings.getPromotesRole(activity);
+
+    await event.interaction.respond(
+      MessageBuilder(
+        content: roleId != null ? adminPromotesRoleCurrent(activity, '<@&$roleId>') : adminPromotesRoleNotSet(activity),
+      ),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _clearPromoteRoleHandler(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final settings = services.settings;
+    final activity = findInOption<String>('activity', event.interaction.data.options!);
+    if (activity == null) return;
+    await settings.updatePromotesRole(activity, null);
+
+    await event.interaction.respond(
+      MessageBuilder(content: adminPromotesRoleCleared(activity)),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _addTimezoneHandler(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final nameOption = findInOption<String>('name', event.interaction.data.options!);
+    final offset = findInOption<int>('offset', event.interaction.data.options!);
+    if (nameOption == null || offset == null) return;
+
+    final name = nameOption.trim();
+    if (name.isEmpty) {
+      await event.interaction.respond(
+        MessageBuilder(content: adminTimezoneInvalidName),
+        isEphemeral: true,
+      );
+      return;
+    }
+
+    final settings = services.settings;
+    final timezones = await settings.getTimezones();
+    if (timezones.containsKey(name)) {
+      await event.interaction.respond(
+        MessageBuilder(content: adminTimezoneAlreadyExists(name)),
+        isEphemeral: true,
+      );
+      return;
+    }
+
+    await settings.addTimezone(name, offset);
+    final formattedOffset = offset > 0 ? '+$offset' : offset.toString();
+    await event.interaction.respond(
+      MessageBuilder(content: adminTimezoneAdded(name, formattedOffset)),
+      isEphemeral: true,
+    );
+  }
+
+  Future<void> _removeTimezoneHandler(
+    InteractionCreateEvent<ApplicationCommandInteraction> event,
+    Services services,
+  ) async {
+    final nameOption = findInOption<String>('name', event.interaction.data.options!);
+    if (nameOption == null) return;
+
+    final name = nameOption.trim();
+    if (name.isEmpty) {
+      await event.interaction.respond(
+        MessageBuilder(content: adminTimezoneInvalidName),
+        isEphemeral: true,
+      );
+      return;
+    }
+
+    final settings = services.settings;
+    final timezones = await settings.getTimezones();
+    if (!timezones.containsKey(name)) {
+      await event.interaction.respond(
+        MessageBuilder(content: adminTimezoneNotFound(name)),
+        isEphemeral: true,
+      );
+      return;
+    }
+
+    await settings.removeTimezone(name);
+    await event.interaction.respond(
+      MessageBuilder(content: adminTimezoneRemoved(name)),
       isEphemeral: true,
     );
   }

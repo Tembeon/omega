@@ -37,59 +37,59 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static m7(count) => "Total: ${count}";
 
-  static m8(activity, roleMention) => "Current promo role for \"${activity}\": ${roleMention}";
+  static m8(activity) => "Promo mention role cleared for activity \"${activity}\".";
 
-  static m9(activity, roleMention) => "For activity \"${activity}\": role ${roleMention} will be mentioned in promo messages.";
+  static m9(activity, roleMention) => "Current promo role for \"${activity}\": ${roleMention}";
 
-  static m10(activity, freeSlots, role) => "Activity \"${activity}\" has ${freeSlots} free \"${role}\" roles";
+  static m10(activity) => "Promo mention role is not set for activity \"${activity}\".";
 
-  static m11(name, offset) => "Timezone \"${name}\" with offset ${offset} added.";
+  static m11(activity, roleMention) => "For activity \"${activity}\": role ${roleMention} will be mentioned in promo messages.";
 
-  static m12(name) => "Timezone \"${name}\" already exists.";
+  static m12(activity, freeSlots, role) => "Activity \"${activity}\" has ${freeSlots} free \"${role}\" roles";
 
-  static m13(name) => "Timezone \"${name}\" not found.";
+  static m13(name, offset) => "Timezone \"${name}\" with offset ${offset} added.";
 
-  static m14(name) => "Timezone \"${name}\" removed.";
+  static m14(name) => "Timezone \"${name}\" already exists.";
 
-  static m15(reason) => "Cannot complete the command.\nReason: ${reason}\nTry again or contact the server administrators.";
+  static m15(name) => "Timezone \"${name}\" not found.";
 
-  static m16(channelId) => "This command is only available in the LFG channel: <#${channelId}>";
+  static m16(name) => "Timezone \"${name}\" removed.";
 
-  static m17(title) => "Your LFG \"${title}\" has been deleted.";
+  static m17(reason) => "Cannot complete the command.\nReason: ${reason}\nTry again or contact the server administrators.";
 
-  static m18(metadata) => "Metadata: ${metadata}";
+  static m18(channelId) => "This command is only available in the LFG channel: <#${channelId}>";
 
-  static m19(stack) => "Stack trace: ${stack}";
+  static m19(title) => "Your LFG \"${title}\" has been deleted.";
 
-  static m20(error) => "An error occurred while executing the command :(\n\n${error}";
+  static m20(metadata) => "Metadata: ${metadata}";
 
-  static m21(role) => "You chose role ${role}";
+  static m21(stack) => "Stack trace: ${stack}";
 
-  static m22(channelId) => "LFG channel not found or misconfigured\nID: ${channelId}";
+  static m22(error) => "An error occurred while executing the command :(\n\n${error}";
 
-  static m23(current, max) => "Members (${current}/${max}):";
+  static m23(role) => "You chose role ${role}";
 
-  static m24(id) => "LFG ${id} not found";
+  static m24(channelId) => "LFG channel not found or misconfigured\nID: ${channelId}";
 
-  static m25(channelId) => "Announcement channel is misconfigured.\nID: ${channelId}";
+  static m25(current, max) => "Members (${current}/${max}):";
 
-  static m26(authorMention, activityName) => "${authorMention} is gathering people for ${activityName}";
+  static m26(id) => "LFG ${id} not found";
 
-  static m27(roleName) => "Role \"${roleName}\" added to the database";
+  static m27(channelId) => "Announcement channel is misconfigured.\nID: ${channelId}";
 
-  static m28(roleName, activityName) => "Role \"${roleName}\" linked to activity \"${activityName}\"";
+  static m28(authorMention, activityName) => "${authorMention} is gathering people for ${activityName}";
 
-  static m29(roleName, activityName) => "Role \"${roleName}\" detached from activity \"${activityName}\"";
+  static m29(roleName) => "Role \"${roleName}\" added to the database";
 
-  static m30(roleName) => "Role \"${roleName}\" removed from the database";
+  static m30(roleName, activityName) => "Role \"${roleName}\" linked to activity \"${activityName}\"";
 
-  static m31(title, authorName) => "It's time for ${title} created by ${authorName}!";
+  static m31(roleName, activityName) => "Role \"${roleName}\" detached from activity \"${activityName}\"";
 
-  static m32(role) => "Role chosen: ${role}";
+  static m32(roleName) => "Role \"${roleName}\" removed from the database";
 
-  static m33(activity) => "Promo mention role cleared for activity \"${activity}\".";
+  static m33(title, authorName) => "It\'s time for ${title} created by ${authorName}!";
 
-  static m34(activity) => "Promo mention role is not set for activity \"${activity}\".";
+  static m34(role) => "Role chosen: ${role}";
 
   @override
   final Map<String, dynamic> messages = _notInlinedMessages(_notInlinedMessages);
@@ -132,19 +132,19 @@ class MessageLookup extends MessageLookupByLibrary {
     'adminPromotesListDescription': MessageLookupByLibrary.simpleMessage('List all messages'),
     'adminPromotesMessageIdDescription': MessageLookupByLibrary.simpleMessage('Message ID'),
     'adminPromotesRemoveDescription': MessageLookupByLibrary.simpleMessage('Delete message by ID'),
-    'adminPromotesRoleClearDescription': MessageLookupByLibrary.simpleMessage('Clear the role'),
-    'adminPromotesRoleCleared': m33,
-    'adminPromotesRoleCurrent': m8,
-    'adminPromotesRoleNotSet': m34,
     'adminPromotesRoleActivityOptionDescription': MessageLookupByLibrary.simpleMessage('Activity'),
+    'adminPromotesRoleClearDescription': MessageLookupByLibrary.simpleMessage('Clear the role'),
+    'adminPromotesRoleCleared': m8,
+    'adminPromotesRoleCurrent': m9,
+    'adminPromotesRoleNotSet': m10,
     'adminPromotesRoleOptionDescription': MessageLookupByLibrary.simpleMessage('Role to ping'),
-    'adminPromotesRoleSet': m9,
+    'adminPromotesRoleSet': m11,
     'adminPromotesRoleSetDescription': MessageLookupByLibrary.simpleMessage('Set a role to mention'),
     'adminPromotesRoleViewDescription': MessageLookupByLibrary.simpleMessage('Show current role'),
-    'adminPromotesTemplateHelp': MessageLookupByLibrary.simpleMessage('Templates: {AUTHOR}, {DESCRIPTION}, {DATE}, {MAX_MEMBERS}, {NAME}, {MESSAGE_URL}'),
+    'adminPromotesTemplateHelp': MessageLookupByLibrary.simpleMessage('Templates: {${AUTHOR}}, {${DESCRIPTION}}, {${DATE}}, {${MAX_MEMBERS}}, {${NAME}}, {${MESSAGE_URL}}'),
     'adminPromotesWeightDescription': MessageLookupByLibrary.simpleMessage('Message weight'),
     'adminRoleOptionDescription': MessageLookupByLibrary.simpleMessage('Role'),
-    'adminRolesAvailability': m10,
+    'adminRolesAvailability': m12,
     'adminSetGroupDescription': MessageLookupByLibrary.simpleMessage('Bot settings'),
     'adminSetLfgChannelCleared': MessageLookupByLibrary.simpleMessage('LFG channel cleared'),
     'adminSetLfgChannelDescription': MessageLookupByLibrary.simpleMessage('Set the LFG channel'),
@@ -152,20 +152,20 @@ class MessageLookup extends MessageLookupByLibrary {
     'adminSetPromoChannelCleared': MessageLookupByLibrary.simpleMessage('Announcement channel cleared'),
     'adminSetPromoChannelDescription': MessageLookupByLibrary.simpleMessage('Set the announcement channel'),
     'adminSetPromoChannelSet': MessageLookupByLibrary.simpleMessage('Announcement channel set'),
-    'adminTimezoneAdded': m11,
-    'adminTimezoneAlreadyExists': m12,
+    'adminTimezoneAdded': m13,
+    'adminTimezoneAlreadyExists': m14,
     'adminTimezoneInvalidName': MessageLookupByLibrary.simpleMessage('Provide a valid timezone name.'),
     'adminTimezoneNameDescription': MessageLookupByLibrary.simpleMessage('Timezone name'),
-    'adminTimezoneNotFound': m13,
+    'adminTimezoneNotFound': m15,
     'adminTimezoneOffsetDescription': MessageLookupByLibrary.simpleMessage('Offset relative to UTC (hours)'),
-    'adminTimezoneRemoved': m14,
+    'adminTimezoneRemoved': m16,
     'adminTimezonesAddDescription': MessageLookupByLibrary.simpleMessage('Add a new timezone'),
     'adminTimezonesGroupDescription': MessageLookupByLibrary.simpleMessage('Manage available timezones'),
     'adminTimezonesRemoveDescription': MessageLookupByLibrary.simpleMessage('Remove a timezone'),
     'alreadyJoinedMessage': MessageLookupByLibrary.simpleMessage('You already joined this group.'),
     'alwaysUserPermissionError': MessageLookupByLibrary.simpleMessage('You do not have permission to use this command'),
     'alwaysUserUnknownMember': MessageLookupByLibrary.simpleMessage('Could not identify the user'),
-    'cantRespondError': m15,
+    'cantRespondError': m17,
     'commandOptionDateDescription': MessageLookupByLibrary.simpleMessage('Enter the activity start date [15 01 2023]'),
     'commandOptionDateKey': MessageLookupByLibrary.simpleMessage('date'),
     'commandOptionDescriptionDescription': MessageLookupByLibrary.simpleMessage('Enter the activity description'),
@@ -178,7 +178,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'commandOptionTimezoneKey': MessageLookupByLibrary.simpleMessage('timezone'),
     'commonUnknownUser': MessageLookupByLibrary.simpleMessage('unknown'),
     'commonValueNotSet': MessageLookupByLibrary.simpleMessage('Not set'),
-    'createCommandChannelRestriction': m16,
+    'createCommandChannelRestriction': m18,
     'createCommandDefaultDescription': MessageLookupByLibrary.simpleMessage('Create a raid'),
     'createCommandDescription': MessageLookupByLibrary.simpleMessage('Create an activity'),
     'createCommandSubcommandDescription': MessageLookupByLibrary.simpleMessage('Create an LFG for an activity'),
@@ -186,7 +186,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'deleteCommandMessageNotFound': MessageLookupByLibrary.simpleMessage('Failed to delete the message [NotFound]'),
     'deleteCommandName': MessageLookupByLibrary.simpleMessage('Delete LFG'),
     'deleteCommandNotAuthor': MessageLookupByLibrary.simpleMessage('You cannot delete this LFG because you are not its author [NotAuthor]'),
-    'deleteCommandSuccess': m17,
+    'deleteCommandSuccess': m19,
     'editCommandCompleted': MessageLookupByLibrary.simpleMessage('Edit complete'),
     'editCommandDateLabel': MessageLookupByLibrary.simpleMessage('Start date'),
     'editCommandDescriptionLabel': MessageLookupByLibrary.simpleMessage('Description'),
@@ -198,9 +198,9 @@ class MessageLookup extends MessageLookupByLibrary {
     'editCommandNotAuthor': MessageLookupByLibrary.simpleMessage('You cannot edit this LFG because you are not its author [NotAuthor]'),
     'editCommandStartTimePlaceholder': MessageLookupByLibrary.simpleMessage('Enter a new start time'),
     'editCommandTimeLabel': MessageLookupByLibrary.simpleMessage('Start time'),
-    'generalMetadata': m18,
-    'generalStackTrace': m19,
-    'interactorCommandError': m20,
+    'generalMetadata': m20,
+    'generalStackTrace': m21,
+    'interactorCommandError': m22,
     'interactorUnknownResponse': MessageLookupByLibrary.simpleMessage('I don\'t know how to respond to that :('),
     'joinComponentJoined': MessageLookupByLibrary.simpleMessage('You joined the LFG'),
     'joinComponentPrompt': MessageLookupByLibrary.simpleMessage('Pick a role to participate'),
@@ -208,20 +208,20 @@ class MessageLookup extends MessageLookupByLibrary {
     'joinComponentRoleExampleOne': MessageLookupByLibrary.simpleMessage('Role 1'),
     'joinComponentRoleExampleThree': MessageLookupByLibrary.simpleMessage('Role 3'),
     'joinComponentRoleExampleTwo': MessageLookupByLibrary.simpleMessage('Role 2'),
-    'joinComponentRolePicked': m21,
+    'joinComponentRolePicked': m23,
     'leaveComponentLeft': MessageLookupByLibrary.simpleMessage('You left the LFG'),
     'leaveComponentUnknownErrorTitle': MessageLookupByLibrary.simpleMessage('An unexpected error occurred while removing you from the LFG'),
-    'lfgChannelInvalid': m22,
+    'lfgChannelInvalid': m24,
     'lfgChannelNotConfigured': MessageLookupByLibrary.simpleMessage('LFG channel is not configured'),
     'lfgJoinButtonLabel': MessageLookupByLibrary.simpleMessage('➕  Join'),
     'lfgLeaveButtonLabel': MessageLookupByLibrary.simpleMessage('➖  Leave'),
-    'lfgMembersLabel': m23,
-    'lfgNotFoundMessage': m24,
+    'lfgMembersLabel': m25,
+    'lfgNotFoundMessage': m26,
     'lfgStartTimeLabel': MessageLookupByLibrary.simpleMessage('Start time:'),
     'notCreatorMessage': MessageLookupByLibrary.simpleMessage('You cannot run this command because you are not the creator of the group.'),
     'notJoinedMessage': MessageLookupByLibrary.simpleMessage('You cannot leave a group you are not in.'),
-    'promoterChannelInvalid': m25,
-    'promoterDefaultTemplate': m26,
+    'promoterChannelInvalid': m27,
+    'promoterDefaultTemplate': m28,
     'promoterNewGatheringTitle': MessageLookupByLibrary.simpleMessage('New gathering!'),
     'promptEnterBannerUrl': MessageLookupByLibrary.simpleMessage('Enter the banner URL'),
     'promptEnterMaxMembers': MessageLookupByLibrary.simpleMessage('Enter the maximum number of participants'),
@@ -229,15 +229,15 @@ class MessageLookup extends MessageLookupByLibrary {
     'promptEnterRoleNameWithEmoji': MessageLookupByLibrary.simpleMessage('Enter a role name (emoji allowed)'),
     'promptEnterRoleQuantity': MessageLookupByLibrary.simpleMessage('How many members are required for this role'),
     'promptUploadBanner': MessageLookupByLibrary.simpleMessage('Or upload a banner'),
-    'roleAddedToDatabaseMessage': m27,
-    'roleConnectedToActivityMessage': m28,
-    'roleDisconnectedFromActivityMessage': m29,
+    'roleAddedToDatabaseMessage': m29,
+    'roleConnectedToActivityMessage': m30,
+    'roleDisconnectedFromActivityMessage': m31,
     'roleNotPickedMessage': MessageLookupByLibrary.simpleMessage('No role was selected'),
     'rolePickerTimeoutMessage': MessageLookupByLibrary.simpleMessage('Role selection timed out'),
-    'roleRemovedFromDatabaseMessage': m30,
-    'schedulerPostStartNotification': m31,
+    'roleRemovedFromDatabaseMessage': m32,
+    'schedulerPostStartNotification': m33,
     'selectedMessageIsNotLfg': MessageLookupByLibrary.simpleMessage('The selected message is not an LFG [LFGNotFound]'),
-    'selectedRoleConfirmation': m32,
+    'selectedRoleConfirmation': m34,
     'tooManyPlayersMessage': MessageLookupByLibrary.simpleMessage('You cannot join because the group is already full.')
   };
 }

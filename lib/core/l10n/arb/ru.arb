@@ -1,6 +1,6 @@
 {
   "@@locale": "ru",
-  "@@last_modified": "2025-10-31T23:33:09.920593",
+  "@@last_modified": "2025-10-31T23:50:18.889997",
   "commandOptionNameKey": "название",
   "@commandOptionNameKey": {
     "description": "Slash command option name for activity title.",

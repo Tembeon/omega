@@ -20,6 +20,7 @@ class Settings {
 
   static const String lfgChannelKey = 'lfg_channel';
   static const String promotesChannelKey = 'promotes_channel';
+  static const String _promotesRoleKeyPrefix = 'promotes_role::';
 
   /// Database used for storing settings.
   final SettingsDatabase _database;
@@ -53,6 +54,11 @@ class Settings {
     return value != null ? int.parse(value) : null;
   }
 
+  Future<int?> getPromotesRole(String activity) async {
+    final value = await _database.guildSettingsDao.getValue(_promotesRoleKey(activity));
+    return value != null ? int.parse(value) : null;
+  }
+
   Future<int?> getLFGChannel() async {
     final value = await _database.guildSettingsDao.getValue(lfgChannelKey);
     return value != null ? int.parse(value) : null;
@@ -79,6 +85,19 @@ class Settings {
 
     _interactor.notifyUpdate({
       UpdateEvent.promoChannelUpdated,
+    });
+  }
+
+  Future<void> updatePromotesRole(String activity, int? roleID) async {
+    final key = _promotesRoleKey(activity);
+    if (roleID == null) {
+      await _database.guildSettingsDao.removeValue(key);
+    } else {
+      await _database.guildSettingsDao.saveValue(key, roleID.toString());
+    }
+
+    _interactor.notifyUpdate({
+      UpdateEvent.promoRoleUpdated,
     });
   }
 
@@ -193,6 +212,8 @@ class Settings {
   Future<void> removeRole(String role) {
     return _database.activitiesDao.removeRole(role);
   }
+
+  String _promotesRoleKey(String activity) => '$_promotesRoleKeyPrefix$activity';
 
   /// Returns the number of free roles for given activity
   Future<int> getFreeRoleCount({

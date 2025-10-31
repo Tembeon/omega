@@ -37,59 +37,59 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static m7(count) => "Total: ${count}";
 
-  static m8(activity, roleMention) => "Текущая роль для пинга активности \"${activity}\": ${roleMention}";
+  static m8(activity) => "Для активности \"${activity}\" роль для промо сообщений удалена.";
 
-  static m9(activity, roleMention) => "Для активности \"${activity}\": роль ${roleMention} будет оповещена в промо сообщениях.";
+  static m9(activity, roleMention) => "Текущая роль для пинга активности \"${activity}\": ${roleMention}";
 
-  static m10(activity, freeSlots, role) => "Активность \"${activity}\" имеет ${freeSlots} свободных ролей \"${role}\"";
+  static m10(activity) => "Для активности \"${activity}\" роль для промо сообщений не установлена.";
 
-  static m11(name, offset) => "Таймзона \"${name}\" со смещением ${offset} добавлена.";
+  static m11(activity, roleMention) => "Для активности \"${activity}\": роль ${roleMention} будет оповещена в промо сообщениях.";
 
-  static m12(name) => "Таймзона \"${name}\" уже существует.";
+  static m12(activity, freeSlots, role) => "Активность \"${activity}\" имеет ${freeSlots} свободных ролей \"${role}\"";
 
-  static m13(name) => "Таймзона \"${name}\" не найдена.";
+  static m13(name, offset) => "Таймзона \"${name}\" со смещением ${offset} добавлена.";
 
-  static m14(name) => "Таймзона \"${name}\" удалена.";
+  static m14(name) => "Таймзона \"${name}\" уже существует.";
 
-  static m15(reason) => "Невозможно выполнить команду.\nПричина: ${reason}\nПопробуйте ещё раз или обратитесь к администрации сервера.";
+  static m15(name) => "Таймзона \"${name}\" не найдена.";
 
-  static m16(channelId) => "Команда доступна только в канале для поиска группы: <#${channelId}>";
+  static m16(name) => "Таймзона \"${name}\" удалена.";
 
-  static m17(title) => "Ваше LFG \"${title}\" удалено.";
+  static m17(reason) => "Невозможно выполнить команду.\nПричина: ${reason}\nПопробуйте ещё раз или обратитесь к администрации сервера.";
 
-  static m18(metadata) => "Метаданные: ${metadata}";
+  static m18(channelId) => "Команда доступна только в канале для поиска группы: <#${channelId}>";
 
-  static m19(stack) => "Стек вызовов: ${stack}";
+  static m19(title) => "Ваше LFG \"${title}\" удалено.";
 
-  static m20(error) => "Произошла ошибка при выполнении команды :(\n\n${error}";
+  static m20(metadata) => "Метаданные: ${metadata}";
 
-  static m21(role) => "Вы выбрали роль ${role}";
+  static m21(stack) => "Стек вызовов: ${stack}";
 
-  static m22(channelId) => "Канал LFG не найден или настроен неправильно\nID: ${channelId}";
+  static m22(error) => "Произошла ошибка при выполнении команды :(\n\n${error}";
 
-  static m23(current, max) => "Участники (${current}/${max}):";
+  static m23(role) => "Вы выбрали роль ${role}";
 
-  static m24(id) => "LFG ${id} не найден";
+  static m24(channelId) => "Канал LFG не найден или настроен неправильно\nID: ${channelId}";
 
-  static m25(channelId) => "Канал для объявлений настроен неверно.\nID: ${channelId}";
+  static m25(current, max) => "Участники (${current}/${max}):";
 
-  static m26(authorMention, activityName) => "${authorMention} собирает людей в ${activityName}";
+  static m26(id) => "LFG ${id} не найден";
 
-  static m27(roleName) => "Роль \"${roleName}\" добавлена к базу данных";
+  static m27(channelId) => "Канал для объявлений настроен неверно.\nID: ${channelId}";
 
-  static m28(roleName, activityName) => "Роль \"${roleName}\" привязана к активности \"${activityName}\"";
+  static m28(authorMention, activityName) => "${authorMention} собирает людей в ${activityName}";
 
-  static m29(roleName, activityName) => "Роль \"${roleName}\" отвязана от активности \"${activityName}\"";
+  static m29(roleName) => "Роль \"${roleName}\" добавлена к базу данных";
 
-  static m30(roleName) => "Роль \"${roleName}\" удалена из базы данных";
+  static m30(roleName, activityName) => "Роль \"${roleName}\" привязана к активности \"${activityName}\"";
 
-  static m31(title, authorName) => "Время сбора для ${title} от ${authorName} наступило!";
+  static m31(roleName, activityName) => "Роль \"${roleName}\" отвязана от активности \"${activityName}\"";
 
-  static m32(role) => "Выбрана роль: ${role}";
+  static m32(roleName) => "Роль \"${roleName}\" удалена из базы данных";
 
-  static m33(activity) => "Для активности \"${activity}\" роль для промо сообщений удалена.";
+  static m33(title, authorName) => "Время сбора для ${title} от ${authorName} наступило!";
 
-  static m34(activity) => "Для активности \"${activity}\" роль для промо сообщений не установлена.";
+  static m34(role) => "Выбрана роль: ${role}";
 
   @override
   final Map<String, dynamic> messages = _notInlinedMessages(_notInlinedMessages);
@@ -132,19 +132,19 @@ class MessageLookup extends MessageLookupByLibrary {
     'adminPromotesListDescription': MessageLookupByLibrary.simpleMessage('Показать все сообщения'),
     'adminPromotesMessageIdDescription': MessageLookupByLibrary.simpleMessage('ID сообщения'),
     'adminPromotesRemoveDescription': MessageLookupByLibrary.simpleMessage('Удалить сообщение по ID'),
-    'adminPromotesRoleClearDescription': MessageLookupByLibrary.simpleMessage('Очистить роль'),
     'adminPromotesRoleActivityOptionDescription': MessageLookupByLibrary.simpleMessage('Активность'),
-    'adminPromotesRoleCleared': m33,
-    'adminPromotesRoleCurrent': m8,
-    'adminPromotesRoleNotSet': m34,
+    'adminPromotesRoleClearDescription': MessageLookupByLibrary.simpleMessage('Очистить роль'),
+    'adminPromotesRoleCleared': m8,
+    'adminPromotesRoleCurrent': m9,
+    'adminPromotesRoleNotSet': m10,
     'adminPromotesRoleOptionDescription': MessageLookupByLibrary.simpleMessage('Роль для пинга'),
-    'adminPromotesRoleSet': m9,
+    'adminPromotesRoleSet': m11,
     'adminPromotesRoleSetDescription': MessageLookupByLibrary.simpleMessage('Установить роль для упоминания'),
     'adminPromotesRoleViewDescription': MessageLookupByLibrary.simpleMessage('Показать текущую роль'),
-    'adminPromotesTemplateHelp': MessageLookupByLibrary.simpleMessage('Шаблоны: {AUTHOR}, {DESCRIPTION}, {DATE}, {MAX_MEMBERS}, {NAME}, {MESSAGE_URL}'),
+    'adminPromotesTemplateHelp': MessageLookupByLibrary.simpleMessage('Шаблоны: AUTHOR, DESCRIPTION, DATE, MAX_MEMBERS, NAME, MESSAGE_URL'),
     'adminPromotesWeightDescription': MessageLookupByLibrary.simpleMessage('Вес сообщения'),
     'adminRoleOptionDescription': MessageLookupByLibrary.simpleMessage('Роль'),
-    'adminRolesAvailability': m10,
+    'adminRolesAvailability': m12,
     'adminSetGroupDescription': MessageLookupByLibrary.simpleMessage('Настройки бота'),
     'adminSetLfgChannelCleared': MessageLookupByLibrary.simpleMessage('LFG канал удален'),
     'adminSetLfgChannelDescription': MessageLookupByLibrary.simpleMessage('Установить LFG канал'),
@@ -152,20 +152,20 @@ class MessageLookup extends MessageLookupByLibrary {
     'adminSetPromoChannelCleared': MessageLookupByLibrary.simpleMessage('Канал уведомлений удален'),
     'adminSetPromoChannelDescription': MessageLookupByLibrary.simpleMessage('Установить канал для оповещений о LFG'),
     'adminSetPromoChannelSet': MessageLookupByLibrary.simpleMessage('Канал уведомлений установлен'),
-    'adminTimezoneAdded': m11,
-    'adminTimezoneAlreadyExists': m12,
+    'adminTimezoneAdded': m13,
+    'adminTimezoneAlreadyExists': m14,
     'adminTimezoneInvalidName': MessageLookupByLibrary.simpleMessage('Введите корректное название таймзоны.'),
     'adminTimezoneNameDescription': MessageLookupByLibrary.simpleMessage('Название таймзоны'),
-    'adminTimezoneNotFound': m13,
+    'adminTimezoneNotFound': m15,
     'adminTimezoneOffsetDescription': MessageLookupByLibrary.simpleMessage('Смещение относительно UTC (часы)'),
-    'adminTimezoneRemoved': m14,
+    'adminTimezoneRemoved': m16,
     'adminTimezonesAddDescription': MessageLookupByLibrary.simpleMessage('Добавить новую таймзону'),
     'adminTimezonesGroupDescription': MessageLookupByLibrary.simpleMessage('Управление таймзонами'),
     'adminTimezonesRemoveDescription': MessageLookupByLibrary.simpleMessage('Удалить таймзону'),
     'alreadyJoinedMessage': MessageLookupByLibrary.simpleMessage('Вы уже присоединились к этому сбору.'),
     'alwaysUserPermissionError': MessageLookupByLibrary.simpleMessage('У вас недостаточно прав для использования этой команды'),
     'alwaysUserUnknownMember': MessageLookupByLibrary.simpleMessage('Не удалось определить пользователя'),
-    'cantRespondError': m15,
+    'cantRespondError': m17,
     'commandOptionDateDescription': MessageLookupByLibrary.simpleMessage('Введите дату начала активности [15 01 2023]'),
     'commandOptionDateKey': MessageLookupByLibrary.simpleMessage('дата'),
     'commandOptionDescriptionDescription': MessageLookupByLibrary.simpleMessage('Введите описание активности'),
@@ -178,7 +178,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'commandOptionTimezoneKey': MessageLookupByLibrary.simpleMessage('часовой_пояс'),
     'commonUnknownUser': MessageLookupByLibrary.simpleMessage('неизвестен'),
     'commonValueNotSet': MessageLookupByLibrary.simpleMessage('Не установлен'),
-    'createCommandChannelRestriction': m16,
+    'createCommandChannelRestriction': m18,
     'createCommandDefaultDescription': MessageLookupByLibrary.simpleMessage('Создать рейд'),
     'createCommandDescription': MessageLookupByLibrary.simpleMessage('Создать активность'),
     'createCommandSubcommandDescription': MessageLookupByLibrary.simpleMessage('Создать сбор на активность'),
@@ -186,7 +186,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'deleteCommandMessageNotFound': MessageLookupByLibrary.simpleMessage('Не удалось удалить сообщение [NotFound]'),
     'deleteCommandName': MessageLookupByLibrary.simpleMessage('Удалить LFG'),
     'deleteCommandNotAuthor': MessageLookupByLibrary.simpleMessage('Вы не можете удалить это LFG, т.к. не являетесь его автором [NotAuthor]'),
-    'deleteCommandSuccess': m17,
+    'deleteCommandSuccess': m19,
     'editCommandCompleted': MessageLookupByLibrary.simpleMessage('Редактирование завершено'),
     'editCommandDateLabel': MessageLookupByLibrary.simpleMessage('Дата начала'),
     'editCommandDescriptionLabel': MessageLookupByLibrary.simpleMessage('Описание'),
@@ -198,9 +198,9 @@ class MessageLookup extends MessageLookupByLibrary {
     'editCommandNotAuthor': MessageLookupByLibrary.simpleMessage('Вы не можете редактировать это LFG, т.к. не являетесь его автором [NotAuthor]'),
     'editCommandStartTimePlaceholder': MessageLookupByLibrary.simpleMessage('Введите новое время начала'),
     'editCommandTimeLabel': MessageLookupByLibrary.simpleMessage('Время начала'),
-    'generalMetadata': m18,
-    'generalStackTrace': m19,
-    'interactorCommandError': m20,
+    'generalMetadata': m20,
+    'generalStackTrace': m21,
+    'interactorCommandError': m22,
     'interactorUnknownResponse': MessageLookupByLibrary.simpleMessage('Я не знаю, как на это ответить :('),
     'joinComponentJoined': MessageLookupByLibrary.simpleMessage('Вы добавлены в LFG'),
     'joinComponentPrompt': MessageLookupByLibrary.simpleMessage('Выберите роль для участия'),
@@ -208,20 +208,20 @@ class MessageLookup extends MessageLookupByLibrary {
     'joinComponentRoleExampleOne': MessageLookupByLibrary.simpleMessage('Роль 1'),
     'joinComponentRoleExampleThree': MessageLookupByLibrary.simpleMessage('Роль 3'),
     'joinComponentRoleExampleTwo': MessageLookupByLibrary.simpleMessage('Роль 2'),
-    'joinComponentRolePicked': m21,
+    'joinComponentRolePicked': m23,
     'leaveComponentLeft': MessageLookupByLibrary.simpleMessage('Вы покинули LFG'),
     'leaveComponentUnknownErrorTitle': MessageLookupByLibrary.simpleMessage('Произошла неизвестная ошибка при удалении вас из LFG'),
-    'lfgChannelInvalid': m22,
+    'lfgChannelInvalid': m24,
     'lfgChannelNotConfigured': MessageLookupByLibrary.simpleMessage('Канал LFG не настроен'),
     'lfgJoinButtonLabel': MessageLookupByLibrary.simpleMessage('➕  Присоединиться'),
     'lfgLeaveButtonLabel': MessageLookupByLibrary.simpleMessage('➖  Покинуть'),
-    'lfgMembersLabel': m23,
-    'lfgNotFoundMessage': m24,
+    'lfgMembersLabel': m25,
+    'lfgNotFoundMessage': m26,
     'lfgStartTimeLabel': MessageLookupByLibrary.simpleMessage('Время сбора:'),
     'notCreatorMessage': MessageLookupByLibrary.simpleMessage('Невозможно выполнить команду, так как вы не являетесь создателем сбора.'),
     'notJoinedMessage': MessageLookupByLibrary.simpleMessage('Невозможно покинуть сбор, в котором вы не участвуете.'),
-    'promoterChannelInvalid': m25,
-    'promoterDefaultTemplate': m26,
+    'promoterChannelInvalid': m27,
+    'promoterDefaultTemplate': m28,
     'promoterNewGatheringTitle': MessageLookupByLibrary.simpleMessage('Новый сбор!'),
     'promptEnterBannerUrl': MessageLookupByLibrary.simpleMessage('Введите URL баннера'),
     'promptEnterMaxMembers': MessageLookupByLibrary.simpleMessage('Введите максимальное количество участников'),
@@ -229,15 +229,15 @@ class MessageLookup extends MessageLookupByLibrary {
     'promptEnterRoleNameWithEmoji': MessageLookupByLibrary.simpleMessage('Введите название роли (можно вставлять эмодзи)'),
     'promptEnterRoleQuantity': MessageLookupByLibrary.simpleMessage('Сколько участников требуется для этой роли'),
     'promptUploadBanner': MessageLookupByLibrary.simpleMessage('Или загрузите баннер'),
-    'roleAddedToDatabaseMessage': m27,
-    'roleConnectedToActivityMessage': m28,
-    'roleDisconnectedFromActivityMessage': m29,
+    'roleAddedToDatabaseMessage': m29,
+    'roleConnectedToActivityMessage': m30,
+    'roleDisconnectedFromActivityMessage': m31,
     'roleNotPickedMessage': MessageLookupByLibrary.simpleMessage('Роль не выбрана'),
     'rolePickerTimeoutMessage': MessageLookupByLibrary.simpleMessage('Превышено время ожидания выбора роли'),
-    'roleRemovedFromDatabaseMessage': m30,
-    'schedulerPostStartNotification': m31,
+    'roleRemovedFromDatabaseMessage': m32,
+    'schedulerPostStartNotification': m33,
     'selectedMessageIsNotLfg': MessageLookupByLibrary.simpleMessage('Данное сообщение не содержит LFG [LFGNotFound]'),
-    'selectedRoleConfirmation': m32,
+    'selectedRoleConfirmation': m34,
     'tooManyPlayersMessage': MessageLookupByLibrary.simpleMessage('Невозможно присоединиться к сбору, так как он уже заполнен.')
   };
 }

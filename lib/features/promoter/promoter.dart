@@ -33,6 +33,7 @@ class Promoter {
   ) async {
     final promoChannel = await _settings.getPromotesChannel();
     final lfgChannel = await _settings.getLFGChannel();
+    final promoRole = await _settings.getPromotesRole(builder.activity.name);
     if (promoChannel == null || lfgChannel == null) {
       l.w('[Promoter] No promo or LFG channel set. Skipping notifying');
       return;
@@ -52,16 +53,24 @@ class Promoter {
       await _createRandomMessage(
         builder,
         'https://discord.com/channels/${channel.guildId.value}/$lfgChannel/${postId.value}',
+        promoRole,
       ),
     );
   }
 
-  Future<MessageBuilder> _createRandomMessage(LFGPostBuilder builder, String lfgMessageUrl) async {
+  Future<MessageBuilder> _createRandomMessage(
+    LFGPostBuilder builder,
+    String lfgMessageUrl,
+    int? promoRole,
+  ) async {
     final messages = await _settings.getPromoteMessagesWithWeight();
-    final message = messages.isNotEmpty ? messages[Random().nextInt(messages.length)] : promoterDefaultTemplate;
+    final authorMention = '<@${builder.authorID}>';
+    final message = messages.isNotEmpty
+        ? messages[Random().nextInt(messages.length)]
+        : promoterDefaultTemplate(authorMention, builder.activity.name);
 
     final content = message
-        .replaceAll('{AUTHOR}', '<@${builder.authorID}>')
+        .replaceAll('{AUTHOR}', authorMention)
         .replaceAll('{DESCRIPTION}', builder.description)
         .replaceAll('{DATE}', '<t:${builder.unixDate ~/ 1000}:F>')
         .replaceAll('{MAX_MEMBERS}', builder.activity.maxMembers.toString())
@@ -71,6 +80,8 @@ class Promoter {
     final splitMessage = content.split(r'\n');
 
     return MessageBuilder(
+      content: promoRole != null ? '<@&$promoRole>' : null,
+      allowedMentions: promoRole != null ? AllowedMentions(roles: [Snowflake(promoRole)]) : null,
       embeds: [
         EmbedBuilder(
           color: ColorPalette.getRandomDiscordColor(),
